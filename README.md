@@ -70,3 +70,4 @@ python .github/tools/evolve.py
 This project is licensed under the [MIT License](LICENSE).
 
 Happy refining!
+# Trigger evolution after API key setup
