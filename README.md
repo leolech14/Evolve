@@ -1,4 +1,3 @@
-<<<<<<< codex/document-pdf-to-csv-conversion-workflow
 # Statement Refinery
 
 This project provides utilities for converting Ita\u00fa credit card statements into structured CSV files. The main goal is to make transaction data easy to analyze with spreadsheet software or other tools.
@@ -29,5 +28,5 @@ Execute the test suite with:
 pytest
 ```
 =======
-# Evolve\n
->>>>>>> main
+# Evolve
+
