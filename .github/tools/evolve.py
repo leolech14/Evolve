@@ -131,12 +131,22 @@ def main():
             branch = f"codex/work-{int(time.time())}-{attempt}"
             sh("git", "checkout", "-b", branch)
 
-            # gather fail log from pytest
-            try:
-                fail_output = sh("pytest", "-v", "--tb=short", capture=True)
-                fail_log = "Tests are failing. Recent output:\n" + fail_output[-2000:]
-            except subprocess.CalledProcessError as e:
-                fail_log = f"Tests failing. Error output:\n{e.stdout[-2000:] if e.stdout else 'No output'}"
+            # gather fail log from pytest only on first attempt
+            if attempt == 1:
+                try:
+                    fail_output = sh("pytest", "-v", "--tb=short", capture=True)
+                    # Get full test output but prioritize error messages
+                    error_lines = [l for l in fail_output.splitlines() if 'FAILED' in l or 'Error' in l or 'AssertionError' in l]
+                    fail_log = "Tests are failing. Errors:\n" + '\n'.join(error_lines)
+                    if len(error_lines) < 10:  # If few errors, include full context
+                        fail_log += "\n\nFull test output:\n" + fail_output
+                except subprocess.CalledProcessError as e:
+                    error_output = e.stdout if e.stdout else 'No output'
+                    error_lines = [l for l in error_output.splitlines() if 'FAILED' in l or 'Error' in l or 'AssertionError' in l]
+                    fail_log = "Tests failing. Errors:\n" + '\n'.join(error_lines)
+                    if len(error_lines) < 10:
+                        fail_log += "\n\nFull error output:\n" + error_output
+            
             patch = generate_patch(fail_log)
             if not patch.strip():
                 print("Empty patch; skipping.")
