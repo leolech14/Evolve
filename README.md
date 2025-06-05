@@ -22,8 +22,8 @@ The `--out` option specifies where the CSV will be written. If omitted, the CSV 
 
 ## Running the Tests
 
-Before running the test suite, install the package in editable mode with the
-development dependencies:
+Before running the test suite, install the package in editable mode with its
+optional `dev` dependencies:
 
 ```bash
 pip install -e '.[dev]'
