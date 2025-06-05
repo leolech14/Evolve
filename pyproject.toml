@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=65"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "statement_refinery"
+version = "0.1.0"
+description = "Utilities for converting Itau card statements to CSV"
+authors = [{name="Leonardo Lech", email="leonardo.lech@gmail.com"}]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pdfplumber",
+]
+
+[project.optional-dependencies]
+# Development dependencies for linting, type checking and tests
+dev = [
+    "pytest",
+    "coverage",
+    "ruff",
+    "black",
+    "mypy",
+]
+
