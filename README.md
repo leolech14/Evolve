@@ -28,6 +28,8 @@ available offline for the evolution script.
 corresponding golden CSV. The tests and operations that use those goldens work
 without it, but installing the library is recommended so that the entire test
 suite can run without skips.
+Having `pdfplumber` installed enables the full test suite with golden PDF
+validation.
 
 Once installation succeeds, the CLI becomes available as `pdf-to-csv`. Run it
 with a PDF file to generate a CSV:
@@ -40,14 +42,22 @@ Convert a PDF statement to CSV:
 
     python -m statement_refinery.pdf_to_csv input.pdf --out output.csv
 
-* **`--out`** specifies where the CSV will be written.  
+* **`--out`** specifies where the CSV will be written.
 * If `--out` is omitted, the CSV is printed to **stdout**.
+
+## Linting and Type Checking
+
+Use the same tools as the CI pipeline to check code style and types:
+
+    ruff check .
+    black --check .
+    mypy src/
 
 ## Running the Tests
 
 The test suite depends on the package’s *development* extras, which also
 install `openai` for the Codex tools. After installing the extras run the
-linters, type checker and the tests with coverage:
+linters and type checker described above, then run the tests with coverage:
 
     pip install -e '.[dev]'
     ruff check .
@@ -101,7 +111,9 @@ These diagnostics operate solely on the PDFs, so no golden CSV is required.
 ## CI Overview
 
 The GitHub Actions workflow runs on every push, pull request and once daily at
-03:00 UTC via cron. It installs the development extras and then executes
+03:00 UTC via cron. Fork maintainers can disable the scheduled run by removing
+the `schedule` block in `.github/workflows/ci.yaml`. The workflow installs the
+development extras and then executes
 `ruff`, `black`, `mypy` and the test suite with coverage. Coverage must remain
 above **90%** or the run fails. When any test fails the job invokes the AI
 patch loop described below to automatically attempt fixes.
