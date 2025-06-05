@@ -19,12 +19,14 @@ pdf-to-csv = "statement_refinery.pdf_to_csv:main"
 
 [project.optional-dependencies.dev]
 # Development dependencies for linting, type checking and tests
-ruff = "*"
-black = "*"
-pytest = "*"
-pytest-cov = "*"
-mypy = "*"
-openai = "*"
+dev = [
+    "ruff",
+    "black",
+    "pytest",
+    "pytest-cov",
+    "mypy",
+    "openai>=0",
+]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
