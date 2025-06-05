@@ -140,6 +140,13 @@ jobs:
         with:
           files: coverage.xml
 
+      - name: Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: coverage.xml
+
 
       - name: Check parser accuracy
         if: always()
