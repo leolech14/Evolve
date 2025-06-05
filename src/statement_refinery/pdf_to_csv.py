@@ -277,39 +277,6 @@ def parse_statement_line(line: str, year: int | None = None) -> dict | None:
 
     # TODO: Improve this function to handle more edge cases
     return None
-
-
-ITAU_PARSING_RULES = {
-    "currency_formats": ["USD", "EUR", "GBP", "JPY", "CHF", "CAD", "AUD"],
-    "skip_keywords": [
-        "PAGAMENTO",
-        "TOTAL",
-        "JUROS",
-        "MULTA",
-        "LIMITE",
-        "VENCIMENTO",
-        "FATURA",
-        "Valor",
-        "VALOR",
-        "Total",
-        "CREDITO",
-        "OUTROS",
-        "LANCAMENTOS",
-    ],
-    "merchant_separators": [".", "*", "-", " "],
-    "amount_validation": {
-        "min_adjustment": Decimal("0.01"),
-        "max_adjustment": Decimal("0.30"),
-    },
-    "installment_format": r"\d{2}/\d{2}",
-    "date_validation": {
-        "min_day": 1,
-        "max_day": 31,
-        "min_month": 1,
-        "max_month": 12,
-    },
-}
-
 # Public API of this module
 __all__ = [
     "parse_amount",
@@ -320,7 +287,6 @@ __all__ = [
     "build_regex_patterns",
     "validate_date",
     "build_comprehensive_patterns",
-    "ITAU_PARSING_RULES",
     "CSV_HEADER",
     "iter_pdf_lines",
     "parse_lines",
