@@ -1,7 +1,14 @@
 import hashlib
 from decimal import Decimal
 from datetime import date
-from statement_refinery.pdf_to_csv import parse_statement_line
+import pytest
+from statement_refinery.pdf_to_csv import (
+    parse_statement_line,
+    parse_amount,
+    classify_transaction,
+    parse_fx_currency_line,
+    _iso_date,
+)
 
 
 def _expected_hash(line: str) -> str:
@@ -108,3 +115,35 @@ def test_header_fragment_skipped():
 def test_keyword_line_skipped():
     line = "TOTAL 1,00"
     assert parse_statement_line(line) is None
+
+
+def test_parse_amount_brazilian_format():
+    assert parse_amount("1.234,56") == Decimal("1234.56")
+
+
+def test_parse_amount_negative_european():
+    assert parse_amount("-7,50") == Decimal("-7.50")
+
+
+def test_classify_transaction_high_priority():
+    cat = classify_transaction("Cobrança IOF", Decimal("10"))
+    assert cat == "ENCARGOS"
+
+
+def test_classify_transaction_fx_keyword():
+    cat = classify_transaction("Compra em EUR loja", Decimal("10"))
+    assert cat == "FX"
+
+
+def test_parse_fx_currency_line_with_city():
+    cur, rate, city = parse_fx_currency_line("EUR 1,00 = 6,27 BRL Milano")
+    assert (cur, rate, city) == ("EUR", "6,27", "Milano")
+
+
+def test_parse_fx_currency_line_none():
+    assert parse_fx_currency_line("No FX here") == (None, None, None)
+
+
+def test_iso_date_invalid():
+    with pytest.raises(ValueError):
+        _iso_date("32/01")

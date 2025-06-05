@@ -11,8 +11,8 @@ on:
 
 env:
   OPENAI_MODEL: gpt-4.1
-  MAX_TOKENS_PER_RUN: '1000000'   # 1 M-token budget
-  MAX_ATTEMPTS: '3'
+  MAX_TOKENS_PER_RUN: '2000000'   # 2 M-token budget
+  MAX_ATTEMPTS: '5'
   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
   GITHUB_TOKEN:   ${{ secrets.BOT_PAT }}
 
@@ -100,7 +100,10 @@ jobs:
       - name: PyTest + Coverage
         id: tests
         continue-on-error: true
-        run: pytest -ra -vv -n auto --cov=statement_refinery --cov-report=term-missing --cov-fail-under=90
+        run: |
+          pytest -ra -vv --cov=statement_refinery \
+                 --cov-report=term-missing --cov-report=xml \
+                 --cov-fail-under=90
 
       # auto-patch loop if tests failed or FORCE_EVOLVE=1
       - name: Evolve patch loop
@@ -126,7 +129,17 @@ jobs:
       # confirm everything green after patch
       - name: Re-run tests
         if: always()
-        run: pytest -ra -vv -n auto --cov=statement_refinery --cov-report=term-missing --cov-fail-under=90
+        run: |
+          pytest -ra -vv --cov=statement_refinery \
+                 --cov-report=term-missing --cov-report=xml \
+                 --cov-fail-under=90
+
+      - name: Upload coverage
+        if: always()
+        uses: codecov/codecov-action@v4
+        with:
+          files: coverage.xml
+
 
       - name: Check parser accuracy
         if: always()

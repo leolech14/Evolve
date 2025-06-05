@@ -1,4 +1,5 @@
 import importlib.util
+import csv
 import pytest
 import re
 from decimal import Decimal
@@ -12,6 +13,7 @@ from statement_refinery.pdf_to_csv import parse_pdf, parse_lines
 
 
 def extract_total_from_pdf(pdf_path: Path) -> Decimal:
+
     """Extract the total amount from the PDF or fallback text."""
     golden = pdf_path.with_name(f"golden_{pdf_path.stem.split('_')[-1]}.csv")
     if golden.exists():
