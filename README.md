@@ -37,13 +37,20 @@ Convert a PDF statement to CSV:
 
 ## Running the Tests
 
-The test suite depends on the package’s *development* extras. Install them and run:
+The test suite depends on the package’s *development* extras, which also install `openai` for the Codex tools. Install them and run:
 
     pip install -e '.[dev]'
     pytest
 
 These tests rely on the checked-in golden CSV files and therefore do not
 require `pdfplumber` unless you add new PDFs.
+
+## Auto-Patch Loop
+
+The GitHub Actions workflow uses `.github/tools/evolve.py` to automatically
+try patches with Codex whenever the test step fails. This script requires
+`OPENAI_API_KEY` to be set, so make sure that variable is available when
+running CI locally or triggering the workflow manually.
 
 ## Project Goals
 
