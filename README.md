@@ -1,4 +1,4 @@
-# ![CI](https://github.com/leolech14/Evolve/actions/workflows/ci.yaml/badge.svg)
+# ![CI](https://github.com/leolech14/Evolve/actions/workflows/ci.yaml/badge.svg) ![Coverage](https://codecov.io/gh/leolech14/Evolve/branch/main/graph/badge.svg)
 
 # Statement Refinery
 

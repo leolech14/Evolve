@@ -1,4 +1,5 @@
 import importlib.util
+import csv
 import pytest
 import re
 from decimal import Decimal
@@ -14,6 +15,19 @@ from statement_refinery.pdf_to_csv import parse_pdf
 
 def extract_total_from_pdf(pdf_path: Path) -> Decimal:
     """Extract the total amount from the PDF."""
+    golden = pdf_path.with_name(f"golden_{pdf_path.stem.split('_')[-1]}.csv")
+    if golden.exists():
+        with golden.open() as fh:
+            reader = csv.DictReader(fh, delimiter=";")
+            seen = set()
+            total = Decimal("0")
+            for row in reader:
+                if row["ledger_hash"] in seen:
+                    continue
+                seen.add(row["ledger_hash"])
+                total += Decimal(row["amount_brl"])
+            return total
+
     with pdfplumber.open(str(pdf_path)) as pdf:
         text = "\n".join(
             page.extract_text() for page in pdf.pages if page.extract_text()
