@@ -111,18 +111,37 @@ jobs:
         continue-on-error: true
         run: python scripts/check_accuracy.py --threshold 99
 
-      # auto-patch loop if tests failed or FORCE_EVOLVE=1
-      - name: Evolve patch loop
-        id: evolve
+      # auto-patch loop runs only when tests or accuracy fail
+      - name: Validate evolve prerequisites
+        id: evolve_prereqs
         if: |
           steps.tests.outcome == 'failure' ||
-          steps.accuracy.outcome == 'failure' ||
-          env.FORCE_EVOLVE == '1'
+          steps.accuracy.outcome == 'failure'
+        run: |
+          python - <<'EOF'
+          import os, sys
+          try:
+              import openai  # noqa
+          except Exception:
+              sys.stderr.write('Missing `openai` package\n')
+              sys.exit(1)
+          if not os.getenv('OPENAI_API_KEY'):
+              sys.stderr.write('OPENAI_API_KEY not set\n')
+              sys.exit(1)
+          EOF
+
+      - name: Evolve patch loop
+        id: evolve
+        if: steps.evolve_prereqs.outcome == 'success'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_TOKEN:   ${{ secrets.BOT_PAT }}
 
         run: python .github/tools/evolve.py
+
+      - name: Evolve skipped
+        if: steps.evolve.outcome == 'skipped'
+        run: echo 'Evolve patch loop skipped: tests already passing.' >> $GITHUB_STEP_SUMMARY
 
       - name: Report evolve failure
         if: steps.evolve.outcome == 'failure'
@@ -135,16 +154,16 @@ jobs:
             gh pr comment "$PR_NUMBER" -b "evolve.py exited without opening a PR."
           fi
 
-      # confirm everything green after patch
+      # confirm everything green only if a patch was applied
       - name: Re-run tests
-        if: always()
+        if: steps.evolve.outcome == 'success'
         run: |
           pytest -ra -vv --cov=statement_refinery \
                  --cov-report=term-missing --cov-report=xml \
                  --cov-fail-under=90
 
       - name: Re-check parser accuracy
-        if: always()
+        if: steps.evolve.outcome == 'success'
         run: python scripts/check_accuracy.py --threshold 99
 
       - name: Upload coverage
