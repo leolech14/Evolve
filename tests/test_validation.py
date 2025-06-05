@@ -1,7 +1,14 @@
+import importlib.util
+import pytest
 import re
 from decimal import Decimal
 from pathlib import Path
-import pdfplumber
+
+if importlib.util.find_spec("pdfplumber") is None:
+    pytest.skip("pdfplumber not installed", allow_module_level=True)
+else:
+    import pdfplumber
+
 from statement_refinery.pdf_to_csv import parse_pdf
 
 
