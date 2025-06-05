@@ -125,12 +125,13 @@ Set `FORCE_EVOLVE=1` to force the loop to run even when the first test pass
 is successful. This can be handy when experimenting locally or when
 triggering the workflow manually in CI.
 
-## Required Secret Scopes
+## BOT_PAT Permissions
 
 The CI workflow expects a `BOT_PAT` secret containing a personal access token
-for the GitHub bot account. The token only needs to push commits and open pull
-requests in this repository. Grant the minimal permissions by enabling
-`contents:write` and `pull_requests:write` (or the classic `repo` scope).
+used to push commits and open pull requests. Grant the minimal permissions by
+enabling the `contents:write` and `pull_requests:write` scopes (or the classic
+`repo` scope). Generate this token with a dedicated, low-privilege bot account
+rather than your personal credentials.
 
 ## Project Goals
 
