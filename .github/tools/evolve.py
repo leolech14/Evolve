@@ -22,7 +22,6 @@ import json
 import os
 import subprocess
 import time
-from hashlib import sha256
 from pathlib import Path
 from typing import Tuple
 
@@ -58,7 +57,7 @@ def run_tests() -> Tuple[bool, float]:
             "--cov-report=term-missing",
             capture=True,
         )
-    except subprocess.CalledProcessError as exc:
+    except subprocess.CalledProcessError:
         return False, 0.0
 
     # coverage line like "TOTAL   213   0 100%"
