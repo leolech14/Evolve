@@ -23,9 +23,7 @@ from datetime import date
 
 # Domestic transaction patterns
 RE_DOM_STRICT: Final = re.compile(
-    r"^(?P<date>\d{1,2}/\d{1,2})\s+"
-    r"(?P<desc>.+?)\s+"
-    r"(?P<amt>-?\d{1,3}(?:\.\d{3})*,\d{2})$"
+    r"^(?P<date>\d{1,2}/\d{1,2})\s+" r"(?P<desc>.+?)\s+" r"(?P<amt>-?\d{1,3}(?:\.\d{3})*,\d{2})$"
 )
 
 RE_DOM_TOLERANT: Final = re.compile(
