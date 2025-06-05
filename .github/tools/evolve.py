@@ -72,7 +72,9 @@ def _run_with_retry(cmd: Tuple[str, ...], capture: bool) -> subprocess.Completed
 def sh(*cmd, capture=False):
     res = _run_with_retry(cmd, capture)
     if res.returncode != 0:
-        raise subprocess.CalledProcessError(res.returncode, cmd, output=res.stdout, stderr=res.stderr)
+        raise subprocess.CalledProcessError(
+            res.returncode, cmd, output=res.stdout, stderr=res.stderr
+        )
     return res.stdout.strip() if capture else None
 
 
