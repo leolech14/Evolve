@@ -7,7 +7,7 @@ This project provides utilities for converting Ita\u00fa credit card statements 
 After cloning the repository, install the package in editable mode along with development dependencies:
 
 ```bash
-pip install -e .[dev]
+pip install -e '.[dev]'
 ```
 
 ## Command-Line Usage
