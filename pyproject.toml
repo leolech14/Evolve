@@ -1,0 +1,26 @@
+[project]
+name = "statement_refinery"
+version = "0.1.0"
+description = "Utilities to convert Itaú credit card statements to CSV"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pdfplumber",
+    "ruff",
+    "black",
+    "mypy",
+]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.package-data]
+"statement_refinery" = ["py.typed"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
