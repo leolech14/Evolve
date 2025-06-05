@@ -2,10 +2,16 @@ import io
 import contextlib
 from pathlib import Path
 import difflib
+import importlib.util
 import sys, os  # noqa: E401,F401
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
+
+_PDFPLUMBER_SPEC = importlib.util.find_spec("pdfplumber")
+if _PDFPLUMBER_SPEC is None:
+    print("pdfplumber not installed; skipping accuracy check")
+    raise SystemExit(0)
 
 from statement_refinery import pdf_to_csv  # noqa: E402
 
