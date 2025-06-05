@@ -7,10 +7,6 @@ automatically becomes part of the test matrix.
 
 import importlib
 import pytest
-
-if importlib.util.find_spec("pdfplumber") is None:
-    pytest.skip("pdfplumber not installed", allow_module_level=True)
-
 from pathlib import Path
 import filecmp
 import subprocess
@@ -19,6 +15,14 @@ import os
 
 DATA = Path(__file__).parent / "data"
 PDFS = list(DATA.glob("*.pdf"))
+missing_golden = [
+    pdf for pdf in PDFS if not (DATA / f"golden_{pdf.stem.split('_')[-1]}.csv").exists()
+]
+if importlib.util.find_spec("pdfplumber") is None and missing_golden:
+    pytest.skip(
+        "pdfplumber not installed and no golden CSV for every PDF",
+        allow_module_level=True,
+    )
 
 
 def run_parser(pdf_path: Path, out_path: Path) -> None:
