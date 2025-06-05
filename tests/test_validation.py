@@ -33,7 +33,7 @@ def extract_total_from_pdf(pdf_path: Path) -> Decimal:
             r"= Total desta fatura\s*[=R\$\s]*([\d\.]+,\d{2})",
             r"TOTAL\s*[=R\$\s]*([\d\.]+,\d{2})",
             r"Valor Total\s*[=R\$\s]*([\d\.]+,\d{2})",
-            r"Saldo Total\s*[=R\$\s]*([\d\.]+,\d{2})"
+            r"Saldo Total\s*[=R\$\s]*([\d\.]+,\d{2})",
         ]
 
         for pattern in patterns:
