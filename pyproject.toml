@@ -26,6 +26,7 @@ dev = [
     "pytest-cov",
     "mypy",
     "openai>=0",
+    "pdfplumber",
 ]
 
 [tool.setuptools]
