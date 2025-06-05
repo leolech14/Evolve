@@ -8,6 +8,18 @@ After cloning the repository, install the package in editable mode **with develo
 
     pip install -e '.[dev]'
 
+## Common Installation Issues
+
+The installation step fetches `pdfplumber` and its dependencies from PyPI.
+If your environment lacks internet access, this download will fail. In that
+case, pre-download the required wheels or install the package in an
+environment that can reach PyPI.
+
+Once installation succeeds, the CLI becomes available as `pdf-to-csv`. Run it
+with a PDF file to generate a CSV:
+
+    pdf-to-csv input.pdf --out output.csv
+
 ## Command-Line Usage
 
 Convert a PDF statement to CSV:
