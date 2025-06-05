@@ -11,8 +11,14 @@ import subprocess
 import tempfile
 from pathlib import Path
 import openai
+import sys
 
-openai.api_key = os.environ["OPENAI_API_KEY"]
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    print("Missing OPENAI_API_KEY environment variable.", file=sys.stderr)
+    raise SystemExit(1)
+
+client = openai.OpenAI(api_key=api_key)
 MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1")
 
 
@@ -22,7 +28,7 @@ def sh(*cmd):
 
 def main():
     print("⚙️  Generating single Codex patch…")
-    resp = openai.ChatCompletion.create(
+    resp = client.chat.completions.create(
         model=MODEL,
         messages=[
             {
