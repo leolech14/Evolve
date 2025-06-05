@@ -59,6 +59,10 @@ export OPENAI_API_KEY=your-key
 python .github/tools/evolve.py
 ```
 
+Set `FORCE_EVOLVE=1` to force the loop to run even when the first test pass
+is successful. This can be handy when experimenting locally or when
+triggering the workflow manually in CI.
+
 ## Project Goals
 
 * **Accuracy first** – robust regex rules tuned for Itaú PDFs.  
