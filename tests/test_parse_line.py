@@ -52,3 +52,14 @@ def test_adjustment_line():
     assert row is not None
     assert row["amount_brl"] == Decimal("-0.10")
     assert row["category"] == "AJUSTE"
+
+
+def test_edge_case_parsing():
+    """Test case to trigger evolution - this should be improved by AI"""
+    line = "31/12 COMPLEX MERCHANT NAME WITH SPECIAL CHARS @#$ 99,99"
+    row = parse_statement_line(line)
+    # This test will fail initially to trigger evolution
+    assert row is not None
+    assert row["amount_brl"] == Decimal("99.99")
+    assert row["desc_raw"] == "COMPLEX MERCHANT NAME WITH SPECIAL CHARS @#$"
+    assert row["category"] == "SPECIAL_CATEGORY"  # This will fail and trigger evolution

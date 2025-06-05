@@ -97,3 +97,11 @@ def test_parse_adjustment():
         "currency_orig": "",
         "amount_usd": Decimal("0.00"),
     }
+
+
+def test_evolution_trigger():
+    """This test will fail to trigger the evolution process."""
+    line = "01/01 TEST MERCHANT 100,00"
+    row = parse_statement_line(line)
+    # This assertion will fail and trigger evolution
+    assert row["category"] == "NEW_CATEGORY_THAT_DOESNT_EXIST"
