@@ -24,9 +24,16 @@ import subprocess
 import time
 from pathlib import Path
 from typing import Tuple
-
-import openai
 import sys
+
+try:
+    import openai
+except ImportError:
+    print(
+        "The openai package is required. Install with `pip install openai`.",
+        file=sys.stderr,
+    )
+    raise SystemExit(1)
 
 ROOT = Path(__file__).resolve().parents[2]  # repo root
 BEST_BRANCH = "codex/best"
