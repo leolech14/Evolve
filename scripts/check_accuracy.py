@@ -2,11 +2,13 @@ import io
 import contextlib
 from pathlib import Path
 import difflib
-
-from statement_refinery import pdf_to_csv
-
+import sys, os  # noqa: E401,F401
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+
+from statement_refinery import pdf_to_csv  # noqa: E402
+
 DATA_DIR = ROOT / "tests" / "data"
 
 
