@@ -41,11 +41,11 @@ def calculate_csv_total(rows: list[dict]) -> Decimal:
 
 
 def find_duplicates(rows: list[dict]) -> list[tuple[str, int]]:
-    """Find duplicate transactions by checking description and amount."""
+    """Find duplicate transactions by checking date, description and amount."""
     seen = {}
     duplicates = []
     for i, row in enumerate(rows):
-        key = (row["desc_raw"], row["amount_brl"])
+        key = (row["post_date"], row["desc_raw"], row["amount_brl"])
         if key in seen:
             duplicates.append((row["desc_raw"], i))
         else:
@@ -122,6 +122,7 @@ def test_all_statements():
         pdf_total = extract_total_from_pdf(pdf_path)
         csv_total = calculate_csv_total(rows)
         duplicates = find_duplicates(rows)
+        assert not duplicates
         invalid_cats = validate_categories(rows)
         metrics = analyze_rows(rows)
 
