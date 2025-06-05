@@ -50,9 +50,24 @@ MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS", "3"))
 MAX_TOKENS = int(os.getenv("MAX_TOKENS_PER_RUN", "1000000"))
 
 
+# ───────────────────────── process helper ─────────────────────────
+def _run_with_retry(cmd: Tuple[str, ...], capture: bool) -> subprocess.CompletedProcess:
+    attempts = 3
+    for i in range(1, attempts + 1):
+        res = subprocess.run(cmd, text=True, capture_output=capture)
+        if res.returncode == 0:
+            return res
+        if i < attempts:
+            print(f"Retry {i}/3 for {' '.join(cmd)}", file=sys.stderr)
+            time.sleep(1)
+    return res
+
+
 # ───────────────────────── git helpers ─────────────────────────
 def sh(*cmd, capture=False):
-    res = subprocess.run(cmd, check=True, text=True, capture_output=capture)
+    res = _run_with_retry(cmd, capture)
+    if res.returncode != 0:
+        raise subprocess.CalledProcessError(res.returncode, cmd, output=res.stdout, stderr=res.stderr)
     return res.stdout.strip() if capture else None
 
 
@@ -124,6 +139,11 @@ def main():
     print(f"BASELINE {best_commit or 'none'} score={best_score}")
 
     sh("git", "fetch", "--all", "--prune")
+    try:
+        sh("git", "rev-parse", "--verify", BEST_BRANCH)
+    except subprocess.CalledProcessError:
+        print(f"{BEST_BRANCH} missing; creating from main")
+        sh("git", "branch", BEST_BRANCH, "main")
     sh("git", "checkout", BEST_BRANCH)
 
     while TOKENS_USED < MAX_TOKENS:
