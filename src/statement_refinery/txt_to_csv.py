@@ -17,6 +17,7 @@ import re
 import hashlib
 from decimal import Decimal
 from typing import Final
+from datetime import date
 
 # ===== CORE REGEX PATTERNS =====
 
