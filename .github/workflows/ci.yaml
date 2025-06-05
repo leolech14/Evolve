@@ -62,6 +62,9 @@ jobs:
       # auto-patch loop if tests failed
       - name: Evolve patch loop
         if: steps.tests.outcome == 'failure'
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python .github/tools/evolve.py
 
       # confirm everything green after patch
