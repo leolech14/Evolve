@@ -211,7 +211,7 @@ def _iso_date(date_str: str) -> str:
     return f"{yr}-{month.zfill(2)}-{day.zfill(2)}"
 
 
-def parse_statement_line(line: str) -> dict | None:  # type: ignore[no-redef]
+def parse_statement_line(line: str) -> dict | None:
     """Parse one statement line into a row dictionary.
 
     The parser is deliberately tolerant and handles domestic transactions,
