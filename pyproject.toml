@@ -24,6 +24,7 @@ dev = [
     "black",
     "pytest",
     "pytest-cov",
+    "pytest-xdist",
     "mypy",
     "openai>=0",
     "pdfplumber",
