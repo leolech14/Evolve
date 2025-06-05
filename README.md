@@ -24,9 +24,10 @@ environment that can reach PyPI.
 The `openai` package, installed via `pip install -e '.[dev]'`, must also be
 available offline for the evolution script.
 
-`pdfplumber` is only needed when parsing PDFs that do not yet have a
-corresponding golden CSV. The tests and operations that use those golden files
-work even if `pdfplumber` is missing.
+`pdfplumber` is only strictly required when parsing PDFs that do not yet have a
+corresponding golden CSV. The tests and operations that use those goldens work
+without it, but installing the library is recommended so that the entire test
+suite can run without skips.
 
 Once installation succeeds, the CLI becomes available as `pdf-to-csv`. Run it
 with a PDF file to generate a CSV:
@@ -44,13 +45,19 @@ Convert a PDF statement to CSV:
 
 ## Running the Tests
 
-The test suite depends on the package’s *development* extras, which also install `openai` for the Codex tools. Install them and run:
+The test suite depends on the package’s *development* extras, which also
+install `openai` for the Codex tools. After installing the extras run the
+linters, type checker and the tests with coverage:
 
     pip install -e '.[dev]'
-    pytest
+    ruff check .
+    black --check .
+    mypy src/
+    pytest -ra -vv --cov=statement_refinery --cov-report=term-missing --cov-fail-under=90
 
-These tests rely on the checked-in golden CSV files and therefore do not
-require `pdfplumber` unless you add new PDFs.
+These tests rely on the checked-in golden CSV files, so `pdfplumber` is optional
+but recommended for full coverage. When it is missing the tests that parse PDFs
+will be skipped.
 
 During test runs the parser writes debug information to the `diagnostics/`
 directory. This folder is ignored by Git so feel free to inspect or delete any
@@ -89,6 +96,15 @@ python scripts/analyze_pdfs.py ~/Downloads --write-csv
 ```
 
 These diagnostics operate solely on the PDFs, so no golden CSV is required.
+
+
+## CI Overview
+
+The GitHub Actions workflow runs on every push, pull request and once daily at
+03:00 UTC via cron. It installs the development extras and then executes
+`ruff`, `black`, `mypy` and the test suite with coverage. Coverage must remain
+above **90%** or the run fails. When any test fails the job invokes the AI
+patch loop described below to automatically attempt fixes.
 
 
 ## Auto-Patch Loop
