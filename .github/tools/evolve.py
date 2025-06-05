@@ -2,18 +2,20 @@
 """
 evolve.py – Codex-driven auto-patch loop.
 
-➤ Partimos sempre do branch `codex/best`.
-➤ Tentamos até MAX_ATTEMPTS patches por ciclo.
-➤ Patch só é aceito se testes ficarem 100 % verdes E score superar o best.
+➤ Always starts from branch `codex/best`.
+➤ Tries up to MAX_ATTEMPTS patches per cycle.
+➤ A patch is accepted only if tests go 100 % green **and** the score beats the best so far.
 
-Env vars obrigatórios:
-- OPENAI_API_KEY
-- GITHUB_TOKEN   (Actions fornece automaticamente)
+Required env vars
+-----------------
+OPENAI_API_KEY                 – your OpenAI key
+GITHUB_TOKEN                   – *or* PERSONAL_ACCESS_TOKEN_CLASSIC *or* GH_TOKEN
 
-Env vars opcionais:
-- OPENAI_MODEL           (default: gpt-4.1)
-- MAX_ATTEMPTS           (default: 5)
-- MAX_TOKENS_PER_RUN     (default: 100000)
+Optional env vars
+-----------------
+OPENAI_MODEL           (default: gpt-4.1)
+MAX_ATTEMPTS           (default: 5)
+MAX_TOKENS_PER_RUN     (default: 100000)
 """
 
 from __future__ import annotations
@@ -21,10 +23,10 @@ from __future__ import annotations
 import json
 import os
 import subprocess
+import sys
 import time
 from pathlib import Path
 from typing import Tuple
-import sys
 
 try:
     import openai
@@ -35,7 +37,8 @@ except ImportError:
     )
     raise SystemExit(1)
 
-ROOT = Path(__file__).resolve().parents[2]  # repo root
+# ───────────────────────── configuration ─────────────────────────
+ROOT = Path(__file__).resolve().parents[2]          # repo root
 BEST_BRANCH = "codex/best"
 SCORE_FILE = ROOT / ".github/tools/score_best.json"
 
@@ -43,18 +46,26 @@ api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     raise SystemExit("Missing OPENAI_API_KEY environment variable.")
 
-github_token = os.getenv("GITHUB_TOKEN")
+# Accept any of the common GitHub token names
+github_token = (
+    os.getenv("GITHUB_TOKEN")
+    or os.getenv("PERSONAL_ACCESS_TOKEN_CLASSIC")
+    or os.getenv("GH_TOKEN")
+)
 if not github_token:
-    raise SystemExit("Missing GITHUB_TOKEN environment variable.")
+    raise SystemExit(
+        "Missing GitHub token. "
+        "Set GITHUB_TOKEN, PERSONAL_ACCESS_TOKEN_CLASSIC, or GH_TOKEN."
+    )
 
 client = openai.OpenAI(api_key=api_key)
 MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1")
 MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS", "5"))
 MAX_TOKENS = int(os.getenv("MAX_TOKENS_PER_RUN", "100000"))
 
-
-# ───────────────────────── process helper ─────────────────────────
+# ───────────────────────── helpers ─────────────────────────
 def _run_with_retry(cmd: Tuple[str, ...], capture: bool) -> subprocess.CompletedProcess:
+    """Run a shell command with up to 3 retries."""
     attempts = 3
     for i in range(1, attempts + 1):
         res = subprocess.run(cmd, text=True, capture_output=capture)
@@ -66,8 +77,8 @@ def _run_with_retry(cmd: Tuple[str, ...], capture: bool) -> subprocess.Completed
     return res
 
 
-# ───────────────────────── git helpers ─────────────────────────
-def sh(*cmd, capture=False):
+def sh(*cmd, capture: bool = False) -> str | None:
+    """Shell helper that raises on non-zero exit."""
     res = _run_with_retry(cmd, capture)
     if res.returncode != 0:
         raise subprocess.CalledProcessError(
@@ -79,8 +90,7 @@ def sh(*cmd, capture=False):
 def current_commit() -> str:
     return sh("git", "rev-parse", "HEAD", capture=True)[:7]
 
-
-# ───────────────────────── scoring ─────────────────────────
+# ───────────────────────── tests & scoring ─────────────────────────
 def run_tests() -> Tuple[bool, float]:
     """Run pytest + coverage; return (green?, coverage%)."""
     try:
@@ -94,12 +104,12 @@ def run_tests() -> Tuple[bool, float]:
     except subprocess.CalledProcessError:
         return False, 0.0
 
-    # coverage line like "TOTAL   213   0 100%"
+    # look for "TOTAL   213   0  97%"
     for line in out.splitlines():
         if line.startswith("TOTAL"):
             cov = float(line.split()[-1].rstrip("%"))
             return True, cov
-    return True, 0.0  # fallback
+    return True, 0.0  # fallback when coverage line missing
 
 
 def score(is_green: bool, coverage: float) -> float:
@@ -113,11 +123,11 @@ def load_best() -> Tuple[str, float]:
     return "", 0.0
 
 
-def save_best(commit: str, best_score: float):
+def save_best(commit: str, best_score: float, tokens_used: int):
     SCORE_FILE.write_text(json.dumps({"commit": commit, "score": best_score}))
-    print(f"Used {TOKENS_USED} tokens")
+    print(f"🎉 New best! Commit {commit}  score={best_score:.1f}  tokens={tokens_used}")
 
-
+# ───────────────────────── git helpers ─────────────────────────
 def ensure_best_branch() -> None:
     """Ensure BEST_BRANCH exists locally."""
     try:
@@ -126,32 +136,32 @@ def ensure_best_branch() -> None:
         print(f"{BEST_BRANCH} missing; creating from main")
         sh("git", "branch", BEST_BRANCH, "main")
 
-
-# ───────────────────────── codex patch ─────────────────────────
+# ───────────────────────── Codex interaction ─────────────────────────
 TOKENS_USED = 0
 
-
 def generate_patch(fail_log: str) -> str:
+    """Ask the model for a unified‐diff patch to fix the failing tests."""
     global TOKENS_USED
     resp = client.chat.completions.create(
         model=MODEL,
         messages=[
             {
                 "role": "user",
-                "content": f"Aplique um patch unificado nas falhas:\n\n{fail_log[:7000]}",
+                "content": (
+                    "Aplicar um patch unificado (.diff) que faça os testes passarem.\n\n"
+                    f"{fail_log[:7000]}"
+                ),
             }
         ],
         temperature=0.1,
     )
-    usage = resp.usage.total_tokens
-    TOKENS_USED += usage
+    TOKENS_USED += resp.usage.total_tokens
     return resp.choices[0].message.content
 
-
 # ───────────────────────── main loop ─────────────────────────
-def main():
+def main() -> int:
     best_commit, best_score = load_best()
-    print(f"BASELINE {best_commit or 'none'} score={best_score}")
+    print(f"BASELINE {best_commit or 'none'}  score={best_score}")
 
     ensure_best_branch()
     sh("git", "fetch", "--all", "--prune")
@@ -162,37 +172,23 @@ def main():
             branch = f"codex/work-{int(time.time())}-{attempt}"
             sh("git", "checkout", "-b", branch)
 
-            # gather fail log from pytest only on first attempt
+            # Run tests once to capture failure log
             if attempt == 1:
                 try:
                     fail_output = sh("pytest", "-v", "--tb=short", capture=True)
-                    # Get full test output but prioritize error messages
                     error_lines = [
-                        line
-                        for line in fail_output.splitlines()
-                        if "FAILED" in line
-                        or "Error" in line
-                        or "AssertionError" in line
+                        ln
+                        for ln in fail_output.splitlines()
+                        if any(k in ln for k in ("FAILED", "Error", "AssertionError"))
                     ]
-                    fail_log = "Tests are failing. Errors:\n" + "\n".join(error_lines)
-                    if len(error_lines) < 10:  # If few errors, include full context
-                        fail_log += "\n\nFull test output:\n" + fail_output
+                    fail_log = "Tests failing:\n" + "\n".join(error_lines or fail_output.splitlines()[:30])
                 except subprocess.CalledProcessError as e:
-                    error_output = e.stdout if e.stdout else "No output"
-                    error_lines = [
-                        line
-                        for line in error_output.splitlines()
-                        if "FAILED" in line
-                        or "Error" in line
-                        or "AssertionError" in line
-                    ]
-                    fail_log = "Tests failing. Errors:\n" + "\n".join(error_lines)
-                    if len(error_lines) < 10:
-                        fail_log += "\n\nFull error output:\n" + error_output
+                    err = e.stdout or "No output"
+                    fail_log = "Tests failed immediately:\n" + err
 
             patch = generate_patch(fail_log)
             if not patch.strip():
-                print("Empty patch; skipping.")
+                print("⚠️ Empty patch; skipping.")
                 sh("git", "checkout", BEST_BRANCH)
                 continue
 
@@ -201,17 +197,16 @@ def main():
             try:
                 sh("git", "apply", str(tmp))
             except subprocess.CalledProcessError:
-                print("Patch didn't apply.")
+                print("❌ Patch did not apply.")
                 sh("git", "checkout", BEST_BRANCH)
                 continue
 
             sh("git", "commit", "-am", "🤖 Codex auto-patch")
             green, cov = run_tests()
             cur_score = score(green, cov)
-            print(f"Attempt {attempt}: green={green} cov={cov}% score={cur_score}")
+            print(f"Attempt {attempt}: green={green}  coverage={cov:.1f}%  score={cur_score}")
 
             if green and cur_score > best_score:
-                # push & PR
                 sh("git", "push", "--set-upstream", "origin", branch)
                 sh(
                     "gh",
@@ -224,17 +219,17 @@ def main():
                     "--title",
                     "🤖 Codex auto-patch",
                     "--body",
-                    f"Score {best_score} → {cur_score}",
+                    f"Score {best_score:.1f} → {cur_score:.1f}",
                 )
-                save_best(current_commit(), cur_score)
+                save_best(current_commit(), cur_score, TOKENS_USED)
                 return 0  # success
 
+            # Revert to best for next attempt
             sh("git", "checkout", BEST_BRANCH)
 
-        print("No improvement in this cycle, restarting from best…")
+        print("No improvement this cycle; restarting from best.")
 
-    print("Max tokens budget reached.")
-    print(f"Used {TOKENS_USED} tokens")
+    print(f"Token budget exhausted ({TOKENS_USED}/{MAX_TOKENS}).")
     return 1
 
 
