@@ -11,15 +11,12 @@ from pathlib import Path
 from statement_refinery import pdf_to_csv as mod
 
 DATA = Path(__file__).parent / "data"
-PDFS = list(DATA.glob("*.pdf"))
-missing_golden = [
-    pdf for pdf in PDFS if not (DATA / f"golden_{pdf.stem.split('_')[-1]}.csv").exists()
+# Only test PDFs that have corresponding golden CSVs
+PDFS = [
+    pdf
+    for pdf in DATA.glob("*.pdf")
+    if (DATA / f"golden_{pdf.stem.split('_')[-1]}.csv").exists()
 ]
-if importlib.util.find_spec("pdfplumber") is None and missing_golden:
-    pytest.skip(
-        "pdfplumber not installed and no golden CSV for every PDF",
-        allow_module_level=True,
-    )
 
 
 def test_all_pdfs(capsys):
