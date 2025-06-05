@@ -183,13 +183,13 @@ def build_comprehensive_patterns():
     return patterns
 
 
-def _iso_date(date_str: str) -> str:
-    yr = date.today().year
+def _iso_date(date_str: str, year: int | None = None) -> str:
+    yr = year or date.today().year
     day, month = date_str.split("/")
     return f"{yr}-{month.zfill(2)}-{day.zfill(2)}"
 
 
-def parse_statement_line(line: str) -> dict | None:
+def parse_statement_line(line: str, year: int | None = None) -> dict | None:
     original_line = line
     line = line.strip()
     if not line:
@@ -220,7 +220,7 @@ def parse_statement_line(line: str) -> dict | None:
             category = "PAGAMENTO"
         return {
             "card_last4": card_last4,
-            "post_date": _iso_date(date_str),
+            "post_date": _iso_date(date_str, year),
             "desc_raw": desc,
             "amount_brl": amt_brl,
             "installment_seq": inst_seq or 0,
@@ -250,7 +250,7 @@ def parse_statement_line(line: str) -> dict | None:
             category = "PAGAMENTO"
         return {
             "card_last4": card_last4,
-            "post_date": _iso_date(date_str),
+            "post_date": _iso_date(date_str, year),
             "desc_raw": desc,
             "amount_brl": amt_brl,
             "installment_seq": inst_seq or 0,
@@ -355,12 +355,12 @@ def iter_pdf_lines(pdf_path: Path) -> Iterator[str]:
                     yield line
 
 
-def parse_lines(lines: Iterator[str]) -> List[dict]:
+def parse_lines(lines: Iterator[str], year: int | None = None) -> List[dict]:
     """Convert raw lines into row-dicts using :func:`parse_statement_line`."""
     rows: List[dict] = []
     for line in lines:
         try:
-            row = parse_statement_line(line)
+            row = parse_statement_line(line, year)
             if row:
                 rows.append(row)
         except Exception as exc:  # pragma: no cover
@@ -368,9 +368,10 @@ def parse_lines(lines: Iterator[str]) -> List[dict]:
     return rows
 
 
-def parse_pdf(pdf_path: Path) -> List[dict]:
+
+def parse_pdf_from_golden(pdf_path: Path, year: int | None = None) -> List[dict]:
     """Parse the PDF and return the list of row dictionaries."""
-    return parse_lines(iter_pdf_lines(pdf_path))
+    return parse_lines(iter_pdf_lines(pdf_path), year)
 
 
 def write_csv(rows: List[dict], out_fh) -> None:
@@ -401,7 +402,14 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--out", type=Path, default=None, help="Output CSV path")
     args = parser.parse_args(argv)
 
-    golden = args.pdf.with_name(f"golden_{args.pdf.stem.split('_')[-1]}.csv")
+    stem_suffix = args.pdf.stem.split('_')[-1]
+    yr = None
+    try:
+        yr = int(stem_suffix.split('-')[0])
+    except (ValueError, IndexError):
+        yr = None
+
+    golden = args.pdf.with_name(f"golden_{stem_suffix}.csv")
     if golden.exists():
         if args.out:
             shutil.copyfile(golden, args.out)
@@ -410,7 +418,8 @@ def main(argv: list[str] | None = None) -> None:
             sys.stdout.write(golden.read_text(encoding="utf-8"))
         return
 
-    rows = parse_pdf(args.pdf)
+ codex/rename-parse_pdf_from_golden-to-parse_pdf
+    rows = parse_pdf_from_golden(args.pdf, yr)
     _LOGGER.info("Parsed %d transactions", len(rows))
 
     if args.out:

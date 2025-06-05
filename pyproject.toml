@@ -24,7 +24,7 @@ dev = [
     "pytest",
     "pytest-cov",
     "mypy",
-    "openai",
+    "openai<1",
 ]
 
 [tool.setuptools]

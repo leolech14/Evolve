@@ -131,3 +131,15 @@ def test_iter_pdf_lines_skips_empty_page(monkeypatch, caplog):
     lines = list(mod.iter_pdf_lines(Path("dummy.pdf")))
     assert lines == []
     assert "no extractable text" in caplog.text.lower()
+
+
+@pytest.mark.skipif(not HAS_PDFPLUMBER, reason="pdfplumber not installed")
+def test_main_infers_year(tmp_path):
+    pdf_src = DATA / "itau_2024-10.pdf"
+    pdf_path = tmp_path / "itau_2023-05.pdf"
+    pdf_path.write_bytes(pdf_src.read_bytes())
+    out_csv = tmp_path / "out.csv"
+    mod.main([str(pdf_path), "--out", str(out_csv)])
+    reader = csv.DictReader(out_csv.read_text().splitlines(), delimiter=";")
+    first = next(reader)
+    assert first["post_date"].startswith("2023-")
