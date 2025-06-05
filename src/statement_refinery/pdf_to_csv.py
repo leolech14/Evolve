@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Iterator, List
 
 import pdfplumber                               # pip install pdfplumber
-from . import text_to_csv as t2c                # existing legacy parser
+from . import txt_to_csv as t2c                 # existing legacy parser
 
 CSV_HEADER = [
     "card_last4",

@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "statement_refinery"
+version = "0.1.0"
+description = "PDF to CSV parser for Itaú credit-card statements"
+authors = [{name = "Evolve"}]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pdfplumber"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "ruff",
+    "black",
+    "mypy"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
