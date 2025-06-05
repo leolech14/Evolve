@@ -137,3 +137,15 @@ outputs/
 # Others
 *.DS_Store
 Thumbs.db
+
+# Itaú statement files (non-test assets)
+itau_*.pdf
+itau_*.csv
+
+# Keep official golden samples under tests/data
+!tests/data/itau_*.pdf
+!tests/data/golden_*.csv
+
+# Diagnostics output
+diagnostics/
+tests/debug/

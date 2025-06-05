@@ -45,17 +45,21 @@ The test suite depends on the package’s *development* extras, which also insta
 These tests rely on the checked-in golden CSV files and therefore do not
 require `pdfplumber` unless you add new PDFs.
 
+During test runs the parser writes debug information to the `diagnostics/`
+directory. This folder is ignored by Git so feel free to inspect or delete any
+files within it.
+
 ## Checking Parser Accuracy
 
 Run `scripts/check_accuracy.py` to compare the parser output with any golden files:
 
     python scripts/check_accuracy.py
 
-The tool runs `pdf_to_csv.main()` for each PDF in the repo root and reports diffs and a match percentage.
+The tool runs `pdf_to_csv.main()` for each PDF in `tests/data/` and reports diffs and a match percentage.
 
 This check also runs in CI after the tests. If any mismatch is detected the job
 fails. Update the golden CSV by rerunning `pdf-to-csv` with the `--out` option
-(for example `pdf-to-csv itau_2024-10.pdf --out golden_2024-10.csv`) and commit
+(for example `pdf-to-csv tests/data/itau_2024-10.pdf --out tests/data/golden_2024-10.csv`) and commit
 the new file.
 
 
