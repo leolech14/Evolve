@@ -45,4 +45,3 @@ def test_all_pdfs(tmp_path):
         assert filecmp.cmp(
             out_csv, golden, shallow=False
         ), f"Mismatch for {pdf.name}"
-
