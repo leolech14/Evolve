@@ -13,7 +13,7 @@ Env vars obrigatórios:
 Env vars opcionais:
 - OPENAI_MODEL           (default: gpt-4.1)
 - MAX_ATTEMPTS           (default: 5)
-- MAX_TOKENS_PER_RUN     (default: 3000000)
+- MAX_TOKENS_PER_RUN     (default: 100000)
 """
 
 from __future__ import annotations
@@ -41,18 +41,16 @@ SCORE_FILE = ROOT / ".github/tools/score_best.json"
 
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
-    print("Missing OPENAI_API_KEY environment variable.", file=sys.stderr)
-    raise SystemExit(1)
+    raise SystemExit("Missing OPENAI_API_KEY environment variable.")
 
 github_token = os.getenv("GITHUB_TOKEN")
 if not github_token:
-    print("Missing GITHUB_TOKEN environment variable.", file=sys.stderr)
-    raise SystemExit(1)
+    raise SystemExit("Missing GITHUB_TOKEN environment variable.")
 
 client = openai.OpenAI(api_key=api_key)
 MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1")
 MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS", "5"))
-MAX_TOKENS = int(os.getenv("MAX_TOKENS_PER_RUN", "3000000"))
+MAX_TOKENS = int(os.getenv("MAX_TOKENS_PER_RUN", "100000"))
 
 
 # ───────────────────────── process helper ─────────────────────────
@@ -117,6 +115,7 @@ def load_best() -> Tuple[str, float]:
 
 def save_best(commit: str, best_score: float):
     SCORE_FILE.write_text(json.dumps({"commit": commit, "score": best_score}))
+    print(f"Used {TOKENS_USED} tokens")
 
 
 def ensure_best_branch() -> None:
@@ -228,7 +227,6 @@ def main():
                     f"Score {best_score} → {cur_score}",
                 )
                 save_best(current_commit(), cur_score)
-                print(f"Used {TOKENS_USED} tokens")
                 return 0  # success
 
             sh("git", "checkout", BEST_BRANCH)
