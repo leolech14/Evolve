@@ -109,7 +109,7 @@ def classify_transaction(description: str, amount: Decimal) -> str:
     if "LOCAL DEMO STORE" in desc_upper:
         # Test helper merchant used by the evolution demo. Treat it as a
         # regular transaction so CI tests remain green.
-        return "DIVERSOS"
+        return DEFAULT_CATEGORY
 
     for pattern, category in RE_CATEGORIES_HIGH_PRIORITY:
         if pattern.search(desc_upper):
