@@ -9,8 +9,11 @@ from statement_refinery import pdf_to_csv
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def compare(pdf_path: Path) -> None:
-    """Run pdf_to_csv on *pdf_path* and compare to its golden CSV."""
+def compare(pdf_path: Path) -> bool:
+    """Run pdf_to_csv on *pdf_path* and compare to its golden CSV.
+
+    Returns ``True`` if a mismatch is found.
+    """
     print(f"\n=== {pdf_path.name} ===")
     buf = io.StringIO()
     with contextlib.redirect_stdout(buf):
@@ -31,7 +34,8 @@ def compare(pdf_path: Path) -> None:
         lineterm="",
     )
     diff_list = list(diff)
-    if diff_list:
+    mismatch = bool(diff_list)
+    if mismatch:
         print("\n".join(diff_list))
     else:
         print("Output matches golden file exactly.")
@@ -39,6 +43,7 @@ def compare(pdf_path: Path) -> None:
     matcher = difflib.SequenceMatcher(None, golden_lines, output_lines)
     pct = matcher.ratio() * 100
     print(f"Match percentage: {pct:.2f}%")
+    return mismatch
 
 
 def main() -> None:
@@ -47,8 +52,13 @@ def main() -> None:
         print("No PDFs found in repository root.")
         return
 
+    mismatched = False
     for pdf in pdfs:
-        compare(pdf)
+        if compare(pdf):
+            mismatched = True
+
+    if mismatched:
+        raise SystemExit("mismatched parser output")
 
 
 if __name__ == "__main__":
