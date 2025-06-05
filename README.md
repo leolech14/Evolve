@@ -1,36 +1,33 @@
 # Statement Refinery
 
-This project provides utilities for converting Ita\u00fa credit card statements into structured CSV files. The main goal is to make transaction data easy to analyze with spreadsheet software or other tools.
+This project provides utilities for converting **Itaú credit card statements** into structured CSV files. The main goal is to make transaction data easy to analyze with spreadsheet software or other tools.
 
 ## Installation
 
-After cloning the repository, install the package in editable mode along with development dependencies:
+After cloning the repository, install the package in editable mode **with development dependencies**:
 
-```bash
-pip install -e '.[dev]'
-```
+    pip install -e '.[dev]'
 
 ## Command-Line Usage
 
-To convert a PDF statement to CSV, run:
+Convert a PDF statement to CSV:
 
-```bash
-python -m statement_refinery.pdf_to_csv input.pdf --out output.csv
-```
+    python -m statement_refinery.pdf_to_csv input.pdf --out output.csv
 
-The `--out` option specifies where the CSV will be written. If omitted, the CSV is printed to `stdout`.
+* **`--out`** specifies where the CSV will be written.  
+* If `--out` is omitted, the CSV is printed to **stdout**.
 
 ## Running the Tests
 
-The test suite requires the package's optional development dependencies. Install
-the project in editable mode with these extras and then run the tests with
-`pytest`:
+The test suite depends on the package’s *development* extras. Install them and run:
 
-```bash
-pip install -e '.[dev]'
-pytest
-```
+    pip install -e '.[dev]'
+    pytest
 
 ## Project Goals
+
+* **Accuracy first** – robust regex rules tuned for Itaú PDFs.  
+* **Zero-friction analysis** – clean CSVs ready for spreadsheets or BI tools.  
+* **Open by default** – contributions welcome; see `CONTRIBUTING.md` for guidelines.
 
 Happy refining!
