@@ -368,7 +368,6 @@ def parse_lines(lines: Iterator[str], year: int | None = None) -> List[dict]:
     return rows
 
 
-
 def parse_pdf_from_golden(pdf_path: Path, year: int | None = None) -> List[dict]:
     """Parse the PDF and return the list of row dictionaries."""
     return parse_lines(iter_pdf_lines(pdf_path), year)
