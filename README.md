@@ -22,9 +22,11 @@ The `--out` option specifies where the CSV will be written. If omitted, the CSV 
 
 ## Running the Tests
 
-Execute the test suite with:
+Before running the test suite, install the package in editable mode with the
+development dependencies:
 
 ```bash
+pip install -e '.[dev]'
 pytest
 ```
 
