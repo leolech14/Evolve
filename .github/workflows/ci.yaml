@@ -64,7 +64,7 @@ jobs:
         if: steps.tests.outcome == 'failure' || env.FORCE_EVOLVE == '1'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN_CLASSIC }}
         run: python .github/tools/evolve.py
 
       # confirm everything green after patch
