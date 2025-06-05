@@ -141,7 +141,7 @@ jobs:
 
       - name: Evolve skipped
         if: steps.evolve.outcome == 'skipped'
-        run: echo 'Evolve patch loop skipped: tests already passing.' >> $GITHUB_STEP_SUMMARY
+        run: "echo 'Evolve patch loop skipped: tests already passing.' >> $GITHUB_STEP_SUMMARY"
 
       - name: Report evolve failure
         if: steps.evolve.outcome == 'failure'
