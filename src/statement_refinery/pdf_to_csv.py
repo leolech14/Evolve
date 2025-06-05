@@ -199,6 +199,13 @@ def parse_statement_line(line: str, year: int | None = None) -> dict | None:
     if not line:
         return None
 
+    upper_line = line.upper()
+    if re.search(r"R\$\s*R\$", upper_line):
+        return None
+    if any(kw in upper_line for kw in ITAU_PARSING_RULES["skip_keywords"]):
+        if not re.search(r"\d{1,2}/\d{1,2}", upper_line):
+            return None
+
     card_match = RE_CARD_FINAL.search(line)
     card_last4 = card_match.group(1) if card_match else "0000"
     line_no_card = line
