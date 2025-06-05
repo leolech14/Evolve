@@ -25,6 +25,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-py-${{ hashFiles('pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-py-
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -52,6 +59,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-py-${{ hashFiles('pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-py-
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -65,7 +79,7 @@ jobs:
       - name: PyTest + Coverage
         id: tests
         continue-on-error: true
-        run: pytest -ra -vv --cov=statement_refinery --cov-report=term-missing --cov-fail-under=90
+        run: pytest -ra -vv -n auto --cov=statement_refinery --cov-report=term-missing --cov-fail-under=90
 
       # auto-patch loop if tests failed or FORCE_EVOLVE=1
       - name: Evolve patch loop
@@ -79,7 +93,7 @@ jobs:
       # confirm everything green after patch
       - name: Re-run tests
         if: always()
-        run: pytest -ra -vv --cov=statement_refinery --cov-report=term-missing --cov-fail-under=90
+        run: pytest -ra -vv -n auto --cov=statement_refinery --cov-report=term-missing --cov-fail-under=90
 
       - name: Check parser accuracy
         if: always()
