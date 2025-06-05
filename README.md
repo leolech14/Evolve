@@ -1,3 +1,5 @@
+# ![CI](https://github.com/leolech14/Evolve/actions/workflows/ci.yaml/badge.svg)
+
 # Statement Refinery
 
 This project provides utilities for converting **Itaú credit card statements** into structured CSV files. The main goal is to make transaction data easy to analyze with spreadsheet software or other tools.
