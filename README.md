@@ -1,4 +1,4 @@
-# ![CI](https://github.com/leolech14/Evolve/actions/workflows/ci.yaml/badge.svg)
+# ![CI](https://github.com/leolech14/Evolve/actions/workflows/ci.yaml/badge.svg) ![Coverage](https://codecov.io/gh/leolech14/Evolve/branch/main/graph/badge.svg)
 
 # Statement Refinery
 
@@ -10,6 +10,11 @@ After cloning the repository, install the package in editable mode **with develo
 
     pip install -e '.[dev]'
 
+You can run the same formatting and lint checks as the CI pipeline using
+`pre-commit`:
+
+    pre-commit run --files <path/to/file.py>
+
 ## Common Installation Issues
 
 The installation step fetches `pdfplumber` and its dependencies from PyPI.
@@ -19,9 +24,10 @@ environment that can reach PyPI.
 The `openai` package, installed via `pip install -e '.[dev]'`, must also be
 available offline for the evolution script.
 
-`pdfplumber` is only needed when parsing PDFs that do not yet have a
-corresponding golden CSV. The tests and operations that use those golden files
-work even if `pdfplumber` is missing.
+`pdfplumber` is only strictly required when parsing PDFs that do not yet have a
+corresponding golden CSV. The tests and operations that use those goldens work
+without it, but installing the library is recommended so that the entire test
+suite can run without skips.
 
 Once installation succeeds, the CLI becomes available as `pdf-to-csv`. Run it
 with a PDF file to generate a CSV:
@@ -39,13 +45,19 @@ Convert a PDF statement to CSV:
 
 ## Running the Tests
 
-The test suite depends on the package’s *development* extras, which also install `openai` for the Codex tools. Install them and run:
+The test suite depends on the package’s *development* extras, which also
+install `openai` for the Codex tools. After installing the extras run the
+linters, type checker and the tests with coverage:
 
     pip install -e '.[dev]'
-    pytest
+    ruff check .
+    black --check .
+    mypy src/
+    pytest -ra -vv --cov=statement_refinery --cov-report=term-missing --cov-fail-under=90
 
-These tests rely on the checked-in golden CSV files and therefore do not
-require `pdfplumber` unless you add new PDFs.
+These tests rely on the checked-in golden CSV files, so `pdfplumber` is optional
+but recommended for full coverage. When it is missing the tests that parse PDFs
+will be skipped.
 
 During test runs the parser writes debug information to the `diagnostics/`
 directory. This folder is ignored by Git so feel free to inspect or delete any
@@ -86,6 +98,15 @@ python scripts/analyze_pdfs.py ~/Downloads --write-csv
 These diagnostics operate solely on the PDFs, so no golden CSV is required.
 
 
+## CI Overview
+
+The GitHub Actions workflow runs on every push, pull request and once daily at
+03:00 UTC via cron. It installs the development extras and then executes
+`ruff`, `black`, `mypy` and the test suite with coverage. Coverage must remain
+above **90%** or the run fails. When any test fails the job invokes the AI
+patch loop described below to automatically attempt fixes.
+
+
 ## Auto-Patch Loop
 
 The GitHub Actions workflow uses `.github/tools/evolve.py` to automatically
@@ -103,6 +124,13 @@ python .github/tools/evolve.py
 Set `FORCE_EVOLVE=1` to force the loop to run even when the first test pass
 is successful. This can be handy when experimenting locally or when
 triggering the workflow manually in CI.
+
+## Required Secret Scopes
+
+The CI workflow expects a `BOT_PAT` secret containing a personal access token
+for the GitHub bot account. The token only needs to push commits and open pull
+requests in this repository. Grant the minimal permissions by enabling
+`contents:write` and `pull_requests:write` (or the classic `repo` scope).
 
 ## Project Goals
 

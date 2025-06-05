@@ -17,17 +17,27 @@ dependencies = [
 [project.scripts]
 pdf-to-csv = "statement_refinery.pdf_to_csv:main"
 
-[project.optional-dependencies]
+[project.optional-dependencies.dev]
 # Development dependencies for linting, type checking and tests
 dev = [
     "ruff",
     "black",
     "pytest",
     "pytest-cov",
+    "pytest-xdist",
     "mypy",
-    "openai>=1.0",
+    "openai>=0",
+    "pdfplumber",
 ]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
 packages = ["statement_refinery"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+
+[tool.black]
+target-version = ["py312"]
+line-length = 88

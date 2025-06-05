@@ -8,6 +8,7 @@ Kept as utility for manual runs or quick hot-fixes.
 
 import os
 import subprocess
+import time
 import tempfile
 from pathlib import Path
 import sys
@@ -30,8 +31,20 @@ client = openai.OpenAI(api_key=api_key)
 MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1")
 
 
+def _run_with_retry(cmd):
+    attempts = 3
+    for i in range(1, attempts + 1):
+        res = subprocess.run(cmd, text=True)
+        if res.returncode == 0:
+            return
+        if i < attempts:
+            print(f"Retry {i}/3 for {' '.join(cmd)}", file=sys.stderr)
+            time.sleep(1)
+    res.check_returncode()
+
+
 def sh(*cmd):
-    subprocess.run(cmd, check=True, text=True)
+    _run_with_retry(cmd)
 
 
 def main():
