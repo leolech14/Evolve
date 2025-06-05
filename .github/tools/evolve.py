@@ -38,7 +38,7 @@ except ImportError:
     raise SystemExit(1)
 
 # ───────────────────────── configuration ─────────────────────────
-ROOT = Path(__file__).resolve().parents[2]          # repo root
+ROOT = Path(__file__).resolve().parents[2]  # repo root
 BEST_BRANCH = "codex/best"
 SCORE_FILE = ROOT / ".github/tools/score_best.json"
 
@@ -62,6 +62,7 @@ client = openai.OpenAI(api_key=api_key)
 MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1")
 MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS", "5"))
 MAX_TOKENS = int(os.getenv("MAX_TOKENS_PER_RUN", "100000"))
+
 
 # ───────────────────────── helpers ─────────────────────────
 def _run_with_retry(cmd: Tuple[str, ...], capture: bool) -> subprocess.CompletedProcess:
@@ -89,6 +90,7 @@ def sh(*cmd, capture: bool = False) -> str | None:
 
 def current_commit() -> str:
     return sh("git", "rev-parse", "HEAD", capture=True)[:7]
+
 
 # ───────────────────────── tests & scoring ─────────────────────────
 def run_tests() -> Tuple[bool, float]:
@@ -127,6 +129,7 @@ def save_best(commit: str, best_score: float, tokens_used: int):
     SCORE_FILE.write_text(json.dumps({"commit": commit, "score": best_score}))
     print(f"🎉 New best! Commit {commit}  score={best_score:.1f}  tokens={tokens_used}")
 
+
 # ───────────────────────── git helpers ─────────────────────────
 def ensure_best_branch() -> None:
     """Ensure BEST_BRANCH exists locally."""
@@ -136,8 +139,10 @@ def ensure_best_branch() -> None:
         print(f"{BEST_BRANCH} missing; creating from main")
         sh("git", "branch", BEST_BRANCH, "main")
 
+
 # ───────────────────────── Codex interaction ─────────────────────────
 TOKENS_USED = 0
+
 
 def generate_patch(fail_log: str) -> str:
     """Ask the model for a unified‐diff patch to fix the failing tests."""
@@ -157,6 +162,7 @@ def generate_patch(fail_log: str) -> str:
     )
     TOKENS_USED += resp.usage.total_tokens
     return resp.choices[0].message.content
+
 
 # ───────────────────────── main loop ─────────────────────────
 def main() -> int:
@@ -181,7 +187,9 @@ def main() -> int:
                         for ln in fail_output.splitlines()
                         if any(k in ln for k in ("FAILED", "Error", "AssertionError"))
                     ]
-                    fail_log = "Tests failing:\n" + "\n".join(error_lines or fail_output.splitlines()[:30])
+                    fail_log = "Tests failing:\n" + "\n".join(
+                        error_lines or fail_output.splitlines()[:30]
+                    )
                 except subprocess.CalledProcessError as e:
                     err = e.stdout or "No output"
                     fail_log = "Tests failed immediately:\n" + err
@@ -204,7 +212,9 @@ def main() -> int:
             sh("git", "commit", "-am", "🤖 Codex auto-patch")
             green, cov = run_tests()
             cur_score = score(green, cov)
-            print(f"Attempt {attempt}: green={green}  coverage={cov:.1f}%  score={cur_score}")
+            print(
+                f"Attempt {attempt}: green={green}  coverage={cov:.1f}%  score={cur_score}"
+            )
 
             if green and cur_score > best_score:
                 sh("git", "push", "--set-upstream", "origin", branch)
