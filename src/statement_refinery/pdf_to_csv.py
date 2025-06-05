@@ -382,12 +382,12 @@ def parse_lines(lines: Iterator[str], year: int | None = None) -> List[dict]:
     """Convert raw lines into row-dicts using :func:`parse_statement_line`."""
     rows: List[dict] = []
     seen_hashes = set()
-    with open('tests/debug/parse_debug.txt', 'w') as debug_file:
+    with open("tests/debug/parse_debug.txt", "w") as debug_file:
         for line in lines:
             try:
                 # Log the line being processed
                 debug_file.write(f"Processing line: {line}\n")
-                
+
                 row = parse_statement_line(line, year)
                 if row:
                     # Skip lines with credit limit information
@@ -398,7 +398,9 @@ def parse_lines(lines: Iterator[str], year: int | None = None) -> List[dict]:
                     if row["ledger_hash"] not in seen_hashes:
                         rows.append(row)
                         seen_hashes.add(row["ledger_hash"])
-                        debug_file.write(f"  Parsed: {row['desc_raw']} = R$ {row['amount_brl']}\n")
+                        debug_file.write(
+                            f"  Parsed: {row['desc_raw']} = R$ {row['amount_brl']}\n"
+                        )
                     else:
                         debug_file.write("  Skipped: Duplicate transaction\n")
                 else:

@@ -1,0 +1,578 @@
+Processing line: A992500005B
+  Skipped: Not a transaction line
+Processing line: PC -00
+  Skipped: Not a transaction line
+Processing line: LEONARDO BROCKSTEDT LECH
+  Skipped: Not a transaction line
+Processing line: Resumo da fatura em R$
+  Skipped: Not a transaction line
+Processing line: DOLOMITI 781
+  Skipped: Not a transaction line
+Processing line: 101 - Planalto Total da fatura anterior 71.543,24
+  Skipped: Not a transaction line
+Processing line: 58003800
+  Skipped: Not a transaction line
+Processing line: 99250-000 Serafina Correa - RS
+  Skipped: Not a transaction line
+Processing line: Pagamento efetuado em 23/09/2024 - 71.543,24
+  Skipped: Not a transaction line
+Processing line: "x#v#!
+  Skipped: Not a transaction line
+Processing line: S Saldo financiado 0,00
+  Skipped: Not a transaction line
+Processing line: +
+  Skipped: Not a transaction line
+Processing line: Postagem: 04/10/2024
+  Skipped: Not a transaction line
+Processing line: E Encargos (financiamento + moratório) 3.822,12
+  Skipped: Not a transaction line
+Processing line: Vencimento: 10/10/2024 +
+  Skipped: Not a transaction line
+Processing line: L Lançamentos atuais 4.772,90
+  Skipped: Not a transaction line
+Processing line: Emissão: 03/10/2024
+  Skipped: Not a transaction line
+Processing line: 041024 Previsão prox. Fechamento: 03/11/2024 = Total desta fatura 8.595,02
+  Skipped: Not a transaction line
+Processing line: Titular LEONARDO BROCKSTEDT LECH
+  Skipped: Not a transaction line
+Processing line: Cartão 5234.XXXX.XXXX.6853 MASTERCARD BLACK
+  Skipped: Not a transaction line
+Processing line: O total da sua fatura é: Com vencimento em: Limite total de crédito:
+  Skipped: Not a transaction line
+Processing line: R$ 8.595,02 10/10/2024 Flexível
+  Skipped: Not a transaction line
+Processing line: Preparamos outras opçõesdepagamento abaixo eaofinal dafatura, válidas atéadatadevencimento:
+  Skipped: Not a transaction line
+Processing line: Pagamento mínimo: Parcelas fixas:
+  Skipped: Not a transaction line
+Processing line: R$ 4.256,91 R$1.025,17
+  Skipped: Not a transaction line
+Processing line: + 10x R$ 1.025,17
+  Skipped: Not a transaction line
+Processing line: Valor em reais % do total financiado Valor em reais % do total financiado
+  Skipped: Not a transaction line
+Processing line: Valor total financiado R$ 4.338,11 100,00% Valor total financiado R$ 8.742,59 100,00%
+  Skipped: Not a transaction line
+Processing line: Encargos R$ 447,69 - Valor solicitado R$ 8.595,02 98,31 %
+  Skipped: Not a transaction line
+Processing line: IOF R$ 53,80 - IOF R$ 147,57 1,69 %
+  Skipped: Not a transaction line
+Processing line: Total a pagar R$ 9.096,51 - Total a pagar R$ 11.276,87 -
+  Skipped: Not a transaction line
+Processing line: Juros: 10,32 % am - 230,34 % aa CET: 10,95 % am - 253,88 % aa Juros: 5,45 % am - 90,72 % aa CET: 6,32 % am - 110,77 % aa
+  Skipped: Not a transaction line
+Processing line: Banco Itaú S.A. 341-7 34191.75066 69406.102520 50434.570003 4 000 recibo do pagador
+  Skipped: Not a transaction line
+Processing line: Ili
+  Skipped: Not a transaction line
+Processing line: Número do Documento 00406694061/0143423 Nosso Número 175/06694061-0
+  Skipped: Not a transaction line
+Processing line: Nome do Pagador/CPF/CNPJ LEONARDO BROCKSTEDT LECH - 024.244.030-40 Valor do Documento R$ 8.595,02
+  Skipped: Not a transaction line
+Processing line: Personnalite Nome do Beneficiário/CPF/CNPJ ITAU UNIBANCO HOLDING S.A. - 60.872.504/0001-23 Vencimento 10/10/2024
+  Skipped: Not a transaction line
+Processing line: Endereço do Beneficiário PÇA ALFREDO EGYDIO DE S.ARANHA, 100, TOS 7 A, JABAQUARA - SÃO PAULO - SP Autenticação Mecânica
+  Skipped: Not a transaction line
+Processing line: - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  Skipped: Not a transaction line
+Processing line: Banco Itaú S.A. 341-7 34191.75066 69406.102520 50434.570003 4 000
+  Skipped: Not a transaction line
+Processing line: 1 1
+  Skipped: Not a transaction line
+Processing line: Local de Pagamento Data de Vencimento
+  Skipped: Not a transaction line
+Processing line: Pague sua fatura em qualquer banco, mesmo após a data de vencimento. Dê preferência para o pagamento até a data de vencimento
+  Skipped: Not a transaction line
+Processing line: para não gerar encargos e/ou rescisão contratual. Em caso de atraso, os encargos serão cobrados na próxima fatura. 10/10/2024
+  Skipped: Not a transaction line
+Processing line: Nome do Beneficiário/ CNPJ/CPF/Endereço Agência / Código Beneficiário
+  Skipped: Not a transaction line
+Processing line: ITAU UNIBANCO HOLDING S.A. - 60.872.504/0001-23
+  Skipped: Not a transaction line
+Processing line: PÇA ALFREDO EGYDIO DE S.ARANHA, 100, TOS 7 A, JABAQUARA - SÃO PAULO - SP 2525/04345-7
+  Skipped: Not a transaction line
+Processing line: Data do Documento Número do Documento Espécie DOC. Aceite Data do Processamento Nosso Número
+  Skipped: Not a transaction line
+Processing line: 10/10/2024 1 00406694061/0143423 1 FT 1 N 1 03/10/2024 175/06694061-0
+  Skipped: Not a transaction line
+Processing line: Uso do Banco Carteira Espécie Quantidade Valor (=) Valor do Documento
+  Skipped: Not a transaction line
+Processing line: 1 5/0 1 R$ 1 1 R$ 8.595,02
+  Skipped: Not a transaction line
+Processing line: Instruções de responsabilidade do beneficiário. (-) Descontos / Abatimentos
+  Skipped: Not a transaction line
+Processing line: Indique o valor que deseja pagar no campo "Valor Pago". Dê preferência ao pagamento total. Não sendo possível, você terá as seguintes
+  Skipped: Not a transaction line
+Processing line: opções: (i) pagar quantia a partir do valor constante em Pagamento Mínimo , financiando o restante pelo crédito rotativo; (ii) optar por (+) Juros / Multa
+  Skipped: Not a transaction line
+Processing line: uma das opções de Parcelas Fixas , pagando o valor exato da parcela até a data do vencimento. O não pagamento poderá gerar
+  Skipped: Not a transaction line
+Processing line: inscrição nos órgãos restritivos de crédito. (=) Valor Pago
+  Skipped: Not a transaction line
+Processing line: Nome do Pagador/CPF/CNPJ/Endereço/Cidade/UF/CEP
+  Skipped: Not a transaction line
+Processing line: LEONARDO BROCKSTEDT LECH - 024.244.030-40
+  Skipped: Not a transaction line
+Processing line: <wwNnDNwONnLNOwnnMWNITwnIn W7W8n1nn W- W10nnn1W W- PnnnlWaWnannnlWtoW n-n n9W9W2nN5nw0w-N0N0nN0w w nSNeWrwannfWinwNan nCnWoNrwrNewawn N-n NRwSw N-wNwnNwnWNnNNwnwNnWnwnnNWwnnWWn>
+  Skipped: Not a transaction line
+Processing line: Sacador Avalista:
+  Skipped: Not a transaction line
+Processing line: Autenticação Mecânica - Ficha de Compensação
+  Skipped: Not a transaction line
+Processing line: Personnalite
+  Skipped: Not a transaction line
+Processing line: Caso você pague um valor entre o mínimo e o total de sua fatura, o saldo restante será cobrado na próxima fatura com juros e impostos. O pagamento
+  Skipped: Not a transaction line
+Processing line: do valor total é sempre a melhor opção porque não há cobranças de juros.
+  Skipped: Not a transaction line
+Processing line: O pagamento obrigatório é composto pelo saldo do crédito rotativo e respectivos encargos incidentes no período (R$ 4.028,59), prestações referentes a
+  Skipped: Not a transaction line
+Processing line: parcelamentos do saldo devedor de períodos anteriores (R$ 0,00) e valor mínimo de novas transações (R$ 228,32). Para entender mais sobre o
+  Skipped: Not a transaction line
+Processing line: pagamento obrigatório e o pagamento mínimo, acesse seu contrato e a aba "Serviços" no site Itaú Cartões.
+  Skipped: Not a transaction line
+Processing line: Consulte outras opções de parcelamento no final da sua fatura.
+  Skipped: Not a transaction line
+Processing line: Previsão do próximo fechamento: 03/11/2024.
+  Skipped: Not a transaction line
+Processing line: Lançamentos: compras e saques Lançamentos: compras e saques
+  Skipped: Not a transaction line
+Processing line: LEONARDO B LECH (final 6853) @1 6/06 RECARGAPAY *LEONA04/12 40,44
+  Skipped: Not a transaction line
+Processing line: DATA ESTABELECIMENTO VALOR EM R$ DIVERSOS .SAO PAULO
+  Skipped: Not a transaction line
+Processing line: ~g 28 /05 FARMACIA SAO JOAO 05/06 39,40 @1 6/06 RECARGAPAY *LEONA04/12 12,74
+  Skipped: Not a transaction line
+Processing line: SAÚDE .CAXIAS DO SUL DIVERSOS .SAO PAULO
+  Skipped: Not a transaction line
+Processing line: ~g 10 /06 FARMACIA SAO JOAO 04/06 87,64 @1 6/06 RECARGAPAY *LEONA04/12 20,50
+  Skipped: Not a transaction line
+Processing line: SAÚDE .PASSO FUNDO DIVERSOS .SAO PAULO
+  Skipped: Not a transaction line
+Processing line: ~g 06 /07 FARMACIA SAO JOAO 03/06 81,09 @1 6/06 RECARGAPAY *LEONA04/12 21,61
+  Skipped: Not a transaction line
+Processing line: SAÚDE .PASSO FUNDO DIVERSOS .SAO PAULO
+  Skipped: Not a transaction line
+Processing line: 25/09 APPLE.COM/BILL 49,90 @1 6/06 RECARGAPAY *LEONA04/12 60,94
+  Parsed: APPLE.COM/BILL = R$ 49.90
+Processing line: HOBBY .SAO PAULO DIVERSOS .SAO PAULO
+  Skipped: Not a transaction line
+Processing line: ~g 27 /09 FARMACIA SAO JOAO 01/04 20,78 @1 6/06 RECARGAPAY *LEONA04/12 13,30
+  Skipped: Not a transaction line
+Processing line: SAÚDE . DIVERSOS .SAO PAULO
+  Skipped: Not a transaction line
+Processing line: ~g 28 /09 RESTAURANTE FRANZ 104,85 @1 6/06 RECARGAPAY *LEONA04/12 14,96
+  Skipped: Not a transaction line
+Processing line: ALIMENTAÇÃO .PASSO FUNDO DIVERSOS .SAO PAULO
+  Skipped: Not a transaction line
+Processing line: ~g 28 /09 PostoDe 305,04 @1 6/06 RECARGAPAY *LEONA04/12 11,63
+  Skipped: Not a transaction line
+Processing line: VEÍCULOS .PASSO FUNDO DIVERSOS .SAO PAULO
+  Skipped: Not a transaction line
+Processing line: ~g
+  Skipped: Not a transaction line
+Processing line: 28/09 FARMACIA SAO JOAO 01/04 21,73 Lançamentos no cartão (final 9779) 225,48
+  Parsed: FARMACIA SAO JOAO 01/04 = R$ 21.73
+Processing line: SAÚDE .
+  Skipped: Not a transaction line
+Processing line: ~g
+  Skipped: Not a transaction line
+Processing line: 28/09 REFUGIO SKATE PARK LTD 170,50 LEONARDO B LECH (final 9835)
+  Parsed: REFUGIO SKATE PARK LTD = R$ 170.50
+Processing line: ~g ALIMENTAÇÃO .PASSO FUNDO DATA ESTABELECIMENTO VALOR EM R$
+  Skipped: Not a transaction line
+Processing line: 30/09 PANVEL FARMACIAS 01/03 42,70 @1 7/06 PICPAY LBL INTEGRA04/12 11,59
+  Parsed: PANVEL FARMACIAS 01/03 = R$ 42.70
+Processing line: ~g SAÚDE . DIVERSOS .S o Paulo
+  Skipped: Not a transaction line
+Processing line: 01/10 PANVEL FARMACIAS 01/03 127,05 @1 7/06 PICPAY LBL INTEGRA04/12 46,13
+  Parsed: PANVEL FARMACIAS 01/03 = R$ 127.05
+Processing line: SAÚDE . DIVERSOS .S o Paulo
+  Skipped: Not a transaction line
+Processing line: Lançamentos no cartão (final 6853) 1.050,68 @1 7/06 PICPAY LBL INTEGRA04/05 107,60
+  Skipped: Not a transaction line
+Processing line: DIVERSOS .S o Paulo
+  Skipped: Not a transaction line
+Processing line: LEONARDO B LECH (final 9779) @1 7/06 PICPAY LBL INTEGRA04/06 20,39
+  Skipped: Not a transaction line
+Processing line: DATA ESTABELECIMENTO VALOR EM R$ DIVERSOS .S o Paulo
+  Skipped: Not a transaction line
+Processing line: @1 6/06 RECARGAPAY *LEONA04/12 18,28 @1 8/06 PICPAY LBL INTEGRA04/06 30,53
+  Skipped: Not a transaction line
+Processing line: DIVERSOS .SAO PAULO DIVERSOS .S o Paulo
+  Skipped: Not a transaction line
+Processing line: @1 6/06 RECARGAPAY *LEONA04/12 11,08 @1 8/06 PICPAY LBL INTEGRA04/06 57,01
+  Skipped: Not a transaction line
+Processing line: DIVERSOS .SAO PAULO DIVERSOS .S o Paulo
+  Skipped: Not a transaction line
+Processing line: Continua...
+  Skipped: Not a transaction line
+Processing line: @ Compra com cartão virtual
+  Skipped: Not a transaction line
+Processing line: ~h!
+  Skipped: Not a transaction line
+Processing line: Compra com carteira digital
+  Skipped: Not a transaction line
+Processing line: 30 acesse SAC 0800 722 7377
+  Skipped: Not a transaction line
+Processing line: 3003 3030 (capitais e regiões metropolitanas) itaupersonnalite.com.br reclamações, cancelamentos e informações gerais. Todos os dias, 24h
+  Skipped: Not a transaction line
+Processing line: horas 0800 720 3030 (demais localidades, somente chamadas de telefone fixo) o c u a u i t x iliz a e s o s e letrônicos Ouvidoria 0800 570 0011
+  Skipped: Not a transaction line
+Processing line: se não ficar satisfeito com a soluçáo apresentada, de posse
+  Skipped: Not a transaction line
+Processing line: Todos os dias, 24h por dia. do protocolo, contate a Ouvidoria. Dias úteis, das 9h às 1S h
+  Skipped: Not a transaction line
+Processing line: Consultas, informações e serviços transacionais. Deficiente auditivo/fala 0800 722 1722
+  Skipped: Not a transaction line
+Processing line: Todos os dias, 24h
+  Skipped: Not a transaction line
+Processing line: Em atendimento à Lei 12.0007/09, declaramos que, com exceção dos débitos desta fatura e de Portabilidade de crédito: você poderá solicitar a portabilidade das suas operações de crédito rotativo
+  Skipped: Not a transaction line
+Processing line: despesas eventualmente contestadas, os valores lançados nas faturas anteriores estão quitadas. ou parcelamento de fatura em aberto para outra instituição. Para saber mais, consulte nossos canais de
+  Skipped: Not a transaction line
+Processing line: Esta declaração substitui os comprovantes anteriores. atendimento.
+  Skipped: Not a transaction line
+Processing line: Você pode pagar sua fatura em nossos canais. Consulte todas as informações e suas despesas nos liquidação antecipada: você poderá liquidar antecipadamente a sua operação de financiamento do
+  Skipped: Not a transaction line
+Processing line: nossos canais eletrànkos. saldo devedor do cartão, mediante redução proporcional de juros. Consulte nossos canais.
+  Skipped: Not a transaction line
+Processing line: Escolha a melhor forma de pagar sua fatura Débito automátko para correntistas ltaú: cadastre seu cartão em débito automático pelo app e tenha
+  Skipped: Not a transaction line
+Processing line: Pagamento total: é sempre a melhor OPÇãop orque não há cobrança de juros. mais praticidade no pagamento da fatura.
+  Skipped: Not a transaction line
+Processing line: Pagamento mínimo para crédito rotativo: você pode pagar o valor mínimo indicado no box ou um Pagamento antecipado: antes do fechamento da fatura é possível optar pelo pagamento antecipado.
+  Skipped: Not a transaction line
+Processing line: valor entre o mínimo e total da fatura e financiar o saldo restante pelo crédito rotativo. O saldo será Consulte o appou nossos canais de atendimento.
+  Skipped: Not a transaction line
+Processing line: cobrado na fatura seguinte com encargos Uuros +IOF). Consulte a taxa aplicável eo CET antes da
+  Skipped: Not a transaction line
+Processing line: contratação. IOF: se você contratar operações de crédito com a gente, será devido IOF sobre esses valores.
+  Skipped: Not a transaction line
+Processing line: Parcelas fixas: você pode parcelar a sua fatura em parcelas fixas, conforme opções ofertadas. Para Importante: para evitar acúmulo de encargos e o bloqueio do seu cartão, poderemos debitar da sua
+  Skipped: Not a transaction line
+Processing line: contratar, você precisa pagara exato valor indicado até a data de vencimento da opção de conta o valor previsto no box de Pagamento Mínimo para Crédito Rotativo ou Pagamento Mínimo
+  Skipped: Not a transaction line
+Processing line: parcelamento que você escolher. Este parcelamento inclui somente o valor total da fatura no momento quando disponível. Se quiser cancelar essa autorização, consulte nossos canais de atendimento
+  Skipped: Not a transaction line
+Processing line: da contratação e as demais transações serão lançadas normalmente nas faturas seguintes. As parcelas
+  Skipped: Not a transaction line
+Processing line: utilizarão o seu limite e vamos liberá-lo após o pagamento de cada parcela. limite para saque (retirada de recursos): os limites são os valores máximos e estão sujeitos à análise de
+  Skipped: Not a transaction line
+Processing line: crédito no momento da solicitação.
+  Skipped: Not a transaction line
+Processing line: Atraso: se você não pagar a fatura, não contratar um parcelamento de parcelas fixas ou pagar um valor
+  Skipped: Not a transaction line
+Processing line: menor que o Pagamento Mínimo para o Crédito Rotativo ou Pagamento Mínimo (Entrada para Atenção! Sua senha é intransferível. Não divulgue para terceiros. Se você perder ou roubarem o seu
+  Skipped: Not a transaction line
+Processing line: Financiamento), quando disponível, até a data de vencimento, você estará em atraso e vamos te cobrar cartão, faça o bloqueio diretamente pelo app ou ligue para nossa central de atendimento e peça o
+  Skipped: Not a transaction line
+Processing line: juros e encargos como (i) juros remuneratórios indicados na fatura como "Juros Máximos do contrato"+ bloqueio. Antes de contratar qualquer operação de crédito, consulte previamente o CET nas faturas ou
+  Skipped: Not a transaction line
+Processing line: juros moratórias de 1% ao mês capitalizados diariamente, computados desde a data do vencimento até em nossos canais. Se tiver qualquer dúvida, consulte as condições gerais do seu contrato no
+  Skipped: Not a transaction line
+Processing line: a data do pagamento, (ii) multa de 20/4s obre os valores em aberto e (iii) impostos. site www.itau.corn.br/cartoes.
+  Skipped: Not a transaction line
+Processing line: Parcelamento do saldo do cartão: se disponível, você pode contratar este parcelamento que é ttaú Unibaoco Hokting, CNPJ 60.872.504/0001·23, instituição financeira com sede na Praça Alfredo
+  Skipped: Not a transaction line
+Processing line: composto pelo (i) total da fatura atual; (ii) valor total dos parcelamentos de fatura e crédito pessoal Egydiode Souza Aranha, 100, Torre Setúbal, 7° andar, Parque Jabaquara, Cep: 04344-902, São Paulo
+  Skipped: Not a transaction line
+Processing line: contratados sem seguro e (iii) compras parceladas com e sem juros. Consulte o CET antes da SP.
+  Skipped: Not a transaction line
+Processing line: contratação e as condições gerais no Contrato.
+  Skipped: Not a transaction line
+Processing line: PC - 00 01290 VK045 04/10/2024 VKRPOF01 G4236 0830085
+  Skipped: Not a transaction line
+Processing line: Lançamentos: compras e saques Compras parceladas - próximas faturas
+  Skipped: Not a transaction line
+Processing line: @1 8/06 PICPAY LBL INTEGRA04/06 65,15 17/06 PICPAY LBL INTEGRA05/06 20,39
+  Skipped: Not a transaction line
+Processing line: DIVERSOS .S o Paulo 18/06 PICPAY LBL INTEGRA05/06 30,53
+  Skipped: Not a transaction line
+Processing line: Lançamentos no cartão (final 9835) 338,40 18/06 PICPAY LBL INTEGRA05/06 57,01
+  Skipped: Not a transaction line
+Processing line: 18/06 PICPAY LBL INTEGRA05/06 65,15
+  Parsed: PICPAY LBL INTEGRA05/06 = R$ 65.15
+Processing line: LEONARDO B LECH (final 3549) 05/07 RECARGAPAY LEONARD04/06 409,64
+  Skipped: Not a transaction line
+Processing line: DATA ESTABELECIMENTO VALOR EM R$ 06/07 FARMACIA SAO JOAO 04/06 81,09
+  Skipped: Not a transaction line
+Processing line: @ 05/07 RECARGAPAY LEONARD03/06 409,64 07/07 RECARGAPAY LEONARD04/06 532,53
+  Skipped: Not a transaction line
+Processing line: DIVERSOS .SAO PAULO 07/07 RECARGAPAY LEONARD04/06 532,53
+  Skipped: Not a transaction line
+Processing line: @ 07/07 RECARGAPAY LEONARD03/06 532,53 07/07 RECARGAPAY LEONARD04/06 614,46
+  Skipped: Not a transaction line
+Processing line: DIVERSOS .SAO PAULO 07/07 RECARGAPAY LEONARD04/06 245,78
+  Skipped: Not a transaction line
+Processing line: @ 07/07 RECARGAPAY LEONARD03/06 532,53 17/07 RECARGAPAY *LEONA04/06 25,60
+  Skipped: Not a transaction line
+Processing line: DIVERSOS .SAO PAULO 17/07 RECARGAPAY *LEONA04/06 102,41
+  Skipped: Not a transaction line
+Processing line: @0 7/07 RECARGAPAY LEONARD03/06 614,46 17/07 RECARGAPAY *LEONA04/06 202,77
+  Skipped: Not a transaction line
+Processing line: DIVERSOS .SAO PAULO 27/09 FARMACIA SAO JOAO 02/04 20,78
+  Skipped: Not a transaction line
+Processing line: @0 7/07 RECARGAPAY LEONARD03/06 245,78 28/09 FARMACIA SAO JOAO 02/04 21,73
+  Skipped: Not a transaction line
+Processing line: DIVERSOS .SAO PAULO 30/09 PANVEL FARMACIAS 02/03 42,70
+  Skipped: Not a transaction line
+Processing line: @1 7/07 RECARGAPAY *LEONA03/06 25,60 01/10 PANVEL FARMACIAS 02/03 127,05
+  Skipped: Not a transaction line
+Processing line: DIVERSOS .SAO PAULO Próxima fatura 3.649,99
+  Skipped: Not a transaction line
+Processing line: @1 7/07 RECARGAPAY *LEONA03/06 102,41 Demais faturas 7.991,51
+  Skipped: Not a transaction line
+Processing line: DIVERSOS .SAO PAULO Total para próximas faturas 11.641,50
+  Skipped: Not a transaction line
+Processing line: @1 7/07 RECARGAPAY *LEONA03/06 202,77
+  Skipped: Not a transaction line
+Processing line: DIVERSOS .SAO PAULO
+  Skipped: Not a transaction line
+Processing line: @0 1/10 BMB*SEANET RS 150,00 Limites de crédito Valor em R$
+  Skipped: Not a transaction line
+Processing line: DIVERSOS .CARAZINHO
+  Skipped: Not a transaction line
+Processing line: Lançamentos no cartão (final 3549) 2.815,72 Limite total de crédito Flexível
+  Skipped: Not a transaction line
+Processing line: Limite total utilizado 20.547,98
+  Skipped: Not a transaction line
+Processing line: LEONARDO B LECH (final 1929)
+  Skipped: Not a transaction line
+Processing line: DATA ESTABELECIMENTO VALOR EM R$ Limite máximo para saque no Brasil 1.000,00
+  Skipped: Not a transaction line
+Processing line: @ 28/09 IPS BR*ONLYFANS 54,34 Limite máximo para saque no exterior 7.000,00
+  Skipped: Not a transaction line
+Processing line: DIVERSOS .RIO DE JANEIR
+  Skipped: Not a transaction line
+Processing line: @ 28/09 IPS BR*ONLYFANS 21,74 O limite total de crédito é composto pelos limites de saque.
+  Skipped: Not a transaction line
+Processing line: DIVERSOS .RIO DE JANEIR Esses são os seus limites na data de fechamento dessa fatura. Caso
+  Skipped: Not a transaction line
+Processing line: Lançamentos no cartão (final 1929) 76,08 queira consultar informações atualizadas sobre o seu limite, consulte
+  Skipped: Not a transaction line
+Processing line: nossos canais.
+  Skipped: Not a transaction line
+Processing line: Lançamentos internacionais
+  Skipped: Not a transaction line
+Processing line: LEONARDO B LECH (final 5570)
+  Skipped: Not a transaction line
+Processing line: DATA ESTABELECIMENTO US$ R$ Encargos cobrados nesta fatura
+  Skipped: Not a transaction line
+Processing line: @ 29/09 SPRED 57,54 Juros do rotativo 9,99 % 3.107,19
+  Skipped: Not a transaction line
+Processing line: +1844211-8832 9,99 USD 9,99 Juros de mora 1,00 % am 309,68
+  Skipped: Not a transaction line
+Processing line: Dólar de Conversão R$ 5,76 Multa por atraso 2,00 % 239,37
+  Skipped: Not a transaction line
+Processing line: Total transações inter. em R$ 57,54 IOF de financiamento (0,38 % + 0,00820 % a.d.) 165,88
+  Skipped: Not a transaction line
+Processing line: Repasse de IOF em R$ 2,53 E Total de encargos em R$ 3.822,12
+  Skipped: Not a transaction line
+Processing line: Total lançamentos inter. em R$ 60,07
+  Skipped: Not a transaction line
+Processing line: Lançamentos: produtos e serviços Fique atento aos encargos para o próximo
+  Skipped: Not a transaction line
+Processing line: Personnalite DATA PRODUTOS/SERVIÇOS VALOR EM R$ período (10/10 a 09/11)
+  Skipped: Not a transaction line
+Processing line: 03/10 ENCARGOS DE ATRASO 206,47
+  Parsed: ENCARGOS DE ATRASO = R$ 206.47
+Processing line: Juros Máximos do contrato 10,32 % am 230,34 % aa
+  Skipped: Not a transaction line
+Processing line: Lançamentos produtos e serviços 206,47
+  Skipped: Not a transaction line
+Processing line: Novo teto de juros do cartão de crédito
+  Skipped: Not a transaction line
+Processing line: L Total dos lançamentos atuais 4.772,90
+  Skipped: Not a transaction line
+Processing line: Valor em R$
+  Skipped: Not a transaction line
+Processing line: Compras parceladas - próximas faturas
+  Skipped: Not a transaction line
+Processing line: DATA ESTABELECIMENTO VALOR EM R$ Crédito Rotativo / Atraso
+  Skipped: Not a transaction line
+Processing line: 28/05 FARMACIA SAO JOAO 06/06 39,40 Valor da dívida origem: R$ 0,00
+  Parsed: FARMACIA SAO JOAO 06/06 = R$ 39.40
+Processing line: 10/06 FARMACIA SAO JOAO 05/06 87,64 Juros e encargos financeiros até o momento: R$ 0,00
+  Parsed: FARMACIA SAO JOAO 05/06 = R$ 87.64
+Processing line: 16/06 RECARGAPAY *LEONA05/12 18,28 % juros sobre valor original dívida: 0,00 %
+  Parsed: RECARGAPAY *LEONA05/12 = R$ 18.28
+Processing line: 16/06 RECARGAPAY *LEONA05/12 11,08
+  Parsed: RECARGAPAY *LEONA05/12 = R$ 11.08
+Processing line: 16/06 RECARGAPAY *LEONA05/12 40,44
+  Parsed: RECARGAPAY *LEONA05/12 = R$ 40.44
+Processing line: 16/06 RECARGAPAY *LEONA05/12 12,74 Nos campos acima você pode consultar o valor da dívida origem das
+  Parsed: RECARGAPAY *LEONA05/12 = R$ 12.74
+Processing line: suas operações e os juros e encargos cobrados até o momento. O
+  Skipped: Not a transaction line
+Processing line: 16/06 RECARGAPAY *LEONA05/12 20,50
+  Parsed: RECARGAPAY *LEONA05/12 = R$ 20.50
+Processing line: limite de juros é considerado individualmente por operação
+  Skipped: Not a transaction line
+Processing line: 16/06 RECARGAPAY *LEONA05/12 21,61 contratada.
+  Parsed: RECARGAPAY *LEONA05/12 = R$ 21.61
+Processing line: 16/06 RECARGAPAY *LEONA05/12 60,94
+  Parsed: RECARGAPAY *LEONA05/12 = R$ 60.94
+Processing line: 16/06 RECARGAPAY *LEONA05/12 13,30
+  Parsed: RECARGAPAY *LEONA05/12 = R$ 13.30
+Processing line: 16/06 RECARGAPAY *LEONA05/12 14,96
+  Parsed: RECARGAPAY *LEONA05/12 = R$ 14.96
+Processing line: 16/06 RECARGAPAY *LEONA05/12 11,63
+  Parsed: RECARGAPAY *LEONA05/12 = R$ 11.63
+Processing line: 17/06 PICPAY LBL INTEGRA05/12 11,59
+  Parsed: PICPAY LBL INTEGRA05/12 = R$ 11.59
+Processing line: 17/06 PICPAY LBL INTEGRA05/12 46,13
+  Parsed: PICPAY LBL INTEGRA05/12 = R$ 46.13
+Processing line: 17/06 PICPAY LBL INTEGRA05/05 107,60
+  Parsed: PICPAY LBL INTEGRA05/05 = R$ 107.60
+Processing line: Continua...
+  Skipped: Not a transaction line
+Processing line: Personnalite
+  Skipped: Not a transaction line
+Processing line: Simulação de Compras parc. c/ juros e
+  Skipped: Not a transaction line
+Processing line: Crediário (próximo período)
+  Skipped: Not a transaction line
+Processing line: Juros da compra parcelada 5,99 % am 102,95% aa
+  Skipped: Not a transaction line
+Processing line: CET da compra parcelada 6,32 % am 110,71 % aa
+  Skipped: Not a transaction line
+Processing line: % do total
+  Skipped: Not a transaction line
+Processing line: Valor em R$ financiado
+  Skipped: Not a transaction line
+Processing line: Valor compra 500,00 97,02 %
+  Skipped: Not a transaction line
+Processing line: Valor do IOF 15,34 2,98 %
+  Skipped: Not a transaction line
+Processing line: Valor total financiado 515,34 100,00%
+  Skipped: Not a transaction line
+Processing line: Valor juros 477,06
+  Skipped: Not a transaction line
+Processing line: Quantidade de parcelas 24
+  Skipped: Not a transaction line
+Processing line: Valor da parcela 41,35
+  Skipped: Not a transaction line
+Processing line: Valor total a pagar 992,40
+  Skipped: Not a transaction line
+Processing line: O valor do IOF compõe o valor financiado e será incluído nas
+  Skipped: Not a transaction line
+Processing line: parcelas.
+  Skipped: Not a transaction line
+Processing line: Ao contratar esse produto, você declara que o pagamento dos
+  Skipped: Not a transaction line
+Processing line: valores devidos não compromete sua renda mínima existencial.
+  Skipped: Not a transaction line
+Processing line: Simulação Saque Cash
+  Skipped: Not a transaction line
+Processing line: Limite de saque 1.000,00
+  Skipped: Not a transaction line
+Processing line: Juros 17,00 % am 575,45% aa
+  Skipped: Not a transaction line
+Processing line: CET 21,23 % am 940,33% aa
+  Skipped: Not a transaction line
+Processing line: % do total
+  Skipped: Not a transaction line
+Processing line: Valor em R$ financiado
+  Skipped: Not a transaction line
+Processing line: Valor saque 500,00 99,38 %
+  Skipped: Not a transaction line
+Processing line: Valor do IOF 3,14 0,62 %
+  Skipped: Not a transaction line
+Processing line: Valor total financiado 503,14 100,00%
+  Skipped: Not a transaction line
+Processing line: Valor juros 85,00
+  Skipped: Not a transaction line
+Processing line: Valor tarifa 18,00
+  Skipped: Not a transaction line
+Processing line: Valor total a pagar 606,14
+  Skipped: Not a transaction line
+Processing line: Demais Taxas de Juros próximo período
+  Skipped: Not a transaction line
+Processing line: De retirada de recursos país 10,32 % am
+  Skipped: Not a transaction line
+Processing line: De pagamento de contas 6,99 % am 127,51 % aa
+  Skipped: Not a transaction line
+Processing line: PC - 00 01290 VK045 04/10/2024 VKRPOF01 G4236 0830085
+  Skipped: Not a transaction line
+Processing line: LEONARDO BROCKSTEDT LECH ,
+  Skipped: Not a transaction line
+Processing line: Pague sua fatura com a opção de parcelamento que melhor cabe no seu bolso!
+  Skipped: Not a transaction line
+Processing line: Oferta válida até o dia do vencimento da sua fatura. Sua taxa de juros de parcelamento é de 5,45% a.m. e 90,72% a.a.
+  Skipped: Not a transaction line
+Processing line: Novidade: você também pode contar com uma das opções com seguro e garantir a quitação total ou parcial do saldo devedor
+  Skipped: Not a transaction line
+Processing line: do parcelamento em caso de desemprego involuntário, incapacidade total, morte ou invalidez permanente total.
+  Skipped: Not a transaction line
+Processing line: 4 x de 6 x de 8 x de
+  Skipped: Not a transaction line
+Processing line: Com seguro R$ 2.428,58 R$ 1.746,70 R$ 1.412,04
+  Skipped: Not a transaction line
+Processing line: Valor total financiado R$ 8.971,58 |100% R$ 9.195,06 |100% R$ 9.427,16 |100%
+  Skipped: Not a transaction line
+Processing line: Valor solicitado R$ 8.595,02 |95,80 % R$ 8.595,02 |93,47 % R$ 8.595,02 |91,17 %
+  Skipped: Not a transaction line
+Processing line: Seguro R$ 308,97 |3,44 % R$ 507,12 |5,52 % R$ 711,99 |7,55 %
+  Skipped: Not a transaction line
+Processing line: IOF R$ 67,59 |0,75 % R$ 92,92 |1,01 % R$ 120,15 |1,28 %
+  Skipped: Not a transaction line
+Processing line: CET 9,39 % a.m. - 198,01 % a.a. 9,18 % a.m. - 191,12 % a.a. 9,14 % a.m. - 189,83 % a.a.
+  Skipped: Not a transaction line
+Processing line: Total a pagar R$ 9.714,32 R$ 10.480,20 R$ 11.296,32
+  Skipped: Not a transaction line
+Processing line: 4 x de 6 x de 8 x de
+  Skipped: Not a transaction line
+Processing line: Sem seguro R$ 2.344,31 R$ 1.649,39 R$ 1.304,02
+  Skipped: Not a transaction line
+Processing line: Valor total financiado R$ 8.660,27 |100% R$ 8.682,76 |100% R$ 8.705,98 |100%
+  Skipped: Not a transaction line
+Processing line: Valor solicitado R$ 8.595,02 |99,25 % R$ 8.595,02 |98,99 % R$ 8.595,02 |98,73 %
+  Skipped: Not a transaction line
+Processing line: IOF R$ 65,25 |0,75 % R$ 87,74 |1,01 % R$ 110,96 |1,28 %
+  Skipped: Not a transaction line
+Processing line: CET 6,67 % a.m. - 119,37 % a.a. 6,45 % a.m. - 113,93 % a.a. 6,36 % a.m. - 111,74 % a.a.
+  Skipped: Not a transaction line
+Processing line: Total a pagar R$ 9.377,24 R$ 9.896,34 R$ 10.432,16
+  Skipped: Not a transaction line
+Processing line: Para contratar,pague o valor exato da parcela escolhida até o vencimento da fatura. Utilize o mesmo código de barras da fatura para
+  Skipped: Not a transaction line
+Processing line: efetuar o pagamento. Se preferir, simule outras opções no nosso app Itaú ou na Central de Atendimento.
+  Skipped: Not a transaction line
+Processing line: Personnalite
+  Skipped: Not a transaction line
+Processing line: Importante: caso a sua fatura esteja em débito automático em uma instituição financeira diferente do Itaú, é necessário realizar o
+  Skipped: Not a transaction line
+Processing line: cancelamento desse serviço antes de contratar o Parcelamento de Fatura.
+  Skipped: Not a transaction line
+Processing line: Opções com seguro: garantia de Perda Involuntária de Emprego (carência de 30 dias e franquia de 30 dias para registrados CLT há mais
+  Skipped: Not a transaction line
+Processing line: de 12 meses contínuos, com o mesmo empregador); incapacidade total e temporária (carência de 30 dias e franquia de 15 dias - este
+  Skipped: Not a transaction line
+Processing line: seguro é destinado a autônomos, com comprovação de recolhimento de contribuição por mais de 12 meses contínuos).
+  Skipped: Not a transaction line
+Processing line: Processo SUSEP n 15414.626445/2019-48. Seguradora: Itaú Seguros S.A., CNPJ: 61.557.039/0001-07. Estipulante: Itaú Unibanco Holding, CNPJ: 60.872.504/0001-23. Corretora: Itaú
+  Skipped: Not a transaction line
+Processing line: Corretora de Seguros S.A., CNPJ: 43.644.285/0001-06 - Registro SUSEP 20.203503-3. Este material possui breve descrição do produto. Para mais informações, consulte as Condições Gerais
+  Skipped: Not a transaction line
+Processing line: no site do cartão. A aceitação da proposta estará sujeita a análise do risco. O registro do produto é automático e não representa aprovação ou recomendação por parte da SUSEP. O segurado
+  Skipped: Not a transaction line
+Processing line: poderá consultar a situação cadastral do seu corretor de seguros no site: www.susep.gov.br , por meio do número do seu registro na SUSEP, nome completo, CNPJ ou CPF. Este seguro é por
+  Skipped: Not a transaction line
+Processing line: prazo determinado, pelo período do parcelamento de fatura contratado, tendo a seguradora a faculdade de não renovar a apólice na data de vencimento, sem devolução dos prêmios pagos
+  Skipped: Not a transaction line
+Processing line: nos termos da apólice.
+  Skipped: Not a transaction line
+Processing line: O Parcelamento da Fatura tem incidência de encargos (juros e IOF) e inclui o valor total da fatura no momento da contratação. Outros valores como novas compras e parcelas a vencer, serão
+  Skipped: Not a transaction line
+Processing line: cobradas normalmente nas faturas seguintes. A contratação do parcelamento COM seguro é opcional e o valor do seguro será financiado utilizando a mesma taxa de juros, e será
+  Skipped: Not a transaction line
+Processing line: efetivada/formalizada com o pagamento da primeira parcela. O valor total do parcelamento comprometerá seu limite de crédito, que será recomposto à medida que as parcelas forem pagas.
+  Skipped: Not a transaction line
+Processing line: A simulação de qualquer opção em um de nossos outros canais, invalida as opções desta fatura.
+  Skipped: Not a transaction line
+Processing line: Personnalite
+  Skipped: Not a transaction line
+Processing line: PC - 00 01290 VK045 04/10/2024 VKRPOF01 G4236 0830085
+  Skipped: Not a transaction line

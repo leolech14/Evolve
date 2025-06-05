@@ -133,9 +133,7 @@ def main():
 
             # gather fail log from pytest
             try:
-                fail_output = sh(
-                    "pytest", "-v", "--tb=short", capture=True
-                )
+                fail_output = sh("pytest", "-v", "--tb=short", capture=True)
                 fail_log = "Tests are failing. Recent output:\n" + fail_output[-2000:]
             except subprocess.CalledProcessError as e:
                 fail_log = f"Tests failing. Error output:\n{e.stdout[-2000:] if e.stdout else 'No output'}"
