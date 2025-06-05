@@ -13,7 +13,9 @@ def extract_total_from_pdf(pdf_path: Path) -> Decimal:
         )
 
         # Save the extracted text for debugging
-        debug_file = Path("tests/debug") / f"{pdf_path.stem}_extracted.txt"
+        debug_dir = Path("diagnostics")
+        debug_dir.mkdir(exist_ok=True)
+        debug_file = debug_dir / f"{pdf_path.stem}_extracted.txt"
         debug_file.write_text(text)
 
         # Try different patterns for total

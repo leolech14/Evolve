@@ -7,6 +7,7 @@ from statement_refinery import pdf_to_csv
 
 
 ROOT = Path(__file__).resolve().parents[1]
+DATA_DIR = ROOT / "tests" / "data"
 
 
 def compare(pdf_path: Path) -> bool:
@@ -47,9 +48,9 @@ def compare(pdf_path: Path) -> bool:
 
 
 def main() -> None:
-    pdfs = sorted(ROOT.glob("*.pdf"))
+    pdfs = sorted(DATA_DIR.glob("itau_*.pdf"))
     if not pdfs:
-        print("No PDFs found in repository root.")
+        print("No PDFs found in tests/data.")
         return
 
     mismatched = False

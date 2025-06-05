@@ -382,7 +382,9 @@ def parse_lines(lines: Iterator[str], year: int | None = None) -> List[dict]:
     """Convert raw lines into row-dicts using :func:`parse_statement_line`."""
     rows: List[dict] = []
     seen_hashes = set()
-    with open("tests/debug/parse_debug.txt", "w") as debug_file:
+    debug_dir = Path("diagnostics")
+    debug_dir.mkdir(exist_ok=True)
+    with open(debug_dir / "parse_debug.txt", "w") as debug_file:
         for line in lines:
             try:
                 # Log the line being processed
