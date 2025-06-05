@@ -1,7 +1,7 @@
 import hashlib
 from decimal import Decimal
 from datetime import date
-from statement_refinery.txt_to_csv import parse_statement_line
+from statement_refinery.pdf_to_csv import parse_statement_line
 
 
 def _expected_hash(line: str) -> str:
