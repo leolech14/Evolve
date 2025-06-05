@@ -133,6 +133,23 @@ def test_iter_pdf_lines_skips_empty_page(monkeypatch, caplog):
     assert "no extractable text" in caplog.text.lower()
 
 
+def test_iter_pdf_lines_missing_pdfplumber(monkeypatch):
+    """iter_pdf_lines should raise a helpful error if pdfplumber is absent."""
+    import builtins
+
+    original_import = builtins.__import__
+
+    def fake_import(name, globals=None, locals=None, fromlist=(), level=0):
+        if name == "pdfplumber":
+            raise ImportError
+        return original_import(name, globals, locals, fromlist, level)
+
+    monkeypatch.setattr(builtins, "__import__", fake_import)
+
+    with pytest.raises(RuntimeError, match="pdfplumber is required"):
+        list(mod.iter_pdf_lines(Path("dummy.pdf")))
+
+
 @pytest.mark.skipif(not HAS_PDFPLUMBER, reason="pdfplumber not installed")
 def test_main_infers_year(tmp_path):
     pdf_src = DATA / "itau_2024-10.pdf"
