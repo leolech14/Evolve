@@ -5,8 +5,6 @@ Any new PDF + corresponding golden CSV added to tests/data/
 automatically becomes part of the test matrix.
 """
 
-import importlib
-import pytest
 from pathlib import Path
 from statement_refinery import pdf_to_csv as mod
 
