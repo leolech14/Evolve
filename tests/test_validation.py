@@ -4,7 +4,6 @@ import re
 from decimal import Decimal
 from pathlib import Path
 
-import pytest
 
 from statement_refinery.pdf_to_csv import parse_pdf, parse_lines
 
