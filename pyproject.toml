@@ -8,6 +8,7 @@ version = "0.1.0"
 description = "Utilities for converting Itau card statements to CSV"
 authors = [{name="Leonardo Lech", email="leonardo.lech@gmail.com"}]
 readme = "README.md"
+license = {text = "MIT"}
 requires-python = ">=3.10"
 dependencies = [
     "pdfplumber",
