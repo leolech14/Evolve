@@ -104,3 +104,12 @@ def test_evolution_trigger():
     line = "01/01 TEST MERCHANT 100,00"
     row = parse_statement_line(line)
     assert row["category"] == "DIVERSOS"
+
+
+def test_new_evolution_trigger():
+    """Another test to trigger evolution - test for special handling."""
+    line = "15/06 SPECIAL*CASE*MERCHANT final 1234 250,00"
+    row = parse_statement_line(line)
+    # This will fail to trigger evolution
+    assert row is not None
+    assert row["category"] == "SPECIAL_MERCHANT_CATEGORY"  # This category doesn't exist yet
