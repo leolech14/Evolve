@@ -58,9 +58,9 @@ Run `scripts/check_accuracy.py` to compare the parser output with any golden fil
 The tool runs `pdf_to_csv.main()` for each PDF in `tests/data/` and reports diffs and a match percentage.
 
 Only PDFs that have a companion `golden_*.csv` file are included in the diff. Any
-others are skipped. Store diagnostic statements outside the repository or place
-them in `tests/data/` alongside a matching golden CSV if you want them checked
-in CI.
+others are skipped. **Store new PDFs without goldens outside the repository or under
+the ignored `diagnostics/` folder.** Place them in `tests/data/` alongside a matching
+golden CSV if you want them checked in CI.
 
 This check also runs in CI after the tests. If any mismatch is detected the job
 fails. Update the golden CSV by rerunning `pdf-to-csv` with the `--out` option
