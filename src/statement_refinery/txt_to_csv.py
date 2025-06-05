@@ -291,6 +291,103 @@ def build_comprehensive_patterns():
     return patterns
 
 
+def _iso_date(date_str: str) -> str:
+    """Convert ``DD/MM`` to ``YYYY-MM-DD`` using the current year."""
+    yr = date.today().year
+    day, month = date_str.split("/")
+    return f"{yr}-{month.zfill(2)}-{day.zfill(2)}"
+
+
+def parse_statement_line(line: str) -> dict | None:
+    """Parse one statement line into a row dictionary.
+
+    The parser is deliberately tolerant and handles domestic transactions,
+    international purchases, payments and small adjustments. Unknown lines
+    return ``None``.
+    """
+
+    original_line = line
+    line = line.strip()
+    if not line:
+        return None
+
+    card_match = RE_CARD_FINAL.search(line)
+    card_last4 = card_match.group(1) if card_match else "0000"
+    line_no_card = line
+    if card_match:
+        line_no_card = line.replace(card_match.group(0), "").strip()
+
+    # International transactions
+    currency, fx_rate, city = parse_fx_currency_line(line_no_card)
+    fx_segment = line_no_card
+    if currency:
+        fx_match = RE_FX_LINE2.search(line_no_card)
+        if fx_match:
+            fx_segment = line_no_card[: fx_match.start()].strip()
+    m = RE_FX_LINE1.match(fx_segment)
+    if m:
+        date_str = m.group("date")
+        desc = m.group("descr").strip()
+        amt_brl = parse_amount(m.group("brl"))
+        amt_orig = parse_amount(m.group("orig"))
+        fx_val = Decimal(fx_rate.replace(",", ".")) if fx_rate else Decimal("0.00")
+        inst_seq, inst_tot = extract_installment_info(desc)
+        category = classify_transaction(desc, amt_brl)
+        if RE_PAYMENT.search(line):
+            category = "PAGAMENTO"
+        return {
+            "card_last4": card_last4,
+            "post_date": _iso_date(date_str),
+            "desc_raw": desc,
+            "amount_brl": amt_brl,
+            "installment_seq": inst_seq or 0,
+            "installment_tot": inst_tot or 0,
+            "fx_rate": fx_val,
+            "iof_brl": Decimal("0.00"),
+            "category": category,
+            "merchant_city": city or "",
+            "ledger_hash": hashlib.sha1(original_line.encode()).hexdigest(),
+            "prev_bill_amount": Decimal("0.00"),
+            "interest_amount": Decimal("0.00"),
+            "amount_orig": amt_orig,
+            "currency_orig": currency or "",
+            "amount_usd": amt_orig if (currency or "") == "USD" else Decimal("0.00"),
+        }
+
+    # Domestic transactions and payments
+    m = RE_DOM_STRICT.match(line_no_card)
+    if not m:
+        m = RE_DOM_TOLERANT.match(line_no_card)
+    if m:
+        date_str = m.group("date")
+        desc = (m.group("desc") if "desc" in m.groupdict() else m.group(2)).strip()
+        amt_brl = parse_amount(m.group("amt"))
+        inst_seq, inst_tot = extract_installment_info(desc)
+        category = classify_transaction(desc, amt_brl)
+        if RE_PAYMENT.search(line_no_card):
+            category = "PAGAMENTO"
+        return {
+            "card_last4": card_last4,
+            "post_date": _iso_date(date_str),
+            "desc_raw": desc,
+            "amount_brl": amt_brl,
+            "installment_seq": inst_seq or 0,
+            "installment_tot": inst_tot or 0,
+            "fx_rate": Decimal("0.00"),
+            "iof_brl": Decimal("0.00"),
+            "category": category,
+            "merchant_city": "",
+            "ledger_hash": hashlib.sha1(original_line.encode()).hexdigest(),
+            "prev_bill_amount": Decimal("0.00"),
+            "interest_amount": Decimal("0.00"),
+            "amount_orig": Decimal("0.00"),
+            "currency_orig": "",
+            "amount_usd": Decimal("0.00"),
+        }
+
+    return None
+
+
 # ===== EXPERT KNOWLEDGE BASE =====
 
 ITAU_PARSING_RULES = {
@@ -320,5 +417,6 @@ __all__ = [
     "build_regex_patterns",
     "validate_date",
     "build_comprehensive_patterns",
+    "parse_statement_line",
     "ITAU_PARSING_RULES",
 ]
