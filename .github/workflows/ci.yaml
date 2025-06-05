@@ -112,11 +112,12 @@ jobs:
         run: python scripts/check_accuracy.py --threshold 99
 
       # auto-patch loop runs only when tests or accuracy fail
-      - name: Validate evolve prerequisites
+      - name: Check evolve prerequisites
         id: evolve_prereqs
         if: |
           steps.tests.outcome == 'failure' ||
           steps.accuracy.outcome == 'failure'
+          
         run: |
           python - <<'EOF'
           import importlib, os, sys
@@ -142,7 +143,10 @@ jobs:
 
       - name: Evolve patch loop
         id: evolve
-        if: steps.evolve_prereqs.outcome == 'success'
+        if: |
+          (steps.tests.outcome == 'failure' ||
+           steps.accuracy.outcome == 'failure') &&
+          steps.evolve_prereqs.outcome == 'success'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_TOKEN:   ${{ secrets.BOT_PAT }}
