@@ -1,8 +1,6 @@
 import hashlib
 from decimal import Decimal
 from datetime import date
-
-import pytest
 from statement_refinery.txt_to_csv import parse_statement_line
 
 
