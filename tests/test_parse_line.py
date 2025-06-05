@@ -5,7 +5,7 @@ from statement_refinery.txt_to_csv import parse_statement_line
 
 
 def _expected_hash(line: str) -> str:
-    return hashlib.sha1(line.encode()).hexdigest()
+    return hashlib.sha1(line.encode("utf-8")).hexdigest()
 
 
 def test_domestic_transaction():
@@ -13,7 +13,7 @@ def test_domestic_transaction():
     row = parse_statement_line(line)
     assert row is not None
     assert row["card_last4"] == "6853"
-    year = __import__('datetime').date.today().year
+    year = __import__("datetime").date.today().year
     assert row["post_date"] == f"{year}-09-28"
     assert row["desc_raw"] == "FARMACIA SAO JOAO 01/04"
     assert row["amount_brl"] == Decimal("21.73")
@@ -28,7 +28,7 @@ def test_fx_transaction():
     line = "10/04 SumUp *BOTISRL 7,90 56,12\nEUR 1,00 = 6,27 BRL Milano"
     row = parse_statement_line(line)
     assert row is not None
-    year = __import__('datetime').date.today().year
+    year = __import__("datetime").date.today().year
     assert row["post_date"] == f"{year}-04-10"
     assert row["desc_raw"] == "SumUp *BOTISRL"
     assert row["amount_orig"] == Decimal("7.90")

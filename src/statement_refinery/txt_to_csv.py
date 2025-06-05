@@ -161,7 +161,6 @@ def _make_ledger_hash(card: str, date: str, desc: str, amount: Decimal) -> str:
     return hashlib.sha1(raw.encode("utf-8")).hexdigest()
 
 
-
 def build_regex_patterns() -> list[re.Pattern]:
     """Build comprehensive list of all parsing patterns."""
     return [
