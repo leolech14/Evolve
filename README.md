@@ -45,6 +45,15 @@ The test suite depends on the package’s *development* extras, which also insta
 These tests rely on the checked-in golden CSV files and therefore do not
 require `pdfplumber` unless you add new PDFs.
 
+## Checking Parser Accuracy
+
+Run `scripts/check_accuracy.py` to compare the parser output with any golden files:
+
+    python scripts/check_accuracy.py
+
+The tool runs `pdf_to_csv.main()` for each PDF in the repo root and reports diffs and a match percentage.
+
+
 ## Auto-Patch Loop
 
 The GitHub Actions workflow uses `.github/tools/evolve.py` to automatically
