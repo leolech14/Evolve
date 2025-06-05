@@ -103,6 +103,12 @@ def run_tests() -> Tuple[bool, float]:
             "--cov-report=term-missing",
             capture=True,
         )
+        sh(
+            "python",
+            "scripts/check_accuracy.py",
+            "--threshold",
+            "99",
+        )
     except subprocess.CalledProcessError:
         return False, 0.0
 

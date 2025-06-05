@@ -75,9 +75,11 @@ files within it.
 
 ## Checking Parser Accuracy
 
-Run `scripts/check_accuracy.py` to compare the parser output with any golden files:
+Run `scripts/check_accuracy.py` to compare the parser output with any golden files.
+The script fails if the average match percentage falls below the threshold (99%
+by default):
 
-    python scripts/check_accuracy.py
+    python scripts/check_accuracy.py --threshold 99
 
 The tool runs `pdf_to_csv.main()` for each PDF in `tests/data/` and reports diffs and a match percentage.
 
