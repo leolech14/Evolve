@@ -47,6 +47,7 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 def iter_pdf_lines(pdf_path: Path) -> Iterator[str]:
     """Yield each non-empty line of the PDF."""
     import pdfplumber  # type: ignore  # moved inside the function
+
     with pdfplumber.open(str(pdf_path)) as pdf:
         for idx, page in enumerate(pdf.pages, 1):
             text = page.extract_text()
