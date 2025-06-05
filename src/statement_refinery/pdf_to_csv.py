@@ -505,7 +505,7 @@ def parse_pdf(pdf_path: Path, year: int | None = None) -> List[dict]:
                     row[key] = Decimal(row[key])
                 if not row.get("category") or row["category"] == "IOF":
                     row["category"] = classify_transaction(
-                        row["desc_raw"], row["amount_brl"]
+                        row["desc_raw"], Decimal(row["amount_brl"])
                     )
                 rows.append(row)
         return rows
