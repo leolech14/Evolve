@@ -8,6 +8,7 @@ for the edge-case where pdfplumber returns no text.
 import io
 import csv
 import importlib.util
+import re
 from pathlib import Path
 
 import pytest
@@ -146,7 +147,8 @@ def test_iter_pdf_lines_missing_pdfplumber(monkeypatch):
 
     monkeypatch.setattr(builtins, "__import__", fake_import)
 
-    with pytest.raises(RuntimeError, match="pdfplumber is required"):
+    expected = "pdfplumber is required to parse PDFs; install via 'pip install pdfplumber'"
+    with pytest.raises(RuntimeError, match=re.escape(expected)):
         list(mod.iter_pdf_lines(Path("dummy.pdf")))
 
 

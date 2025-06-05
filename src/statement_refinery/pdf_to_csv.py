@@ -346,7 +346,7 @@ def iter_pdf_lines(pdf_path: Path) -> Iterator[str]:
         import pdfplumber  # type: ignore  # moved inside the function
     except ImportError as exc:  # pragma: no cover - network/optional dep
         raise RuntimeError(
-            "pdfplumber is required to parse PDFs; install with `pip install pdfplumber`."
+            "pdfplumber is required to parse PDFs; install via 'pip install pdfplumber'"
         ) from exc
 
     with pdfplumber.open(str(pdf_path)) as pdf:
