@@ -59,9 +59,9 @@ jobs:
         continue-on-error: true
         run: pytest -ra -vv --cov=statement_refinery --cov-report=term-missing --cov-fail-under=90
 
-      # auto-patch loop if tests failed
+      # auto-patch loop if tests failed or FORCE_EVOLVE=1
       - name: Evolve patch loop
-        if: steps.tests.outcome == 'failure'
+        if: steps.tests.outcome == 'failure' || env.FORCE_EVOLVE == '1'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
