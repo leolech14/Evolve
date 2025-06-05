@@ -96,18 +96,18 @@ RE_INTERNATIONAL_PATTERNS = [
 def parse_amount(amount_str: str) -> Decimal:
     """Parse Brazilian currency format to Decimal."""
     # Remove any currency symbols and extra spaces
-    clean = amount_str.replace('R$', '').strip()
+    clean = amount_str.replace("R$", "").strip()
     # Remove any characters except digits, comma, period, and minus sign
-    clean = re.sub(r'[^\d,\.\-]', '', clean)
+    clean = re.sub(r"[^\d,\.\-]", "", clean)
     # Handle different number formats
-    if ',' in clean and '.' in clean:
+    if "," in clean and "." in clean:
         # Brazilian format (1.234,56)
-        clean = clean.replace('.', '').replace(',', '.')
-    elif ',' in clean and '.' not in clean:
+        clean = clean.replace(".", "").replace(",", ".")
+    elif "," in clean and "." not in clean:
         # European/Brazilian format without thousands separator
-        clean = clean.replace(',', '.')
+        clean = clean.replace(",", ".")
     # Remove any trailing/leading dots
-    clean = clean.strip('.')
+    clean = clean.strip(".")
     return Decimal(clean)
 
 
