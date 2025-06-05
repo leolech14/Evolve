@@ -2,12 +2,12 @@ import io
 import contextlib
 from pathlib import Path
 import difflib
+import importlib.util
 import sys, os  # noqa: E401,F401
 import importlib.util
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-
 if importlib.util.find_spec("pdfplumber") is None:
     print("pdfplumber not installed; skipping accuracy checks.")
     raise SystemExit(0)
