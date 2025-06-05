@@ -16,6 +16,8 @@ The installation step fetches `pdfplumber` and its dependencies from PyPI.
 If your environment lacks internet access, this download will fail. In that
 case, pre-download the required wheels or install the package in an
 environment that can reach PyPI.
+The `openai` package, installed via `pip install -e '.[dev]'`, must also be
+available offline for the evolution script.
 
 `pdfplumber` is only needed when parsing PDFs that do not yet have a
 corresponding golden CSV. The tests and operations that use those golden files
