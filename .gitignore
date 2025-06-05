@@ -148,4 +148,5 @@ itau_*.csv
 
 # Diagnostics output
 diagnostics/
+diagnostics/*.csv
 tests/debug/
