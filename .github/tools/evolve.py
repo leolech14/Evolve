@@ -13,7 +13,7 @@ Env vars obrigatórios:
 Env vars opcionais:
 - OPENAI_MODEL           (default: gpt-4.1)
 - MAX_ATTEMPTS           (default: 3)
-- MAX_TOKENS_PER_RUN     (default: 1_000_000)
+- MAX_TOKENS_PER_RUN     (default: 100000)
 """
 
 from __future__ import annotations
@@ -44,10 +44,15 @@ if not api_key:
     print("Missing OPENAI_API_KEY environment variable.", file=sys.stderr)
     raise SystemExit(1)
 
+github_token = os.getenv("GITHUB_TOKEN")
+if not github_token:
+    print("Missing GITHUB_TOKEN environment variable.", file=sys.stderr)
+    raise SystemExit(1)
+
 client = openai.OpenAI(api_key=api_key)
 MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1")
 MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS", "3"))
-MAX_TOKENS = int(os.getenv("MAX_TOKENS_PER_RUN", "1000000"))
+MAX_TOKENS = int(os.getenv("MAX_TOKENS_PER_RUN", "100000"))
 
 
 # ───────────────────────── git helpers ─────────────────────────
@@ -196,6 +201,7 @@ def main():
                     f"Score {best_score} → {cur_score}",
                 )
                 save_best(current_commit(), cur_score)
+                print(f"Used {TOKENS_USED} tokens")
                 return 0  # success
 
             sh("git", "checkout", BEST_BRANCH)
@@ -203,6 +209,7 @@ def main():
         print("No improvement in this cycle, restarting from best…")
 
     print("Max tokens budget reached.")
+    print(f"Used {TOKENS_USED} tokens")
     return 1
 
 
