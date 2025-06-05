@@ -6,6 +6,7 @@ CLI
 ---
 python -m statement_refinery.pdf_to_csv input.pdf [--out output.csv]
 """
+
 from __future__ import annotations
 
 import argparse

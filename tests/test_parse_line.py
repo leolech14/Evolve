@@ -13,7 +13,7 @@ def test_domestic_transaction():
     row = parse_statement_line(line)
     assert row is not None
     assert row["card_last4"] == "6853"
-    year = __import__('datetime').date.today().year
+    year = __import__("datetime").date.today().year
     assert row["post_date"] == f"{year}-09-28"
     assert row["desc_raw"] == "FARMACIA SAO JOAO 01/04"
     assert row["amount_brl"] == Decimal("21.73")
@@ -21,15 +21,14 @@ def test_domestic_transaction():
     assert row["installment_tot"] == 4
     assert row["category"] == "FARMÁCIA"
     assert row["fx_rate"] == Decimal("0.00")
-    h = _expected_hash(line)
-    assert row["ledger_hash"] == h
+    assert row["ledger_hash"] == _expected_hash(line)
 
 
 def test_fx_transaction():
     line = "10/04 SumUp *BOTISRL 7,90 56,12\nEUR 1,00 = 6,27 BRL Milano"
     row = parse_statement_line(line)
     assert row is not None
-    year = __import__('datetime').date.today().year
+    year = __import__("datetime").date.today().year
     assert row["post_date"] == f"{year}-04-10"
     assert row["desc_raw"] == "SumUp *BOTISRL"
     assert row["amount_orig"] == Decimal("7.90")

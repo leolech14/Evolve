@@ -211,7 +211,7 @@ def _iso_date(date_str: str) -> str:
     return f"{yr}-{month.zfill(2)}-{day.zfill(2)}"
 
 
-def parse_statement_line(line: str) -> dict | None:
+def parse_statement_line(line: str) -> dict | None:  # type: ignore[no-redef]
     """Parse one statement line into a row dictionary.
 
     The parser is deliberately tolerant and handles domestic transactions,
@@ -305,7 +305,15 @@ def parse_statement_line(line: str) -> dict | None:
 
 ITAU_PARSING_RULES = {
     "currency_formats": ["USD", "EUR", "GBP", "JPY", "CHF", "CAD", "AUD"],
-    "skip_keywords": ["PAGAMENTO", "TOTAL", "JUROS", "MULTA", "LIMITE", "VENCIMENTO", "FATURA"],
+    "skip_keywords": [
+        "PAGAMENTO",
+        "TOTAL",
+        "JUROS",
+        "MULTA",
+        "LIMITE",
+        "VENCIMENTO",
+        "FATURA",
+    ],
     "merchant_separators": [".", "*", "-", " "],
     "amount_validation": {
         "min_adjustment": Decimal("0.01"),
