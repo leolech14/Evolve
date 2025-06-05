@@ -12,8 +12,8 @@ Env vars obrigatórios:
 
 Env vars opcionais:
 - OPENAI_MODEL           (default: gpt-4.1)
-- MAX_ATTEMPTS           (default: 3)
-- MAX_TOKENS_PER_RUN     (default: 100000)
+- MAX_ATTEMPTS           (default: 5)
+- MAX_TOKENS_PER_RUN     (default: 3000000)
 """
 
 from __future__ import annotations
@@ -51,8 +51,8 @@ if not github_token:
 
 client = openai.OpenAI(api_key=api_key)
 MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1")
-MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS", "3"))
-MAX_TOKENS = int(os.getenv("MAX_TOKENS_PER_RUN", "100000"))
+MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS", "5"))
+MAX_TOKENS = int(os.getenv("MAX_TOKENS_PER_RUN", "3000000"))
 
 
 # ───────────────────────── process helper ─────────────────────────
