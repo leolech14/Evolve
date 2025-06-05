@@ -16,6 +16,8 @@ The installation step fetches `pdfplumber` and its dependencies from PyPI.
 If your environment lacks internet access, this download will fail. In that
 case, pre-download the required wheels or install the package in an
 environment that can reach PyPI.
+The `openai` package, installed via `pip install -e '.[dev]'`, must also be
+available offline for the evolution script.
 
 `pdfplumber` is only needed when parsing PDFs that do not yet have a
 corresponding golden CSV. The tests and operations that use those golden files
@@ -58,9 +60,9 @@ Run `scripts/check_accuracy.py` to compare the parser output with any golden fil
 The tool runs `pdf_to_csv.main()` for each PDF in `tests/data/` and reports diffs and a match percentage.
 
 Only PDFs that have a companion `golden_*.csv` file are included in the diff. Any
-others are skipped. Store diagnostic statements outside the repository or place
-them in `tests/data/` alongside a matching golden CSV if you want them checked
-in CI.
+others are skipped. **Store new PDFs without goldens outside the repository or under
+the ignored `diagnostics/` folder.** Place them in `tests/data/` alongside a matching
+golden CSV if you want them checked in CI.
 
 This check also runs in CI after the tests. If any mismatch is detected the job
 fails. Update the golden CSV by rerunning `pdf-to-csv` with the `--out` option
@@ -72,11 +74,13 @@ the new file.
 Use `scripts/analyze_pdfs.py` to run the parser on statements that do **not**
 have golden CSVs. The script prints a summary showing the difference between the
 PDF total and the parsed CSV, any duplicate transactions and the distribution of
-categories. Optionally it can store the generated CSVs under `diagnostics/` for
-manual inspection.
+categories. When you include the `--write-csv` flag it writes the generated
+CSVs under `diagnostics/` for manual inspection.
+
+Example:
 
 ```bash
-python scripts/analyze_pdfs.py path/to/statements --write-csv
+python scripts/analyze_pdfs.py ~/Downloads --write-csv
 ```
 
 These diagnostics operate solely on the PDFs, so no golden CSV is required.
