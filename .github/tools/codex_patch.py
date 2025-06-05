@@ -10,8 +10,16 @@ import os
 import subprocess
 import tempfile
 from pathlib import Path
-import openai
 import sys
+
+try:
+    import openai
+except ImportError:
+    print(
+        "The openai package is required. Install with `pip install openai`.",
+        file=sys.stderr,
+    )
+    raise SystemExit(1)
 
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
