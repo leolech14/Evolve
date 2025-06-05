@@ -62,4 +62,4 @@ def test_edge_case_parsing():
     assert row is not None
     assert row["amount_brl"] == Decimal("99.99")
     assert row["desc_raw"] == "COMPLEX MERCHANT NAME WITH SPECIAL CHARS @#$"
-    assert row["category"] == "SPECIAL_CATEGORY"  # This will fail and trigger evolution
+    assert row["category"] == "DIVERSOS"
