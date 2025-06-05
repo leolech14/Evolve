@@ -17,6 +17,7 @@ import re
 import hashlib
 from decimal import Decimal
 from typing import Final
+from datetime import date
 
 # ===== CORE REGEX PATTERNS =====
 
@@ -159,93 +160,6 @@ def _make_ledger_hash(card: str, date: str, desc: str, amount: Decimal) -> str:
     raw = f"{card}|{date}|{desc}|{amount}"
     return hashlib.sha1(raw.encode("utf-8")).hexdigest()
 
-
-def parse_statement_line(line: str) -> dict | None:
-    """Parse a single statement line into a row dictionary.
-
-    The function understands domestic transactions, foreign exchange lines,
-    payments and adjustments. It relies solely on the regex patterns and
-    helper functions defined in this module.  The returned dictionary contains
-    all keys required by :data:`statement_refinery.pdf_to_csv.CSV_HEADER`.
-    """
-
-    line = line.strip()
-    if not line:
-        return None
-
-    fx_line1 = line
-    fx_line2 = ""
-    if "\n" in line:
-        fx_line1, fx_line2 = line.split("\n", 1)
-
-    # --- Foreign exchange transaction ---
-    mfx = RE_FX_LINE1.match(fx_line1)
-    if mfx:
-        date = mfx.group("date")
-        desc = mfx.group("descr").strip()
-        amount_orig = parse_amount(mfx.group("orig"))
-        amount_brl = parse_amount(mfx.group("brl"))
-
-        currency, fx_rate, city = parse_fx_currency_line(fx_line2)
-        fx_rate_val = parse_amount(fx_rate) if fx_rate else Decimal("0.00")
-
-        seq, tot = extract_installment_info(desc)
-        card_match = RE_CARD_FINAL.search(line)
-        card_last4 = card_match.group(1) if card_match else ""
-
-        row = {
-            "card_last4": card_last4,
-            "post_date": date,
-            "desc_raw": desc,
-            "amount_brl": amount_brl,
-            "installment_seq": seq or 0,
-            "installment_tot": tot or 0,
-            "fx_rate": fx_rate_val,
-            "iof_brl": Decimal("0.00"),
-            "category": classify_transaction(desc, amount_brl),
-            "merchant_city": city or "",
-            "ledger_hash": _make_ledger_hash(card_last4, date, desc, amount_brl),
-            "prev_bill_amount": Decimal("0"),
-            "interest_amount": Decimal("0"),
-            "amount_orig": amount_orig,
-            "currency_orig": currency or "",
-            "amount_usd": Decimal("0.00"),
-        }
-        return row
-
-    # --- Domestic / payment / adjustment ---
-    mdom = RE_DOM_STRICT.match(line) or RE_DOM_TOLERANT.match(line)
-    if not mdom:
-        return None
-
-    date = mdom.group("date")
-    desc_group = mdom.groupdict().get("desc") or mdom.group(2)
-    desc = RE_CARD_FINAL.sub("", desc_group).strip()
-    amount_brl = parse_amount(mdom.group("amt"))
-
-    seq, tot = extract_installment_info(desc)
-    card_match = RE_CARD_FINAL.search(line)
-    card_last4 = card_match.group(1) if card_match else ""
-
-    row = {
-        "card_last4": card_last4,
-        "post_date": date,
-        "desc_raw": desc,
-        "amount_brl": amount_brl,
-        "installment_seq": seq or 0,
-        "installment_tot": tot or 0,
-        "fx_rate": Decimal("0.00"),
-        "iof_brl": Decimal("0.00"),
-        "category": classify_transaction(desc, amount_brl),
-        "merchant_city": "",
-        "ledger_hash": _make_ledger_hash(card_last4, date, desc, amount_brl),
-        "prev_bill_amount": Decimal("0"),
-        "interest_amount": Decimal("0"),
-        "amount_orig": Decimal("0.00"),
-        "currency_orig": "",
-        "amount_usd": Decimal("0.00"),
-    }
-    return row
 
 
 def build_regex_patterns() -> list[re.Pattern]:
@@ -425,6 +339,5 @@ __all__ = [
     "build_regex_patterns",
     "validate_date",
     "build_comprehensive_patterns",
-    "parse_statement_line",
     "ITAU_PARSING_RULES",
 ]
