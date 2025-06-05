@@ -106,8 +106,6 @@ def classify_transaction(description: str, amount: Decimal) -> str:
     if abs(amount) <= Decimal("0.30") and abs(amount) > 0:
         return "AJUSTE"
 
-    if "LOCAL DEMO STORE" in desc_upper:
-        return "LOCAL_STORE_CATEGORY"
 
     for pattern, category in RE_CATEGORIES_HIGH_PRIORITY:
         if pattern.search(desc_upper):
