@@ -36,10 +36,12 @@ def test_validate_date_false():
 
 
 def test_parse_lines_skips_limite():
-    lines = iter([
-        "10/01 LIMITE 300,00",
-        "10/01 MARKET 10,00",
-    ])
+    lines = iter(
+        [
+            "10/01 LIMITE 300,00",
+            "10/01 MARKET 10,00",
+        ]
+    )
     rows = mod.parse_lines(lines)
     assert len(rows) == 1
     assert rows[0]["desc_raw"] == "MARKET"
