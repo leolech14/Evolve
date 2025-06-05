@@ -119,14 +119,24 @@ jobs:
           steps.accuracy.outcome == 'failure'
         run: |
           python - <<'EOF'
-          import os, sys
+          import importlib, os, sys
+
+          missing = False
           try:
-              import openai  # noqa
+              importlib.import_module('openai')
           except Exception:
               sys.stderr.write('Missing `openai` package\n')
-              sys.exit(1)
+              missing = True
+
           if not os.getenv('OPENAI_API_KEY'):
               sys.stderr.write('OPENAI_API_KEY not set\n')
+              missing = True
+
+          if not os.getenv('PERSONAL_ACCESS_TOKEN_CLASSIC'):
+              sys.stderr.write('PERSONAL_ACCESS_TOKEN_CLASSIC not set\n')
+              missing = True
+
+          if missing:
               sys.exit(1)
           EOF
 
@@ -139,9 +149,6 @@ jobs:
 
         run: python .github/tools/evolve.py
 
-      - name: Evolve skipped
-        if: steps.evolve.outcome == 'skipped'
-        run: "echo 'Evolve patch loop skipped: tests already passing.' >> $GITHUB_STEP_SUMMARY"
 
       - name: Report evolve failure
         if: steps.evolve.outcome == 'failure'
