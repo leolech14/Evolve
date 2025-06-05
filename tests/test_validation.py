@@ -112,7 +112,12 @@ def analyze_rows(rows: list[dict]) -> dict:
 
 def test_all_statements():
     """Test CSV output against all test PDFs."""
-    test_files = ["itau_2024-10.pdf", "itau_2025-05.pdf"]
+    test_files = [
+        "itau_2024-10.pdf",
+        "itau_2025-05.pdf",
+        "itau_2026-01.pdf",
+        "itau_2026-02.pdf",
+    ]
 
     for pdf_file in test_files:
         pdf_path = Path("tests/data") / pdf_file
