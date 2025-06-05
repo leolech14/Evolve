@@ -72,11 +72,13 @@ the new file.
 Use `scripts/analyze_pdfs.py` to run the parser on statements that do **not**
 have golden CSVs. The script prints a summary showing the difference between the
 PDF total and the parsed CSV, any duplicate transactions and the distribution of
-categories. Optionally it can store the generated CSVs under `diagnostics/` for
-manual inspection.
+categories. When you include the `--write-csv` flag it writes the generated
+CSVs under `diagnostics/` for manual inspection.
+
+Example:
 
 ```bash
-python scripts/analyze_pdfs.py path/to/statements --write-csv
+python scripts/analyze_pdfs.py ~/Downloads --write-csv
 ```
 
 These diagnostics operate solely on the PDFs, so no golden CSV is required.
