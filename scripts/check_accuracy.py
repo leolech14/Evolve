@@ -78,14 +78,16 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    pdfs = sorted(DATA_DIR.glob("itau_*.pdf"))
+    pdfs = sorted(DATA_DIR.glob("[iI]tau_*.pdf"))
     if not pdfs:
         print("No PDFs found in tests/data.")
         return
 
     mismatched = False
     percentages = []
-    for pdf in pdfs:
+    total = len(pdfs)
+    for idx, pdf in enumerate(pdfs, 1):
+        print(f"\nProcessing {idx}/{total}: {pdf.name}")
         mis, pct = compare(pdf)
         percentages.append(pct)
         if mis:
@@ -99,6 +101,8 @@ def main() -> None:
 
     if mismatched:
         raise SystemExit("mismatched parser output or low accuracy")
+
+    print("All PDF checks passed \N{PARTY POPPER}")
 
 
 if __name__ == "__main__":
