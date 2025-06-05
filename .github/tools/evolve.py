@@ -89,7 +89,7 @@ TOKENS_USED = 0
 
 def generate_patch(fail_log: str) -> str:
     global TOKENS_USED
-    resp = openai.ChatCompletion.create(
+    resp = openai.chat.completions.create(
         model=MODEL,
         messages=[
             {
@@ -101,7 +101,7 @@ def generate_patch(fail_log: str) -> str:
     )
     usage = resp.usage.total_tokens
     TOKENS_USED += usage
-    return resp.choices[0].message["content"]
+    return resp.choices[0].message.content
 
 
 # ───────────────────────── main loop ─────────────────────────
