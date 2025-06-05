@@ -30,7 +30,7 @@ import openai
 ROOT = Path(__file__).resolve().parents[2]  # repo root
 BEST_BRANCH = "codex/best"
 SCORE_FILE = ROOT / ".github/tools/score_best.json"
-openai.api_key = os.environ["OPENAI_API_KEY"]
+client = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1")
 MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS", "3"))
 MAX_TOKENS = int(os.getenv("MAX_TOKENS_PER_RUN", "1000000"))
@@ -89,7 +89,7 @@ TOKENS_USED = 0
 
 def generate_patch(fail_log: str) -> str:
     global TOKENS_USED
-    resp = openai.ChatCompletion.create(
+    resp = client.chat.completions.create(
         model=MODEL,
         messages=[
             {
