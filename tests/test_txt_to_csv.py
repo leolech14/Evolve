@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from statement_refinery.txt_to_csv import parse_statement_line
+from statement_refinery.pdf_to_csv import parse_statement_line
 
 
 def test_parse_domestic():
