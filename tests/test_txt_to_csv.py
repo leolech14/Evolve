@@ -6,7 +6,7 @@ from statement_refinery.txt_to_csv import parse_statement_line
 def test_parse_domestic():
     line = "28/09 FARMACIA SAO JOAO final 6853 20,00"
     row = parse_statement_line(line)
-    year = __import__('datetime').date.today().year
+    year = __import__("datetime").date.today().year
     assert row == {
         "card_last4": "6853",
         "post_date": f"{year}-09-28",
@@ -18,7 +18,7 @@ def test_parse_domestic():
         "iof_brl": Decimal("0.00"),
         "category": "FARMÁCIA",
         "merchant_city": "",
-        "ledger_hash": __import__('hashlib').sha1(line.encode()).hexdigest(),
+        "ledger_hash": __import__("hashlib").sha1(line.encode()).hexdigest(),
         "prev_bill_amount": Decimal("0.00"),
         "interest_amount": Decimal("0.00"),
         "amount_orig": Decimal("0.00"),
@@ -28,11 +28,9 @@ def test_parse_domestic():
 
 
 def test_parse_international():
-    line = (
-        "10/04 SumUp *BOTI SRL 7,90 56,12 final 6853 EUR 7,90 = 6,27 BRL Milano"
-    )
+    line = "10/04 SumUp *BOTI SRL 7,90 56,12 final 6853 EUR 7,90 = 6,27 BRL Milano"
     row = parse_statement_line(line)
-    year = __import__('datetime').date.today().year
+    year = __import__("datetime").date.today().year
     assert row == {
         "card_last4": "6853",
         "post_date": f"{year}-04-10",
@@ -44,7 +42,7 @@ def test_parse_international():
         "iof_brl": Decimal("0.00"),
         "category": "FX",
         "merchant_city": "Milano",
-        "ledger_hash": __import__('hashlib').sha1(line.encode()).hexdigest(),
+        "ledger_hash": __import__("hashlib").sha1(line.encode()).hexdigest(),
         "prev_bill_amount": Decimal("0.00"),
         "interest_amount": Decimal("0.00"),
         "amount_orig": Decimal("7.90"),
@@ -56,7 +54,7 @@ def test_parse_international():
 def test_parse_payment():
     line = "22/04 PAGAMENTO final 0000 -500,00"
     row = parse_statement_line(line)
-    year = __import__('datetime').date.today().year
+    year = __import__("datetime").date.today().year
     assert row == {
         "card_last4": "0000",
         "post_date": f"{year}-04-22",
@@ -68,7 +66,7 @@ def test_parse_payment():
         "iof_brl": Decimal("0.00"),
         "category": "PAGAMENTO",
         "merchant_city": "",
-        "ledger_hash": __import__('hashlib').sha1(line.encode()).hexdigest(),
+        "ledger_hash": __import__("hashlib").sha1(line.encode()).hexdigest(),
         "prev_bill_amount": Decimal("0.00"),
         "interest_amount": Decimal("0.00"),
         "amount_orig": Decimal("0.00"),
@@ -80,7 +78,7 @@ def test_parse_payment():
 def test_parse_adjustment():
     line = "17/03 MP*BECLOT final 3549 -0,01"
     row = parse_statement_line(line)
-    year = __import__('datetime').date.today().year
+    year = __import__("datetime").date.today().year
     assert row == {
         "card_last4": "3549",
         "post_date": f"{year}-03-17",
@@ -92,7 +90,7 @@ def test_parse_adjustment():
         "iof_brl": Decimal("0.00"),
         "category": "AJUSTE",
         "merchant_city": "",
-        "ledger_hash": __import__('hashlib').sha1(line.encode()).hexdigest(),
+        "ledger_hash": __import__("hashlib").sha1(line.encode()).hexdigest(),
         "prev_bill_amount": Decimal("0.00"),
         "interest_amount": Decimal("0.00"),
         "amount_orig": Decimal("0.00"),

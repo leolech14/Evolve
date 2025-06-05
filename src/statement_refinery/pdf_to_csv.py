@@ -6,6 +6,7 @@ CLI
 ---
 python -m statement_refinery.pdf_to_csv input.pdf [--out output.csv]
 """
+
 from __future__ import annotations
 
 import argparse
@@ -16,7 +17,7 @@ from pathlib import Path
 from typing import Iterator, List
 import shutil
 
-import pdfplumber  # pip install pdfplumber
+import pdfplumber  # type: ignore  # pip install pdfplumber
 
 from . import txt_to_csv as t2c  # existing legacy parser
 

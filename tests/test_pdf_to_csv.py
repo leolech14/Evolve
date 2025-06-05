@@ -42,6 +42,4 @@ def test_all_pdfs(tmp_path):
         out_csv = tmp_path / golden.name
         run_parser(pdf, out_csv)
 
-        assert filecmp.cmp(
-            out_csv, golden, shallow=False
-        ), f"Mismatch for {pdf.name}"
+        assert filecmp.cmp(out_csv, golden, shallow=False), f"Mismatch for {pdf.name}"

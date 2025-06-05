@@ -1,8 +1,10 @@
 import hashlib
 from decimal import Decimal
+from datetime import date
+
 import pytest
 from statement_refinery.txt_to_csv import parse_statement_line
-from datetime import date
+
 
 def _expected_hash(line: str) -> str:
     return hashlib.sha1(line.encode("utf-8")).hexdigest()
@@ -21,8 +23,7 @@ def test_domestic_transaction():
     assert row["installment_tot"] == 4
     assert row["category"] == "FARMÁCIA"
     assert row["fx_rate"] == Decimal("0.00")
-    h = _expected_hash(line)
-    assert row["ledger_hash"] == h
+    assert row["ledger_hash"] == _expected_hash(line)
 
 
 def test_fx_transaction():
