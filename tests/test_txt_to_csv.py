@@ -112,4 +112,6 @@ def test_new_evolution_trigger():
     row = parse_statement_line(line)
     # This will fail to trigger evolution
     assert row is not None
-    assert row["category"] == "SPECIAL_MERCHANT_CATEGORY"  # This category doesn't exist yet
+    assert (
+        row["category"] == "SPECIAL_MERCHANT_CATEGORY"
+    )  # This category doesn't exist yet
