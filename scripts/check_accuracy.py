@@ -8,9 +8,9 @@ import importlib.util
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-if importlib.util.find_spec("pdfplumber") is None:
-    print("pdfplumber not installed; skipping accuracy checks.")
-    raise SystemExit(0)
+HAS_PDFPLUMBER = importlib.util.find_spec("pdfplumber") is not None
+if not HAS_PDFPLUMBER:
+    print("pdfplumber not installed; using text fallback")
 
 from statement_refinery import pdf_to_csv  # noqa: E402
 
@@ -25,7 +25,16 @@ def compare(pdf_path: Path) -> bool:
     print(f"\n=== {pdf_path.name} ===")
     buf = io.StringIO()
     with contextlib.redirect_stdout(buf):
-        pdf_to_csv.main([str(pdf_path)])
+        if HAS_PDFPLUMBER:
+            pdf_to_csv.main([str(pdf_path)])
+        else:
+            txt = pdf_path.with_suffix(".txt")
+            if not txt.exists():
+                print("Fallback text file missing. Skipping.")
+                return False
+            lines = txt.read_text().splitlines()
+            rows = pdf_to_csv.parse_lines(iter(lines))
+            pdf_to_csv.write_csv(rows, buf)
     output_lines = buf.getvalue().splitlines()
 
     golden = pdf_path.with_name(f"golden_{pdf_path.stem.split('_')[-1]}.csv")
