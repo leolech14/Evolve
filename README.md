@@ -48,9 +48,16 @@ require `pdfplumber` unless you add new PDFs.
 ## Auto-Patch Loop
 
 The GitHub Actions workflow uses `.github/tools/evolve.py` to automatically
-try patches with Codex whenever the test step fails. This script requires
-`OPENAI_API_KEY` to be set, so make sure that variable is available when
-running CI locally or triggering the workflow manually.
+try patches with Codex whenever the tests fail. The script depends on the
+`openai` package, which is installed when you include the `[dev]` extras at
+installation time. It also needs an API key, so the CI environment must
+define `OPENAI_API_KEY` for the patch loop to run. To experiment locally,
+export your key and invoke the tool directly:
+
+```bash
+export OPENAI_API_KEY=your-key
+python .github/tools/evolve.py
+```
 
 ## Project Goals
 
