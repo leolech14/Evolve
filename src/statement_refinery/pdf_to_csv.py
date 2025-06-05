@@ -73,17 +73,8 @@ def parse_lines(lines: Iterator[str]) -> List[dict]:
 
 
 def parse_pdf_from_golden(pdf_path: Path) -> List[dict]:
-    """Load rows from a golden CSV next to the PDF if available."""
-    golden = pdf_path.with_name(f"golden_{pdf_path.stem.split('_')[-1]}.csv")
-    if not golden.exists():
-        # Fall back to parsing lines if no golden CSV is available
-        return parse_lines(iter_pdf_lines(pdf_path))
-
-    rows: List[dict] = []
-    with golden.open("r", encoding="utf-8", newline="") as fh:
-        reader = csv.DictReader(fh, delimiter=";")
-        rows.extend(reader)
-    return rows
+    """Parse the PDF and return the list of row dictionaries."""
+    return parse_lines(iter_pdf_lines(pdf_path))
 
 
 def write_csv(rows: List[dict], out_fh) -> None:
@@ -114,9 +105,6 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--out", type=Path, default=None, help="Output CSV path")
     args = parser.parse_args(argv)
 
-    rows = parse_pdf_from_golden(args.pdf)
-    _LOGGER.info("Parsed %d transactions", len(rows))
-
     golden = args.pdf.with_name(f"golden_{args.pdf.stem.split('_')[-1]}.csv")
     if golden.exists():
         if args.out:
@@ -125,6 +113,9 @@ def main(argv: list[str] | None = None) -> None:
         else:
             sys.stdout.write(golden.read_text(encoding="utf-8"))
         return
+
+    rows = parse_pdf_from_golden(args.pdf)
+    _LOGGER.info("Parsed %d transactions", len(rows))
 
     if args.out:
         with args.out.open("w", newline="", encoding="utf-8") as fh:
