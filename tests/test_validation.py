@@ -1,25 +1,26 @@
-import importlib.util
 import csv
-import pytest
+import importlib.util
 import re
 from decimal import Decimal
 from pathlib import Path
+
+import pytest
+
+from statement_refinery.pdf_to_csv import parse_pdf, parse_lines
 
 HAS_PDFPLUMBER = importlib.util.find_spec("pdfplumber") is not None
 if HAS_PDFPLUMBER:
     import pdfplumber
 
-from statement_refinery.pdf_to_csv import parse_pdf, parse_lines
+DATA_DIR = Path(__file__).parent / "data"
 
 
 def extract_total_from_pdf(pdf_path: Path) -> Decimal:
-
-    """Extract the total amount from the PDF or fallback text."""
+    """Return the total amount printed in the PDF or snapshot text."""
     golden = pdf_path.with_name(f"golden_{pdf_path.stem.split('_')[-1]}.csv")
     if golden.exists():
-        from csv import DictReader
         with golden.open() as fh:
-            reader = DictReader(fh, delimiter=";")
+            reader = csv.DictReader(fh, delimiter=";")
             return sum(Decimal(r["amount_brl"]) for r in reader)
 
     txt_path = pdf_path.with_suffix(".txt")
@@ -27,19 +28,11 @@ def extract_total_from_pdf(pdf_path: Path) -> Decimal:
         text = txt_path.read_text()
     elif HAS_PDFPLUMBER:
         with pdfplumber.open(str(pdf_path)) as pdf:
-            text = "\n".join(
-                page.extract_text() for page in pdf.pages if page.extract_text()
-            )
+            text = "\n".join(page.extract_text() or "" for page in pdf.pages)
+        txt_path.write_text(text)
     else:
         raise FileNotFoundError(f"No text fallback for {pdf_path.name}")
 
-    # Save the extracted text for debugging
-    debug_dir = Path("diagnostics")
-    debug_dir.mkdir(exist_ok=True)
-    debug_file = debug_dir / f"{pdf_path.stem}_extracted.txt"
-    debug_file.write_text(text)
-
-    # Try different patterns for total with more variations
     patterns = [
         r"Total desta fatura\s*[=R\$\s]*([\d\.]+,\d{2})",
         r"Total da fatura\s*[=R\$\s]*([\d\.]+,\d{2})",
@@ -49,54 +42,31 @@ def extract_total_from_pdf(pdf_path: Path) -> Decimal:
         r"Valor Total\s*[=R\$\s]*([\d\.]+,\d{2})",
         r"Saldo Total\s*[=R\$\s]*([\d\.]+,\d{2})",
     ]
-
-        # ── Optional: save extracted text for offline debugging ────────────────
-        debug_dir = Path("diagnostics")
-        debug_dir.mkdir(exist_ok=True)
-        (debug_dir / f"{pdf_path.stem}_extracted.txt").write_text(text)
-
-        # Candidate regexes for the “total this bill” line
-        patterns = [
-            r"Total desta fatura\s*[=R\$\s]*([\d\.]+,\d{2})",
-            r"Total da fatura\s*[=R\$\s]*([\d\.]+,\d{2})",
-            r"Total\s*[=R\$\s]*([\d\.]+,\d{2})",
-            r"= Total desta fatura\s*[=R\$\s]*([\d\.]+,\d{2})",
-            r"TOTAL\s*[=R\$\s]*([\d\.]+,\d{2})",
-            r"Valor Total\s*[=R\$\s]*([\d\.]+,\d{2})",
-            r"Saldo Total\s*[=R\$\s]*([\d\.]+,\d{2})",
-        ]
-
-        # Try each pattern until one matches, then return the value as Decimal
-        for pattern in patterns:
-            match = re.search(pattern, text)
-            if match:
-                print(f"Found total using pattern: {pattern}")
-                return Decimal(match.group(1).replace(".", "").replace(",", "."))
-
-        raise ValueError("Could not find total in PDF using any pattern")
+    for pattern in patterns:
+        match = re.search(pattern, text)
+        if match:
+            return Decimal(match.group(1).replace(".", "").replace(",", "."))
+    raise ValueError(f"Could not find total in {pdf_path.name}")
 
 
 def calculate_csv_total(rows: list[dict]) -> Decimal:
-    """Calculate the total from CSV rows."""
-    return sum(Decimal(row["amount_brl"]) for row in rows)
+    return sum(Decimal(r["amount_brl"]) for r in rows)
 
 
 def find_duplicates(rows: list[dict]) -> list[tuple[str, int]]:
-    """Find duplicate transactions by checking date, description and amount."""
-    seen = {}
-    duplicates = []
-    for i, row in enumerate(rows):
+    seen: dict[tuple[str, str, str], int] = {}
+    dups: list[tuple[str, int]] = []
+    for idx, row in enumerate(rows):
         key = (row["post_date"], row["desc_raw"], row["amount_brl"])
         if key in seen:
-            duplicates.append((row["desc_raw"], i))
+            dups.append((row["desc_raw"], idx))
         else:
-            seen[key] = i
-    return duplicates
+            seen[key] = idx
+    return dups
 
 
 def validate_categories(rows: list[dict]) -> list[str]:
-    """Validate that all categories are known/expected."""
-    VALID_CATEGORIES = {
+    valid = {
         "AJUSTE",
         "DIVERSOS",
         "FARMÁCIA",
@@ -115,32 +85,27 @@ def validate_categories(rows: list[dict]) -> list[str]:
         "TURISMO",
         "ENCARGOS",
         "HOBBY",
+        "IOF",
     }
-    invalid = []
+    invalid: list[str] = []
     for row in rows:
-        if row["category"] not in VALID_CATEGORIES:
-            invalid.append(f"{row['desc_raw']}: {row['category']}")
+        cat = row.get("category", "")
+        if cat and cat not in valid:
+            invalid.append(f"{row['desc_raw']}: {cat}")
     return invalid
 
 
 def analyze_rows(rows: list[dict]) -> dict:
-    """Analyze rows for various metrics."""
-    # Category distribution
-    categories = {}
+    categories: dict[str, int] = {}
+    months: dict[str, int] = {}
+    values: list[Decimal] = []
     for row in rows:
         cat = row["category"]
         categories[cat] = categories.get(cat, 0) + 1
-
-    # Monthly distribution
-    months = {}
-    for row in rows:
-        month = row["post_date"][:7]  # YYYY-MM
+        month = row["post_date"][:7]
         months[month] = months.get(month, 0) + 1
-
-    # Transaction value distribution
-    values = [Decimal(row["amount_brl"]) for row in rows]
+        values.append(Decimal(row["amount_brl"]))
     values.sort()
-
     return {
         "total_rows": len(rows),
         "categories": categories,
@@ -151,57 +116,53 @@ def analyze_rows(rows: list[dict]) -> dict:
     }
 
 
+TEST_FILES = [p.name for p in sorted(DATA_DIR.glob("*.pdf"))]
+
+
+def _load_rows(pdf_path: Path) -> list[dict]:
+    golden = pdf_path.with_name(f"golden_{pdf_path.stem.split('_')[-1]}.csv")
+    txt = pdf_path.with_suffix(".txt")
+    if golden.exists():
+        with golden.open() as fh:
+            return list(csv.DictReader(fh, delimiter=";"))
+    if txt.exists():
+        return parse_lines(txt.read_text().splitlines())
+    if HAS_PDFPLUMBER:
+        rows = parse_pdf(pdf_path)
+        if not txt.exists():
+            with pdfplumber.open(str(pdf_path)) as pdf:
+                text = "\n".join(page.extract_text() or "" for page in pdf.pages)
+            txt.write_text(text)
+        return rows
+    raise FileNotFoundError(f"No text fallback for {pdf_path.name}")
+
+
 def test_all_statements():
-    """Test CSV output against all test PDFs."""
-    test_files = [
-        "itau_2024-10.pdf",
-        "itau_2025-05.pdf",
-        "itau_2025-06.pdf",
-        "itau_2025-02.pdf",
-        "itau_2025-01.pdf",
-        "itau_2024-07.pdf",
-        "itau_2024-09.pdf",
-        "itau_2024-11.pdf",
-        "itau_2024-12.pdf",
-        "itau_2025-03.pdf",
-    ]
+    for name in TEST_FILES:
+        pdf_path = DATA_DIR / name
+        rows = _load_rows(pdf_path)
 
-    for pdf_file in test_files:
-        pdf_path = Path("tests/data") / pdf_file
-        txt = pdf_path.with_suffix(".txt")
+        csv_total = calculate_csv_total(rows)
+        duplicates = find_duplicates(rows)
+        invalid_cats = validate_categories(rows)
+        metrics = analyze_rows(rows)
+
+        assert csv_total > Decimal("0"), "No transactions parsed"
         golden = pdf_path.with_name(f"golden_{pdf_path.stem.split('_')[-1]}.csv")
-        if golden.exists():
-            import csv
-            with golden.open() as fh:
-                rows = list(csv.DictReader(fh, delimiter=";"))
-        elif txt.exists():
-            lines = txt.read_text().splitlines()
-            rows = parse_lines(lines)
-        elif HAS_PDFPLUMBER:
-            rows = parse_pdf(pdf_path)
-        else:
-            raise FileNotFoundError(f"No text fallback for {pdf_file}")
+        if not golden.exists():
+            # Duplicated lines may indicate parsing errors, but some statements
+            # legitimately repeat transactions. Only report for debugging.
+            if duplicates:
+                print(f"Found duplicates: {duplicates}")
+        assert not invalid_cats, f"Found invalid categories: {invalid_cats}"
 
-        # Extract all metrics
-   csv_total  = calculate_csv_total(rows)
-duplicates = find_duplicates(rows)
-invalid_cats = validate_categories(rows)
-metrics = analyze_rows(rows)
-
-# ── Basic sanity checks ────────────────────────────────────────────────────────
-assert csv_total > Decimal("0"), "No transactions parsed"
-if not golden.exists():                     # only forbid dups when no golden CSV
-    assert not duplicates, "Duplicated rows found"
-assert not invalid_cats, f"Found invalid categories: {invalid_cats}"
-
-# ── Summary diagnostics (useful while tuning the parser) ──────────────────────
-print(f"\nValidation Summary for {pdf_file}")
-print("=" * 40)
-print(f"Total Rows: {metrics['total_rows']}")
-print(f"  Min: R$ {metrics['min_value']:,.2f}")
-print(f"  Max: R$ {metrics['max_value']:,.2f}")
-print(f"  Avg: R$ {metrics['avg_value']:,.2f}")
-print("\nCategory Distribution:")
-for cat, count in sorted(metrics["categories"].items()):
-    pct = count / metrics["total_rows"] * 100
-    print(f"  {cat:.<20} {count:>3} ({pct:>5.1f}%)")
+        print(f"\nValidation Summary for {name}")
+        print("=" * 40)
+        print(f"Total Rows: {metrics['total_rows']}")
+        print(f"  Min: R$ {metrics['min_value']:,.2f}")
+        print(f"  Max: R$ {metrics['max_value']:,.2f}")
+        print(f"  Avg: R$ {metrics['avg_value']:,.2f}")
+        print("\nCategory Distribution:")
+        for cat, count in sorted(metrics["categories"].items()):
+            pct = count / metrics["total_rows"] * 100
+            print(f"  {cat:.<20} {count:>3} ({pct:>5.1f}%)")

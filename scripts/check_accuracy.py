@@ -26,6 +26,10 @@ def compare(pdf_path: Path) -> bool:
     with contextlib.redirect_stdout(buf):
         if HAS_PDFPLUMBER:
             pdf_to_csv.main([str(pdf_path)])
+            txt_file = pdf_path.with_suffix(".txt")
+            if not txt_file.exists():
+                lines = list(pdf_to_csv.iter_pdf_lines(pdf_path))
+                txt_file.write_text("\n".join(lines))
         else:
             txt = pdf_path.with_suffix(".txt")
             if not txt.exists():
