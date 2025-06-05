@@ -1,11 +1,6 @@
 import hashlib
 from decimal import Decimal
-from pathlib import Path
-import sys
-
 import pytest
-
-sys.path.insert(0, str(Path(__file__).parents[1] / "src"))
 from statement_refinery.txt_to_csv import parse_statement_line
 
 
