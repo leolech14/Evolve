@@ -17,6 +17,10 @@ If your environment lacks internet access, this download will fail. In that
 case, pre-download the required wheels or install the package in an
 environment that can reach PyPI.
 
+`pdfplumber` is only needed when parsing PDFs that do not yet have a
+corresponding golden CSV. The tests and operations that use those golden files
+work even if `pdfplumber` is missing.
+
 Once installation succeeds, the CLI becomes available as `pdf-to-csv`. Run it
 with a PDF file to generate a CSV:
 
@@ -37,6 +41,9 @@ The test suite depends on the package’s *development* extras. Install them and
 
     pip install -e '.[dev]'
     pytest
+
+These tests rely on the checked-in golden CSV files and therefore do not
+require `pdfplumber` unless you add new PDFs.
 
 ## Project Goals
 
