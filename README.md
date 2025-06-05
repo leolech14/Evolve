@@ -109,6 +109,13 @@ Set `FORCE_EVOLVE=1` to force the loop to run even when the first test pass
 is successful. This can be handy when experimenting locally or when
 triggering the workflow manually in CI.
 
+## Required Secret Scopes
+
+The CI workflow expects a `BOT_PAT` secret containing a personal access token
+for the GitHub bot account. The token only needs to push commits and open pull
+requests in this repository. Grant the minimal permissions by enabling
+`contents:write` and `pull_requests:write` (or the classic `repo` scope).
+
 ## Project Goals
 
 * **Accuracy first** – robust regex rules tuned for Itaú PDFs.  

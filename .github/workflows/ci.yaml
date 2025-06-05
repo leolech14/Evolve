@@ -14,7 +14,7 @@ env:
   MAX_TOKENS_PER_RUN: '1000000'   # 1 M-token budget
   MAX_ATTEMPTS: '3'
   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-  GITHUB_TOKEN:   ${{ secrets.PERSONAL_ACCESS_TOKEN_CLASSIC }}
+  GITHUB_TOKEN:   ${{ secrets.BOT_PAT }}
 
 jobs:
   static:
@@ -24,7 +24,7 @@ jobs:
         task: [ruff, black, mypy]
     env:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      GITHUB_TOKEN:   ${{ secrets.PERSONAL_ACCESS_TOKEN_CLASSIC }}
+      GITHUB_TOKEN:   ${{ secrets.BOT_PAT }}
     steps:
       - uses: actions/checkout@v4
 
@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      GITHUB_TOKEN:   ${{ secrets.PERSONAL_ACCESS_TOKEN_CLASSIC }}
+      GITHUB_TOKEN:   ${{ secrets.BOT_PAT }}
     steps:
       - uses: actions/checkout@v4
 
@@ -94,7 +94,7 @@ jobs:
         if: steps.tests.outcome == 'failure' || env.FORCE_EVOLVE == '1'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          GITHUB_TOKEN:   ${{ secrets.PERSONAL_ACCESS_TOKEN_CLASSIC }}
+          GITHUB_TOKEN:   ${{ secrets.BOT_PAT }}
 
         run: python .github/tools/evolve.py
 
