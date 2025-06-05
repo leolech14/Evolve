@@ -7,7 +7,7 @@ This project provides utilities for converting Ita\u00fa credit card statements 
 After cloning the repository, install the package in editable mode along with development dependencies:
 
 ```bash
-pip install -e .[dev]
+pip install -e '.[dev]'
 ```
 
 ## Command-Line Usage
@@ -28,5 +28,6 @@ Execute the test suite with:
 pytest
 ```
 
-# Evolve
+## Project Goals
 
+Statement Refinery began as a simple script to parse a personal Ita\u00fa credit card statement. It now aims to provide a reliable toolchain for converting statements into analysis-ready CSV files.
