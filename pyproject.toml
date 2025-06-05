@@ -24,10 +24,20 @@ dev = [
     "black",
     "pytest",
     "pytest-cov",
+    "pytest-xdist",
     "mypy",
     "openai>=0",
+    "pdfplumber",
 ]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
 packages = ["statement_refinery"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+
+[tool.black]
+target-version = ["py312"]
+line-length = 88

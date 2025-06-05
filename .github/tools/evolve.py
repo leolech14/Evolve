@@ -12,8 +12,8 @@ Env vars obrigatórios:
 
 Env vars opcionais:
 - OPENAI_MODEL           (default: gpt-4.1)
-- MAX_ATTEMPTS           (default: 3)
-- MAX_TOKENS_PER_RUN     (default: 1_000_000)
+- MAX_ATTEMPTS           (default: 5)
+- MAX_TOKENS_PER_RUN     (default: 3000000)
 """
 
 from __future__ import annotations
@@ -44,15 +44,37 @@ if not api_key:
     print("Missing OPENAI_API_KEY environment variable.", file=sys.stderr)
     raise SystemExit(1)
 
+github_token = os.getenv("GITHUB_TOKEN")
+if not github_token:
+    print("Missing GITHUB_TOKEN environment variable.", file=sys.stderr)
+    raise SystemExit(1)
+
 client = openai.OpenAI(api_key=api_key)
 MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1")
-MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS", "3"))
-MAX_TOKENS = int(os.getenv("MAX_TOKENS_PER_RUN", "1000000"))
+MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS", "5"))
+MAX_TOKENS = int(os.getenv("MAX_TOKENS_PER_RUN", "3000000"))
+
+
+# ───────────────────────── process helper ─────────────────────────
+def _run_with_retry(cmd: Tuple[str, ...], capture: bool) -> subprocess.CompletedProcess:
+    attempts = 3
+    for i in range(1, attempts + 1):
+        res = subprocess.run(cmd, text=True, capture_output=capture)
+        if res.returncode == 0:
+            return res
+        if i < attempts:
+            print(f"Retry {i}/3 for {' '.join(cmd)}", file=sys.stderr)
+            time.sleep(1)
+    return res
 
 
 # ───────────────────────── git helpers ─────────────────────────
 def sh(*cmd, capture=False):
-    res = subprocess.run(cmd, check=True, text=True, capture_output=capture)
+    res = _run_with_retry(cmd, capture)
+    if res.returncode != 0:
+        raise subprocess.CalledProcessError(
+            res.returncode, cmd, output=res.stdout, stderr=res.stderr
+        )
     return res.stdout.strip() if capture else None
 
 
@@ -124,6 +146,11 @@ def main():
     print(f"BASELINE {best_commit or 'none'} score={best_score}")
 
     sh("git", "fetch", "--all", "--prune")
+    try:
+        sh("git", "rev-parse", "--verify", BEST_BRANCH)
+    except subprocess.CalledProcessError:
+        print(f"{BEST_BRANCH} missing; creating from main")
+        sh("git", "branch", BEST_BRANCH, "main")
     sh("git", "checkout", BEST_BRANCH)
 
     while TOKENS_USED < MAX_TOKENS:
@@ -196,6 +223,7 @@ def main():
                     f"Score {best_score} → {cur_score}",
                 )
                 save_best(current_commit(), cur_score)
+                print(f"Used {TOKENS_USED} tokens")
                 return 0  # success
 
             sh("git", "checkout", BEST_BRANCH)
@@ -203,6 +231,7 @@ def main():
         print("No improvement in this cycle, restarting from best…")
 
     print("Max tokens budget reached.")
+    print(f"Used {TOKENS_USED} tokens")
     return 1
 
 

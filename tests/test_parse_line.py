@@ -61,15 +61,30 @@ def test_adjustment_line():
     assert row["category"] == "AJUSTE"
 
 
-def test_edge_case_parsing():
-    """Test case to trigger evolution - this should be improved by AI"""
+def test_complex_merchant_parsed():
+    """Ensure unusual merchant names are parsed correctly."""
     line = "31/12 COMPLEX MERCHANT NAME WITH SPECIAL CHARS @#$ 99,99"
     row = parse_statement_line(line)
-    # This test will fail initially to trigger evolution
     assert row is not None
-    assert row["amount_brl"] == Decimal("99.99")
-    assert row["desc_raw"] == "COMPLEX MERCHANT NAME WITH SPECIAL CHARS @#$"
-    assert row["category"] == "DIVERSOS"
+    year = date.today().year
+    assert row == {
+        "card_last4": "0000",
+        "post_date": f"{year}-12-31",
+        "desc_raw": "COMPLEX MERCHANT NAME WITH SPECIAL CHARS @#$",
+        "amount_brl": Decimal("99.99"),
+        "installment_seq": 0,
+        "installment_tot": 0,
+        "fx_rate": Decimal("0.00"),
+        "iof_brl": Decimal("0.00"),
+        "category": "DIVERSOS",
+        "merchant_city": "",
+        "ledger_hash": _expected_hash(line),
+        "prev_bill_amount": Decimal("0.00"),
+        "interest_amount": Decimal("0.00"),
+        "amount_orig": Decimal("0.00"),
+        "currency_orig": "",
+        "amount_usd": Decimal("0.00"),
+    }
 
 
 def test_invalid_month_skipped():
