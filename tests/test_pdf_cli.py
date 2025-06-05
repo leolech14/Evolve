@@ -1,3 +1,10 @@
+"""
+Tests for statement_refinery.pdf_to_csv
+
+This file resolves previous merge-conflict markers and adds a mock-based test
+for the edge-case where pdfplumber returns no text.
+"""
+
 import io
 import csv
 import importlib.util
@@ -10,10 +17,13 @@ from statement_refinery import pdf_to_csv as mod
 DATA = Path(__file__).parent / "data"
 PDF_SAMPLE = DATA / "itau_2024-10.pdf"
 
-if importlib.util.find_spec("pdfplumber") is None:
-    pytest.skip("pdfplumber not installed", allow_module_level=True)
+HAS_PDFPLUMBER = importlib.util.find_spec("pdfplumber") is not None
 
 
+# ─────────────────────────── tests that need pdfplumber ─────────────────────────
+
+
+@pytest.mark.skipif(not HAS_PDFPLUMBER, reason="pdfplumber not installed")
 def test_iter_pdf_lines():
     lines = list(mod.iter_pdf_lines(PDF_SAMPLE))
     assert lines[:3] == [
@@ -24,6 +34,7 @@ def test_iter_pdf_lines():
     assert len(lines) > 100
 
 
+@pytest.mark.skipif(not HAS_PDFPLUMBER, reason="pdfplumber not installed")
 def test_parse_lines():
     rows = mod.parse_lines(mod.iter_pdf_lines(PDF_SAMPLE))
     assert rows, "expected at least one parsed transaction"
@@ -31,6 +42,7 @@ def test_parse_lines():
         assert key in rows[0]
 
 
+@pytest.mark.skipif(not HAS_PDFPLUMBER, reason="pdfplumber not installed")
 def test_write_csv_roundtrip():
     rows = mod.parse_lines(mod.iter_pdf_lines(PDF_SAMPLE))
     buf = io.StringIO()
@@ -44,6 +56,7 @@ def test_write_csv_roundtrip():
     assert parsed[0]["desc_raw"] == rows[0]["desc_raw"]
 
 
+@pytest.mark.skipif(not HAS_PDFPLUMBER, reason="pdfplumber not installed")
 def test_main_uses_golden(tmp_path):
     out_csv = tmp_path / "out.csv"
     mod.main([str(PDF_SAMPLE), "--out", str(out_csv)])
@@ -51,6 +64,7 @@ def test_main_uses_golden(tmp_path):
     assert out_csv.read_text() == golden.read_text()
 
 
+@pytest.mark.skipif(not HAS_PDFPLUMBER, reason="pdfplumber not installed")
 def test_main_stdout_golden(capsys):
     mod.main([str(PDF_SAMPLE)])
     golden = (DATA / "golden_2024-10.csv").read_text()
@@ -58,6 +72,7 @@ def test_main_stdout_golden(capsys):
     assert captured.out == golden
 
 
+@pytest.mark.skipif(not HAS_PDFPLUMBER, reason="pdfplumber not installed")
 def test_main_parse_pdf(tmp_path):
     pdf_path = tmp_path / "copy.pdf"
     pdf_path.write_bytes(PDF_SAMPLE.read_bytes())
@@ -69,6 +84,7 @@ def test_main_parse_pdf(tmp_path):
     assert len(lines) > 1
 
 
+@pytest.mark.skipif(not HAS_PDFPLUMBER, reason="pdfplumber not installed")
 def test_main_parse_pdf_stdout(tmp_path, capsys):
     pdf_path = tmp_path / "copy.pdf"
     pdf_path.write_bytes(PDF_SAMPLE.read_bytes())
@@ -77,3 +93,40 @@ def test_main_parse_pdf_stdout(tmp_path, capsys):
     lines = captured.out.splitlines()
     assert lines[0] == ";".join(mod.CSV_HEADER)
     assert len(lines) > 1
+
+
+# ───────────────────────── tests that DO NOT need pdfplumber ─────────────────────
+
+
+def test_iter_pdf_lines_skips_empty_page(monkeypatch, caplog):
+    """
+    Ensure iter_pdf_lines returns an empty list and logs a warning when
+    pdfplumber.extract_text() yields None.
+    """
+
+    class DummyPage:
+        def extract_text(self):
+            return None
+
+    class DummyPdf:
+        pages = [DummyPage()]
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, tb):
+            pass
+
+    def dummy_open(_):
+        return DummyPdf()
+
+    import types, sys
+
+    # Inject a dummy pdfplumber module with just an `open` function.
+    dummy_module = types.SimpleNamespace(open=dummy_open)
+    monkeypatch.setitem(sys.modules, "pdfplumber", dummy_module)
+
+    caplog.set_level("WARNING", logger="pdf_to_csv")
+    lines = list(mod.iter_pdf_lines(Path("dummy.pdf")))
+    assert lines == []
+    assert "no extractable text" in caplog.text.lower()
