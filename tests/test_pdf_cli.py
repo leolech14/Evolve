@@ -67,3 +67,31 @@ def test_main_parse_pdf(tmp_path):
     lines = out_csv.read_text().splitlines()
     assert lines[0] == ";".join(mod.CSV_HEADER)
     assert len(lines) > 1
+
+
+def test_iter_pdf_lines_skips_empty_page(monkeypatch, caplog):
+    class DummyPage:
+        def extract_text(self):
+            return None
+
+    class DummyPdf:
+        pages = [DummyPage()]
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, tb):
+            pass
+
+    def dummy_open(_):
+        return DummyPdf()
+
+    import types, sys
+
+    dummy_module = types.SimpleNamespace(open=dummy_open)
+    monkeypatch.setitem(sys.modules, "pdfplumber", dummy_module)
+
+    caplog.set_level("WARNING", logger="pdf_to_csv")
+    lines = list(mod.iter_pdf_lines(Path("dummy.pdf")))
+    assert lines == []
+    assert "no extractable text" in caplog.text.lower()
