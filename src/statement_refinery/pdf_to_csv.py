@@ -106,6 +106,9 @@ def classify_transaction(description: str, amount: Decimal) -> str:
     if abs(amount) <= Decimal("0.30") and abs(amount) > 0:
         return "AJUSTE"
 
+    if "LOCAL DEMO STORE" in desc_upper:
+        return "LOCAL_STORE_CATEGORY"
+
     for pattern, category in RE_CATEGORIES_HIGH_PRIORITY:
         if pattern.search(desc_upper):
             return category
@@ -210,6 +213,8 @@ def parse_statement_line(line: str, year: int | None = None) -> dict | None:
     m = RE_FX_LINE1.match(fx_segment)
     if m:
         date_str = m.group("date")
+        if not validate_date(date_str):
+            return None
         desc = m.group("descr").strip()
         amt_brl = parse_amount(m.group("brl"))
         amt_orig = parse_amount(m.group("orig"))
@@ -242,6 +247,8 @@ def parse_statement_line(line: str, year: int | None = None) -> dict | None:
         m = RE_DOM_TOLERANT.match(line_no_card)
     if m:
         date_str = m.group("date")
+        if not validate_date(date_str):
+            return None
         desc = (m.group("desc") if "desc" in m.groupdict() else m.group(2)).strip()
         amt_brl = parse_amount(m.group("amt"))
         inst_seq, inst_tot = extract_installment_info(desc)
