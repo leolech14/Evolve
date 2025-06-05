@@ -122,3 +122,12 @@ def test_demo_evolution():
     assert row is not None
     # Ensure unrecognized merchants default to DIVERSOS
     assert row["category"] == "DIVERSOS"
+
+
+def test_local_evolution_demo():
+    """Local demo to see evolution working."""
+    line = "05/05 LOCAL DEMO STORE 150,00"
+    row = parse_statement_line(line)
+    assert row is not None
+    # This will fail - AI should fix it
+    assert row["category"] == "LOCAL_STORE_CATEGORY"
