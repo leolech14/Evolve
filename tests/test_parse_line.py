@@ -63,3 +63,13 @@ def test_edge_case_parsing():
     assert row["amount_brl"] == Decimal("99.99")
     assert row["desc_raw"] == "COMPLEX MERCHANT NAME WITH SPECIAL CHARS @#$"
     assert row["category"] == "DIVERSOS"
+
+
+def test_invalid_month_skipped():
+    line = "05/00 R$ R$ 10,00"
+    assert parse_statement_line(line) is None
+
+
+def test_invalid_day_skipped():
+    line = "32/12 SOME TEXT 1,00"
+    assert parse_statement_line(line) is None
