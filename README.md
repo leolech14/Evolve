@@ -30,4 +30,8 @@ The test suite depends on the package’s *development* extras. Install them and
 * **Zero-friction analysis** – clean CSVs ready for spreadsheets or BI tools.  
 * **Open by default** – contributions welcome; see `CONTRIBUTING.md` for guidelines.
 
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
 Happy refining!
