@@ -131,6 +131,9 @@ env/
 # Temporary files
 *.tmp
 
+# Build outputs
+outputs/
+
 # Others
 *.DS_Store
 Thumbs.db

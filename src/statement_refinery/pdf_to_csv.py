@@ -106,11 +106,6 @@ def classify_transaction(description: str, amount: Decimal) -> str:
     if abs(amount) <= Decimal("0.30") and abs(amount) > 0:
         return "AJUSTE"
 
-    if "LOCAL DEMO STORE" in desc_upper:
-        # Test helper merchant used by the evolution demo. Treat it as a
-        # regular transaction so CI tests remain green.
-        return DEFAULT_CATEGORY
-
     for pattern, category in RE_CATEGORIES_HIGH_PRIORITY:
         if pattern.search(desc_upper):
             return category
@@ -199,6 +194,13 @@ def parse_statement_line(line: str, year: int | None = None) -> dict | None:
     line = line.strip()
     if not line:
         return None
+
+    upper_line = line.upper()
+    if re.search(r"R\$\s*R\$", upper_line):
+        return None
+    if any(kw in upper_line for kw in ITAU_PARSING_RULES["skip_keywords"]):
+        if not re.search(r"\d{1,2}/\d{1,2}", upper_line):
+            return None
 
     card_match = RE_CARD_FINAL.search(line)
     card_last4 = card_match.group(1) if card_match else "0000"
@@ -290,6 +292,12 @@ ITAU_PARSING_RULES = {
         "LIMITE",
         "VENCIMENTO",
         "FATURA",
+        "Valor",
+        "VALOR",
+        "Total",
+        "CREDITO",
+        "OUTROS",
+        "LANCAMENTOS",
     ],
     "merchant_separators": [".", "*", "-", " "],
     "amount_validation": {
@@ -373,11 +381,18 @@ def iter_pdf_lines(pdf_path: Path) -> Iterator[str]:
 def parse_lines(lines: Iterator[str], year: int | None = None) -> List[dict]:
     """Convert raw lines into row-dicts using :func:`parse_statement_line`."""
     rows: List[dict] = []
+    seen_hashes = set()
     for line in lines:
         try:
             row = parse_statement_line(line, year)
             if row:
-                rows.append(row)
+                # Skip lines with credit limit information
+                if "LIMITE" in row["desc_raw"].upper():
+                    continue
+                # Deduplicate using transaction hash
+                if row["ledger_hash"] not in seen_hashes:
+                    rows.append(row)
+                    seen_hashes.add(row["ledger_hash"])
         except Exception as exc:  # pragma: no cover
             _LOGGER.warning("Skip line '%s': %s", line, exc)
     return rows
