@@ -418,7 +418,6 @@ def main(argv: list[str] | None = None) -> None:
             sys.stdout.write(golden.read_text(encoding="utf-8"))
         return
 
- codex/rename-parse_pdf_from_golden-to-parse_pdf
     rows = parse_pdf_from_golden(args.pdf, yr)
     _LOGGER.info("Parsed %d transactions", len(rows))
 
