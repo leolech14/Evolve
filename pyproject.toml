@@ -17,7 +17,7 @@ dependencies = [
 [project.scripts]
 pdf-to-csv = "statement_refinery.pdf_to_csv:main"
 
-[project.optional-dependencies.dev]
+[project.optional-dependencies]
 # Development dependencies for linting, type checking and tests
 dev = [
     "ruff",
