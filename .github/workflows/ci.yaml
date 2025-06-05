@@ -104,44 +104,34 @@ jobs:
         run: |
           pytest -ra -vv --cov=statement_refinery \
                  --cov-report=term-missing --cov-report=xml \
-                 --cov-fail-under=90
+                 --cov-fail-under=90 \
+                 --json-report --json-report-file=report.json
 
       - name: Check parser accuracy
         id: accuracy
         continue-on-error: true
-        run: python scripts/check_accuracy.py --threshold 99
+        run: python scripts/check_accuracy.py --threshold 99 --summary-file accuracy_summary.json
 
       # auto-patch loop runs only when tests or accuracy fail
-      - name: Validate evolve prerequisites
+      - name: Check evolve prerequisites
         id: evolve_prereqs
         if: |
           steps.tests.outcome == 'failure' ||
           steps.accuracy.outcome == 'failure'
-        run: |
-          python - <<'EOF'
-          import os, sys
-          try:
-              import openai  # noqa
-          except Exception:
-              sys.stderr.write('Missing `openai` package\n')
-              sys.exit(1)
-          if not os.getenv('OPENAI_API_KEY'):
-              sys.stderr.write('OPENAI_API_KEY not set\n')
-              sys.exit(1)
-          EOF
+        run: python scripts/check_evolve_prereqs.py
 
       - name: Evolve patch loop
         id: evolve
-        if: steps.evolve_prereqs.outcome == 'success'
+        if: |
+          (steps.tests.outcome == 'failure' ||
+           steps.accuracy.outcome == 'failure') &&
+          steps.evolve_prereqs.outcome == 'success'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_TOKEN:   ${{ secrets.BOT_PAT }}
 
         run: python .github/tools/evolve.py
 
-      - name: Evolve skipped
-        if: steps.evolve.outcome == 'skipped'
-        run: "echo 'Evolve patch loop skipped: tests already passing.' >> $GITHUB_STEP_SUMMARY"
 
       - name: Report evolve failure
         if: steps.evolve.outcome == 'failure'
@@ -178,6 +168,16 @@ jobs:
         with:
           name: coverage-xml
           path: coverage.xml
+
+      - name: Summarize results
+        if: always()
+        env:
+          STATIC_RESULT: ${{ needs.static.result }}
+          TESTS_OUTCOME: ${{ steps.tests.outcome }}
+          ACCURACY_OUTCOME: ${{ steps.accuracy.outcome }}
+          EVOLVE_PREREQS_OUTCOME: ${{ steps.evolve_prereqs.outcome }}
+          EVOLVE_OUTCOME: ${{ steps.evolve.outcome }}
+        run: python scripts/ci_summary.py
 
 
   golden-check:

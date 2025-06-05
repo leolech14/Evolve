@@ -4,6 +4,7 @@ import argparse
 from pathlib import Path
 import difflib
 import importlib.util
+import json
 import statistics
 import sys, os  # noqa: E401,F401
 
@@ -76,16 +77,23 @@ def main() -> None:
         default=99.0,
         help="fail if average match percentage is below this value",
     )
+    parser.add_argument(
+        "--summary-file",
+        default="accuracy_summary.json",
+        help="write JSON summary to this file",
+    )
     args = parser.parse_args()
 
-    pdfs = sorted(DATA_DIR.glob("itau_*.pdf"))
+    pdfs = sorted(DATA_DIR.glob("[iI]tau_*.pdf"))
     if not pdfs:
         print("No PDFs found in tests/data.")
         return
 
     mismatched = False
     percentages = []
-    for pdf in pdfs:
+    total = len(pdfs)
+    for idx, pdf in enumerate(pdfs, 1):
+        print(f"\nProcessing {idx}/{total}: {pdf.name}")
         mis, pct = compare(pdf)
         percentages.append(pct)
         if mis:
@@ -97,8 +105,13 @@ def main() -> None:
         print(f"Accuracy {avg:.2f}% below threshold {args.threshold}%")
         mismatched = True
 
+    summary = {"pdf_count": len(pdfs), "average": avg}
+    Path(args.summary_file).write_text(json.dumps(summary))
+
     if mismatched:
         raise SystemExit("mismatched parser output or low accuracy")
+
+    print("All PDF checks passed \N{PARTY POPPER}")
 
 
 if __name__ == "__main__":
