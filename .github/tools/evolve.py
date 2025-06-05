@@ -26,11 +26,18 @@ from pathlib import Path
 from typing import Tuple
 
 import openai
+import sys
 
 ROOT = Path(__file__).resolve().parents[2]  # repo root
 BEST_BRANCH = "codex/best"
 SCORE_FILE = ROOT / ".github/tools/score_best.json"
-client = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    print("Missing OPENAI_API_KEY environment variable.", file=sys.stderr)
+    raise SystemExit(1)
+
+client = openai.OpenAI(api_key=api_key)
 MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1")
 MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS", "3"))
 MAX_TOKENS = int(os.getenv("MAX_TOKENS_PER_RUN", "1000000"))
