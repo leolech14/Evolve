@@ -73,3 +73,13 @@ def test_invalid_month_skipped():
 def test_invalid_day_skipped():
     line = "32/12 SOME TEXT 1,00"
     assert parse_statement_line(line) is None
+
+
+def test_header_fragment_skipped():
+    line = "R$    R$"
+    assert parse_statement_line(line) is None
+
+
+def test_keyword_line_skipped():
+    line = "TOTAL 1,00"
+    assert parse_statement_line(line) is None
