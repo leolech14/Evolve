@@ -119,6 +119,15 @@ def save_best(commit: str, best_score: float):
     SCORE_FILE.write_text(json.dumps({"commit": commit, "score": best_score}))
 
 
+def ensure_best_branch() -> None:
+    """Ensure BEST_BRANCH exists locally."""
+    try:
+        sh("git", "rev-parse", "--verify", BEST_BRANCH)
+    except subprocess.CalledProcessError:
+        print(f"{BEST_BRANCH} missing; creating from main")
+        sh("git", "branch", BEST_BRANCH, "main")
+
+
 # ───────────────────────── codex patch ─────────────────────────
 TOKENS_USED = 0
 
@@ -145,12 +154,8 @@ def main():
     best_commit, best_score = load_best()
     print(f"BASELINE {best_commit or 'none'} score={best_score}")
 
+    ensure_best_branch()
     sh("git", "fetch", "--all", "--prune")
-    try:
-        sh("git", "rev-parse", "--verify", BEST_BRANCH)
-    except subprocess.CalledProcessError:
-        print(f"{BEST_BRANCH} missing; creating from main")
-        sh("git", "branch", BEST_BRANCH, "main")
     sh("git", "checkout", BEST_BRANCH)
 
     while TOKENS_USED < MAX_TOKENS:
