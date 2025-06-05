@@ -129,5 +129,4 @@ def test_local_evolution_demo():
     line = "05/05 LOCAL DEMO STORE 150,00"
     row = parse_statement_line(line)
     assert row is not None
-    # The parser currently defaults to ``DIVERSOS`` for this demo entry
     assert row["category"] == "DIVERSOS"

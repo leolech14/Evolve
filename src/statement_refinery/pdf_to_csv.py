@@ -184,6 +184,24 @@ def build_comprehensive_patterns():
 
 
 def _iso_date(date_str: str, year: int | None = None) -> str:
+    """Return ISO formatted date string from ``DD/MM`` format.
+
+    Parameters
+    ----------
+    date_str:
+        Date string in ``DD/MM`` format.
+    year:
+        Year for the resulting date. Defaults to the current year.
+
+    Raises
+    ------
+    ValueError
+        If ``date_str`` does not represent a valid day and month.
+    """
+
+    if not validate_date(date_str):
+        raise ValueError(f"Invalid date: {date_str}")
+
     yr = year or date.today().year
     day, month = date_str.split("/")
     return f"{yr}-{month.zfill(2)}-{day.zfill(2)}"
@@ -227,9 +245,13 @@ def parse_statement_line(line: str, year: int | None = None) -> dict | None:
         category = classify_transaction(desc, amt_brl)
         if RE_PAYMENT.search(line):
             category = "PAGAMENTO"
+        try:
+            post_date = _iso_date(date_str, year)
+        except ValueError:
+            return None
         return {
             "card_last4": card_last4,
-            "post_date": _iso_date(date_str, year),
+            "post_date": post_date,
             "desc_raw": desc,
             "amount_brl": amt_brl,
             "installment_seq": inst_seq or 0,
@@ -259,9 +281,13 @@ def parse_statement_line(line: str, year: int | None = None) -> dict | None:
         category = classify_transaction(desc, amt_brl)
         if RE_PAYMENT.search(line_no_card):
             category = "PAGAMENTO"
+        try:
+            post_date = _iso_date(date_str, year)
+        except ValueError:
+            return None
         return {
             "card_last4": card_last4,
-            "post_date": _iso_date(date_str, year),
+            "post_date": post_date,
             "desc_raw": desc,
             "amount_brl": amt_brl,
             "installment_seq": inst_seq or 0,
