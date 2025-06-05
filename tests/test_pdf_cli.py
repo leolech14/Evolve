@@ -67,3 +67,13 @@ def test_main_parse_pdf(tmp_path):
     lines = out_csv.read_text().splitlines()
     assert lines[0] == ";".join(mod.CSV_HEADER)
     assert len(lines) > 1
+
+
+def test_main_parse_pdf_stdout(tmp_path, capsys):
+    pdf_path = tmp_path / "copy.pdf"
+    pdf_path.write_bytes(PDF_SAMPLE.read_bytes())
+    mod.main([str(pdf_path)])
+    captured = capsys.readouterr()
+    lines = captured.out.splitlines()
+    assert lines[0] == ";".join(mod.CSV_HEADER)
+    assert len(lines) > 1
