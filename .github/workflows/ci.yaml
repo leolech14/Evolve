@@ -26,7 +26,7 @@ jobs:
           cache: 'pip'
 
       - name: Install dev deps
-        run: pip install -e .[dev]
+        run: pip install -e '.[dev]'
 
       - name: Ruff lint
         run: ruff check .
@@ -49,7 +49,7 @@ jobs:
           cache: 'pip'
 
       - name: Install dev deps
-        run: pip install -e .[dev]
+        run: pip install -e '.[dev]'
 
       # run tests once, capture failure but don't abort
       - name: PyTest + Coverage

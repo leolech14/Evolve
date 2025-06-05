@@ -16,10 +16,13 @@ dependencies = [
 [project.optional-dependencies]
 # Development dependencies for linting, type checking and tests
 dev = [
-    "pytest",
-    "coverage",
     "ruff",
     "black",
+    "pytest",
     "mypy",
 ]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["statement_refinery"]
 
