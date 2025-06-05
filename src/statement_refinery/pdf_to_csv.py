@@ -401,10 +401,10 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--out", type=Path, default=None, help="Output CSV path")
     args = parser.parse_args(argv)
 
-    stem_suffix = args.pdf.stem.split('_')[-1]
+    stem_suffix = args.pdf.stem.split("_")[-1]
     yr = None
     try:
-        yr = int(stem_suffix.split('-')[0])
+        yr = int(stem_suffix.split("-")[0])
     except (ValueError, IndexError):
         yr = None
 
