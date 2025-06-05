@@ -71,3 +71,7 @@ jobs:
       - name: Re-run tests
         if: always()
         run: pytest -ra -vv --cov=statement_refinery --cov-report=term-missing --cov-fail-under=90
+
+      - name: Check parser accuracy
+        if: always()
+        run: python scripts/check_accuracy.py
