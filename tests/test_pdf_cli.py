@@ -120,7 +120,8 @@ def test_iter_pdf_lines_skips_empty_page(monkeypatch, caplog):
     def dummy_open(_):
         return DummyPdf()
 
-    import types, sys
+    import types
+    import sys
 
     # Inject a dummy pdfplumber module with just an `open` function.
     dummy_module = types.SimpleNamespace(open=dummy_open)
