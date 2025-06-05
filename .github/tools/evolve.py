@@ -136,13 +136,13 @@ def main():
                 try:
                     fail_output = sh("pytest", "-v", "--tb=short", capture=True)
                     # Get full test output but prioritize error messages
-                    error_lines = [l for l in fail_output.splitlines() if 'FAILED' in l or 'Error' in l or 'AssertionError' in l]
+                    error_lines = [line for line in fail_output.splitlines() if 'FAILED' in line or 'Error' in line or 'AssertionError' in line]
                     fail_log = "Tests are failing. Errors:\n" + '\n'.join(error_lines)
                     if len(error_lines) < 10:  # If few errors, include full context
                         fail_log += "\n\nFull test output:\n" + fail_output
                 except subprocess.CalledProcessError as e:
                     error_output = e.stdout if e.stdout else 'No output'
-                    error_lines = [l for l in error_output.splitlines() if 'FAILED' in l or 'Error' in l or 'AssertionError' in l]
+                    error_lines = [line for line in error_output.splitlines() if 'FAILED' in line or 'Error' in line or 'AssertionError' in line]
                     fail_log = "Tests failing. Errors:\n" + '\n'.join(error_lines)
                     if len(error_lines) < 10:
                         fail_log += "\n\nFull error output:\n" + error_output
