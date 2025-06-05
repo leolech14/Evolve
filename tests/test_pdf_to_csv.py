@@ -8,15 +8,19 @@ automatically becomes part of the test matrix.
 from pathlib import Path
 import filecmp
 import subprocess
+import sys
+import os
 
 DATA = Path(__file__).parent / "data"
 PDFS = list(DATA.glob("*.pdf"))
 
 
-def run_parser(pdf_path: Path, out_path: Path):
+def run_parser(pdf_path: Path, out_path: Path) -> None:
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(Path(__file__).parents[1] / "src")
     subprocess.run(
         [
-            "python",
+            sys.executable,
             "-m",
             "statement_refinery.pdf_to_csv",
             str(pdf_path),
@@ -24,6 +28,7 @@ def run_parser(pdf_path: Path, out_path: Path):
             str(out_path),
         ],
         check=True,
+        env=env,
     )
 
 

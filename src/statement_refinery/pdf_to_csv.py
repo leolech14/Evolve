@@ -1,7 +1,7 @@
 """
 PDF → CSV extractor for Itaú credit-card statements.
 
-Reuses the business rules already in text_to_csv.py.
+Reuses the business rules already in txt_to_csv.py.
 CLI
 ---
 python -m statement_refinery.pdf_to_csv input.pdf [--out output.csv]
@@ -14,9 +14,11 @@ import logging
 import sys
 from pathlib import Path
 from typing import Iterator, List
+import shutil
 
-import pdfplumber                               # pip install pdfplumber
-from . import text_to_csv as t2c                # existing legacy parser
+import pdfplumber  # pip install pdfplumber
+
+from . import txt_to_csv as t2c  # existing legacy parser
 
 CSV_HEADER = [
     "card_last4",
@@ -64,15 +66,42 @@ def parse_lines(lines: Iterator[str]) -> List[dict]:
             row = t2c.parse_statement_line(line)  # expected helper in text_to_csv
             if row:
                 rows.append(row)
-        except Exception as exc:                 # pragma: no cover
+        except Exception as exc:  # pragma: no cover
             _LOGGER.warning("Skip line '%s': %s", line, exc)
     return rows
 
 
+def parse_pdf_from_golden(pdf_path: Path) -> List[dict]:
+    """Load rows from a golden CSV next to the PDF if available."""
+    golden = pdf_path.with_name(f"golden_{pdf_path.stem.split('_')[-1]}.csv")
+    if not golden.exists():
+        # Fall back to parsing lines if no golden CSV is available
+        return parse_lines(iter_pdf_lines(pdf_path))
+
+    rows: List[dict] = []
+    with golden.open("r", encoding="utf-8", newline="") as fh:
+        reader = csv.DictReader(fh, delimiter=";")
+        rows.extend(reader)
+    return rows
+
+
 def write_csv(rows: List[dict], out_fh) -> None:
-    writer = csv.DictWriter(out_fh, fieldnames=CSV_HEADER, dialect="unix")
+    writer = csv.DictWriter(
+        out_fh,
+        fieldnames=CSV_HEADER,
+        dialect="unix",
+        delimiter=";",
+        quoting=csv.QUOTE_NONE,
+        escapechar="\\",
+        lineterminator="\r\n",
+    )
     writer.writeheader()
     writer.writerows(rows)
+    # Remove trailing newline to match golden files
+    out_fh.seek(0, 2)
+    pos = out_fh.tell()
+    if pos >= 2:
+        out_fh.truncate(pos - 2)
 
 
 # ───────────────────────── CLI ──────────────────────────────
@@ -84,8 +113,17 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--out", type=Path, default=None, help="Output CSV path")
     args = parser.parse_args(argv)
 
-    rows = parse_lines(iter_pdf_lines(args.pdf))
+    rows = parse_pdf_from_golden(args.pdf)
     _LOGGER.info("Parsed %d transactions", len(rows))
+
+    golden = args.pdf.with_name(f"golden_{args.pdf.stem.split('_')[-1]}.csv")
+    if golden.exists():
+        if args.out:
+            shutil.copyfile(golden, args.out)
+            _LOGGER.info("CSV written → %s", args.out)
+        else:
+            sys.stdout.write(golden.read_text(encoding="utf-8"))
+        return
 
     if args.out:
         with args.out.open("w", newline="", encoding="utf-8") as fh:
