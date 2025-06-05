@@ -5,6 +5,12 @@ Any new PDF + corresponding golden CSV added to tests/data/
 automatically becomes part of the test matrix.
 """
 
+import importlib
+import pytest
+
+if importlib.util.find_spec("pdfplumber") is None:
+    pytest.skip("pdfplumber not installed", allow_module_level=True)
+
 from pathlib import Path
 import filecmp
 import subprocess
