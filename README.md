@@ -30,4 +30,4 @@ pytest
 
 ## Project Goals
 
-Statement Refinery began as a simple script to parse a personal Ita\u00fa credit card statement. It now aims to provide a reliable toolchain for converting statements into analysis-ready CSV files.
+Happy refining!
