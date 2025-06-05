@@ -309,7 +309,7 @@ __all__ = [
     "CSV_HEADER",
     "iter_pdf_lines",
     "parse_lines",
-    "parse_pdf",
+    "parse_pdf_from_golden",
     "write_csv",
     "main",
 ]
