@@ -2,7 +2,6 @@ import re
 from decimal import Decimal
 from pathlib import Path
 import pdfplumber
-import pytest
 from statement_refinery.pdf_to_csv import parse_pdf
 
 def extract_total_from_pdf(pdf_path: Path) -> Decimal:
@@ -114,7 +113,7 @@ def test_all_statements():
         print(f"CSV Total: R$ {csv_total:,.2f}")
         print(f"Difference: R$ {abs(pdf_total - csv_total):,.2f}")
         print(f"Accuracy: {accuracy:.1f}%")
-        print(f"\nTransaction Range:")
+        print("\nTransaction Range:")
         print(f"  Min: R$ {metrics['min_value']:,.2f}")
         print(f"  Max: R$ {metrics['max_value']:,.2f}")
         print(f"  Avg: R$ {metrics['avg_value']:,.2f}")
