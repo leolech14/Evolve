@@ -20,6 +20,7 @@ jobs:
   static:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         task: [ruff, black, mypy]
     env:
@@ -141,6 +142,40 @@ jobs:
           files: coverage.xml
 
 
+  golden-check:
+    needs: tests-evolve
+    runs-on: ubuntu-latest
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      GITHUB_TOKEN:   ${{ secrets.BOT_PAT }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-py-${{ hashFiles('pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-py-
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Cache golden data
+        uses: actions/cache@v3
+        with:
+          path: |
+            .pytest_cache
+            .ruff_cache
+          key: ${{ runner.os }}-golden-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-golden-
+
+      - name: Install dev deps
+        run: pip install -e '.[dev]'
+
       - name: Check parser accuracy
-        if: always()
         run: python scripts/check_accuracy.py
+
