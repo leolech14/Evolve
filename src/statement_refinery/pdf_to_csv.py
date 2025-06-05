@@ -28,9 +28,9 @@ import shutil
 # ===== CORE REGEX PATTERNS =====
 
 RE_DOM_STRICT: Final = re.compile(
-    r"^(?P<date>\d{1,2}/\d{1,2})\s+"
+    r"^[~g]*\s*(?P<date>\d{1,2}/\d{1,2})\s+"
     r"(?P<desc>.+?)\s+"
-    r"(?P<amt>-?\d{1,3}(?:\.\d{3})*,\d{2})$"
+    r"(?P<amt>-?\d{1,3}(?:\.\d{3})*,\d{2})(?:\s+.*)?$"
 )
 
 RE_DOM_TOLERANT: Final = re.compile(
@@ -56,7 +56,7 @@ RE_CARD_FINAL: Final = re.compile(r"\bfinal\s+(\d{4})\b", re.I)
 RE_INSTALLMENT: Final = re.compile(r"(\d{2})/(\d{2})$")
 
 RE_EMBEDDED_TRANSACTION: Final = re.compile(
-    r"(?P<date>\d{1,2}/\d{1,2})\s+(?P<desc>[A-Z][A-Z\s\*\-\.]{2,30}?)\s+(?P<amt>\d{1,3}(?:\.\d{3})*,\d{2})"
+    r"(?P<date>\d{1,2}/\d{1,2})\s+(?P<desc>[A-Z][A-Z\s\*\-\.]{2,30}?)\s+(?:final\s+\d{4}\s+)?(?P<amt>\d{1,3}(?:\.\d{3})*,\d{2})"
 )
 
 # ===== CATEGORY CLASSIFICATION PATTERNS =====
@@ -379,19 +379,30 @@ def parse_lines(lines: Iterator[str], year: int | None = None) -> List[dict]:
     """Convert raw lines into row-dicts using :func:`parse_statement_line`."""
     rows: List[dict] = []
     seen_hashes = set()
-    for line in lines:
-        try:
-            row = parse_statement_line(line, year)
-            if row:
-                # Skip lines with credit limit information
-                if "LIMITE" in row["desc_raw"].upper():
-                    continue
-                # Deduplicate using transaction hash
-                if row["ledger_hash"] not in seen_hashes:
-                    rows.append(row)
-                    seen_hashes.add(row["ledger_hash"])
-        except Exception as exc:  # pragma: no cover
-            _LOGGER.warning("Skip line '%s': %s", line, exc)
+    with open('tests/debug/parse_debug.txt', 'w') as debug_file:
+        for line in lines:
+            try:
+                # Log the line being processed
+                debug_file.write(f"Processing line: {line}\n")
+                
+                row = parse_statement_line(line, year)
+                if row:
+                    # Skip lines with credit limit information
+                    if "LIMITE" in row["desc_raw"].upper():
+                        debug_file.write("  Skipped: Contains LIMITE\n")
+                        continue
+                    # Deduplicate using transaction hash
+                    if row["ledger_hash"] not in seen_hashes:
+                        rows.append(row)
+                        seen_hashes.add(row["ledger_hash"])
+                        debug_file.write(f"  Parsed: {row['desc_raw']} = R$ {row['amount_brl']}\n")
+                    else:
+                        debug_file.write("  Skipped: Duplicate transaction\n")
+                else:
+                    debug_file.write("  Skipped: Not a transaction line\n")
+            except Exception as exc:  # pragma: no cover
+                debug_file.write(f"  Error: {exc}\n")
+                _LOGGER.warning("Skip line '%s': %s", line, exc)
     return rows
 
 
