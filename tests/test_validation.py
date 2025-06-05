@@ -145,6 +145,9 @@ def test_all_statements():
             else Decimal("0")
         )
 
+        assert abs(pdf_total - csv_total) < Decimal("0.01")
+        assert accuracy >= Decimal("99")
+
         # Print detailed report
         print(f"\nValidation Report for {pdf_file}")
         print("=" * 50)
