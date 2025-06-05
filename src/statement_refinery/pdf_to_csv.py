@@ -342,7 +342,12 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 # ───────────────────────── helpers ──────────────────────────
 def iter_pdf_lines(pdf_path: Path) -> Iterator[str]:
     """Yield each non-empty line of the PDF."""
-    import pdfplumber  # type: ignore  # moved inside the function
+    try:
+        import pdfplumber  # type: ignore  # moved inside the function
+    except ImportError as exc:  # pragma: no cover - network/optional dep
+        raise RuntimeError(
+            "pdfplumber is required to parse PDFs; install with `pip install pdfplumber`."
+        ) from exc
 
     with pdfplumber.open(str(pdf_path)) as pdf:
         for idx, page in enumerate(pdf.pages, 1):
