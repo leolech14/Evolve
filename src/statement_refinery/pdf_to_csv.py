@@ -310,7 +310,7 @@ __all__ = [
     "CSV_HEADER",
     "iter_pdf_lines",
     "parse_lines",
-    "parse_pdf_from_golden",
+    "parse_pdf",
     "write_csv",
     "main",
 ]
@@ -369,7 +369,7 @@ def parse_lines(lines: Iterator[str], year: int | None = None) -> List[dict]:
     return rows
 
 
-def parse_pdf_from_golden(pdf_path: Path, year: int | None = None) -> List[dict]:
+def parse_pdf(pdf_path: Path, year: int | None = None) -> List[dict]:
     """Parse the PDF and return the list of row dictionaries."""
     return parse_lines(iter_pdf_lines(pdf_path), year)
 
@@ -418,7 +418,7 @@ def main(argv: list[str] | None = None) -> None:
             sys.stdout.write(golden.read_text(encoding="utf-8"))
         return
 
-    rows = parse_pdf_from_golden(args.pdf, yr)
+    rows = parse_pdf(args.pdf, yr)
     _LOGGER.info("Parsed %d transactions", len(rows))
 
     if args.out:
