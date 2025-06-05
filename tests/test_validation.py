@@ -25,12 +25,15 @@ def extract_total_from_pdf(pdf_path: Path) -> Decimal:
         debug_file = debug_dir / f"{pdf_path.stem}_extracted.txt"
         debug_file.write_text(text)
 
-        # Try different patterns for total
+        # Try different patterns for total with more variations
         patterns = [
-            r"Total desta fatura\s+([\d\.]+,\d{2})",
-            r"Total da fatura\s+([\d\.]+,\d{2})",
-            r"Total\s+([\d\.]+,\d{2})",
-            r"= Total desta fatura\s+([\d\.]+,\d{2})",
+            r"Total desta fatura\s*[=R\$\s]*([\d\.]+,\d{2})",
+            r"Total da fatura\s*[=R\$\s]*([\d\.]+,\d{2})",
+            r"Total\s*[=R\$\s]*([\d\.]+,\d{2})",
+            r"= Total desta fatura\s*[=R\$\s]*([\d\.]+,\d{2})",
+            r"TOTAL\s*[=R\$\s]*([\d\.]+,\d{2})",
+            r"Valor Total\s*[=R\$\s]*([\d\.]+,\d{2})",
+            r"Saldo Total\s*[=R\$\s]*([\d\.]+,\d{2})"
         ]
 
         for pattern in patterns:

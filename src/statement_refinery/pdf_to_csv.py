@@ -30,7 +30,7 @@ import shutil
 RE_DOM_STRICT: Final = re.compile(
     r"^[~g]*\s*(?P<date>\d{1,2}/\d{1,2})\s+"
     r"(?P<desc>.+?)\s+"
-    r"(?P<amt>-?\d{1,3}(?:\.\d{3})*,\d{2})(?:\s+.*)?$"
+    r"(?P<amt>-?\d{1,3}(?:\.\d{3})*,\d{2})\s*(?:R\$)?(?:\s+.*)?$"
 )
 
 RE_DOM_TOLERANT: Final = re.compile(
@@ -56,7 +56,7 @@ RE_CARD_FINAL: Final = re.compile(r"\bfinal\s+(\d{4})\b", re.I)
 RE_INSTALLMENT: Final = re.compile(r"(\d{2})/(\d{2})$")
 
 RE_EMBEDDED_TRANSACTION: Final = re.compile(
-    r"(?P<date>\d{1,2}/\d{1,2})\s+(?P<desc>[A-Z][A-Z\s\*\-\.]{2,30}?)\s+(?:final\s+\d{4}\s+)?(?P<amt>\d{1,3}(?:\.\d{3})*,\d{2})"
+    r"(?P<date>\d{1,2}/\d{1,2})\s+(?P<desc>[A-Z][A-Z\s\*\-\.\d]{2,50}?)\s+(?:final\s+\d{4}\s+)?(?P<amt>-?\d{1,3}(?:\.\d{3})*,\d{2})(?:\s+.*)?$"
 )
 
 # ===== CATEGORY CLASSIFICATION PATTERNS =====
@@ -71,7 +71,7 @@ RE_CATEGORIES_STANDARD = [
     (re.compile(r"ACELERADOR|PONTOS|ANUIDADE|SEGURO|TARIFA", re.I), "SERVIÇOS"),
     (re.compile(r"SUPERMERC", re.I), "SUPERMERCADO"),
     (re.compile(r"FARMAC|DROG|PANVEL", re.I), "FARMÁCIA"),
-    (re.compile(r"RESTAUR|PIZZ|BAR|CAFÉ", re.I), "RESTAURANTE"),
+    (re.compile(r"RESTAUR|PIZZ|BAR|CAFÉ|REFUG", re.I), "RESTAURANTE"),
     (re.compile(r"POSTO|COMBUST|GASOLIN", re.I), "POSTO"),
     (re.compile(r"UBER|TAXI|TRANSP|PASSAGEM", re.I), "TRANSPORTE"),
     (re.compile(r"AEROPORTO|HOTEL|TUR", re.I), "TURISMO"),
@@ -80,6 +80,7 @@ RE_CATEGORIES_STANDARD = [
     (re.compile(r"VEIC", re.I), "VEÍCULOS"),
     (re.compile(r"VEST|LOJA|MAGAZINE", re.I), "VESTUÁRIO"),
     (re.compile(r"EDU", re.I), "EDUCAÇÃO"),
+    (re.compile(r"APPLE|GAME|STEAM|NETFLIX|SPOTIFY", re.I), "HOBBY"),
 ]
 
 RE_INTERNATIONAL_PATTERNS = [
@@ -94,8 +95,19 @@ RE_INTERNATIONAL_PATTERNS = [
 
 def parse_amount(amount_str: str) -> Decimal:
     """Parse Brazilian currency format to Decimal."""
-    clean = re.sub(r"[^\d,\-]", "", amount_str.replace(" ", ""))
-    clean = clean.replace(".", "").replace(",", ".")
+    # Remove any currency symbols and extra spaces
+    clean = amount_str.replace('R$', '').strip()
+    # Remove any characters except digits, comma, period, and minus sign
+    clean = re.sub(r'[^\d,\.\-]', '', clean)
+    # Handle different number formats
+    if ',' in clean and '.' in clean:
+        # Brazilian format (1.234,56)
+        clean = clean.replace('.', '').replace(',', '.')
+    elif ',' in clean and '.' not in clean:
+        # European/Brazilian format without thousands separator
+        clean = clean.replace(',', '.')
+    # Remove any trailing/leading dots
+    clean = clean.strip('.')
     return Decimal(clean)
 
 
@@ -309,7 +321,7 @@ def parse_statement_line(line: str, year: int | None = None) -> dict | None:
 
 
 ITAU_PARSING_RULES = {
-    "currency_formats": ["USD", "EUR", "GBP", "JPY", "CHF", "CAD", "AUD"],
+    "currency_formats": ["USD", "EUR", "GBP", "JPY", "CHF", "CAD", "AUD", "BRL", "R$"],
     "skip_keywords": [
         "PAGAMENTO",
         "TOTAL",
@@ -324,6 +336,11 @@ ITAU_PARSING_RULES = {
         "CREDITO",
         "OUTROS",
         "LANCAMENTOS",
+        "SALDO",
+        "ENCARGOS",
+        "ROTATIVO",
+        "PARCELA",
+        "PROXIMA",
     ],
     "merchant_separators": [".", "*", "-", " "],
     "amount_validation": {
@@ -408,6 +425,7 @@ def parse_lines(lines: Iterator[str], year: int | None = None) -> List[dict]:
     """Convert raw lines into row-dicts using :func:`parse_statement_line`."""
     rows: List[dict] = []
     seen_hashes = set()
+    current_card = "0000"
     debug_dir = Path("diagnostics")
     debug_dir.mkdir(exist_ok=True)
     with open(debug_dir / "parse_debug.txt", "w") as debug_file:
@@ -416,12 +434,29 @@ def parse_lines(lines: Iterator[str], year: int | None = None) -> List[dict]:
                 # Log the line being processed
                 debug_file.write(f"Processing line: {line}\n")
 
+                # Check for card number updates
+                card_match = RE_CARD_FINAL.search(line)
+                if card_match:
+                    current_card = card_match.group(1)
+                    debug_file.write(f"  Updated current card to: {current_card}\n")
+
                 row = parse_statement_line(line, year)
                 if row:
                     # Skip lines with credit limit information
                     if "LIMITE" in row["desc_raw"].upper():
                         debug_file.write("  Skipped: Contains LIMITE\n")
                         continue
+
+                    # Update card number if not set
+                    if row["card_last4"] == "0000":
+                        row["card_last4"] = current_card
+                        debug_file.write(f"  Updated card number to: {current_card}\n")
+
+                    # Special handling for IOF and similar fees
+                    if RE_IOF.search(row["desc_raw"]):
+                        row["iof_brl"] = row["amount_brl"]
+                        debug_file.write(f"  Marked as IOF: {row['amount_brl']}\n")
+
                     # Deduplicate using transaction hash
                     if row["ledger_hash"] not in seen_hashes:
                         rows.append(row)
