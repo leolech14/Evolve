@@ -112,36 +112,25 @@ jobs:
         run: python scripts/check_accuracy.py --threshold 99
 
       # auto-patch loop runs only when tests or accuracy fail
-      - name: Validate evolve prerequisites
+      - name: Check evolve prerequisites
         id: evolve_prereqs
         if: |
           steps.tests.outcome == 'failure' ||
           steps.accuracy.outcome == 'failure'
-        run: |
-          python - <<'EOF'
-          import os, sys
-          try:
-              import openai  # noqa
-          except Exception:
-              sys.stderr.write('Missing `openai` package\n')
-              sys.exit(1)
-          if not os.getenv('OPENAI_API_KEY'):
-              sys.stderr.write('OPENAI_API_KEY not set\n')
-              sys.exit(1)
-          EOF
+        run: python scripts/check_evolve_prereqs.py
 
       - name: Evolve patch loop
         id: evolve
-        if: steps.evolve_prereqs.outcome == 'success'
+        if: |
+          (steps.tests.outcome == 'failure' ||
+           steps.accuracy.outcome == 'failure') &&
+          steps.evolve_prereqs.outcome == 'success'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_TOKEN:   ${{ secrets.BOT_PAT }}
 
         run: python .github/tools/evolve.py
 
-      - name: Evolve skipped
-        if: steps.evolve.outcome == 'skipped'
-        run: "echo 'Evolve patch loop skipped: tests already passing.' >> $GITHUB_STEP_SUMMARY"
 
       - name: Report evolve failure
         if: steps.evolve.outcome == 'failure'
