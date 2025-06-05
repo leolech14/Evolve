@@ -28,7 +28,7 @@ from typing import Tuple
 
 import openai
 
-ROOT = Path(__file__).resolve().parents[2]      # repo root
+ROOT = Path(__file__).resolve().parents[2]  # repo root
 BEST_BRANCH = "codex/best"
 SCORE_FILE = ROOT / ".github/tools/score_best.json"
 openai.api_key = os.environ["OPENAI_API_KEY"]
@@ -51,7 +51,13 @@ def current_commit() -> str:
 def run_tests() -> Tuple[bool, float]:
     """Run pytest + coverage; return (green?, coverage%)."""
     try:
-        out = sh("pytest", "-q", "--cov=statement_refinery", "--cov-report=term-missing", capture=True)
+        out = sh(
+            "pytest",
+            "-q",
+            "--cov=statement_refinery",
+            "--cov-report=term-missing",
+            capture=True,
+        )
     except subprocess.CalledProcessError as exc:
         return False, 0.0
 

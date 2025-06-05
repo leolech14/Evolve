@@ -392,7 +392,15 @@ def parse_statement_line(line: str) -> dict | None:
 
 ITAU_PARSING_RULES = {
     "currency_formats": ["USD", "EUR", "GBP", "JPY", "CHF", "CAD", "AUD"],
-    "skip_keywords": ["PAGAMENTO", "TOTAL", "JUROS", "MULTA", "LIMITE", "VENCIMENTO", "FATURA"],
+    "skip_keywords": [
+        "PAGAMENTO",
+        "TOTAL",
+        "JUROS",
+        "MULTA",
+        "LIMITE",
+        "VENCIMENTO",
+        "FATURA",
+    ],
     "merchant_separators": [".", "*", "-", " "],
     "amount_validation": {
         "min_adjustment": Decimal("0.01"),

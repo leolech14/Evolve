@@ -24,10 +24,12 @@ def main():
     print("⚙️  Generating single Codex patch…")
     resp = openai.ChatCompletion.create(
         model=MODEL,
-        messages=[{
-            "role": "user",
-            "content": "There are pytest failures; provide a unified diff that fixes them."
-        }],
+        messages=[
+            {
+                "role": "user",
+                "content": "There are pytest failures; provide a unified diff that fixes them.",
+            }
+        ],
         temperature=0.1,
     )
     patch = resp.choices[0].message["content"]
@@ -45,11 +47,17 @@ def main():
     sh("git", "checkout", "-b", branch)
     sh("git", "push", "-u", "origin", branch)
     sh(
-        "gh", "pr", "create",
-        "--base", os.getenv("GITHUB_HEAD_REF", "main"),
-        "--head", branch,
-        "--title", "🤖 One-shot Codex patch",
-        "--body", "Generated automatically."
+        "gh",
+        "pr",
+        "create",
+        "--base",
+        os.getenv("GITHUB_HEAD_REF", "main"),
+        "--head",
+        branch,
+        "--title",
+        "🤖 One-shot Codex patch",
+        "--body",
+        "Generated automatically.",
     )
     print("PR opened.")
     return 0
