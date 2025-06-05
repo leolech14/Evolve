@@ -67,6 +67,20 @@ fails. Update the golden CSV by rerunning `pdf-to-csv` with the `--out` option
 (for example `pdf-to-csv tests/data/itau_2024-10.pdf --out tests/data/golden_2024-10.csv`) and commit
 the new file.
 
+## Analyzing PDFs without Goldens
+
+Use `scripts/analyze_pdfs.py` to run the parser on statements that do **not**
+have golden CSVs. The script prints a summary showing the difference between the
+PDF total and the parsed CSV, any duplicate transactions and the distribution of
+categories. Optionally it can store the generated CSVs under `diagnostics/` for
+manual inspection.
+
+```bash
+python scripts/analyze_pdfs.py path/to/statements --write-csv
+```
+
+These diagnostics operate solely on the PDFs, so no golden CSV is required.
+
 
 ## Auto-Patch Loop
 
