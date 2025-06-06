@@ -87,7 +87,12 @@ summary_lines.append(
     f"\ud83c\udfd1 RESULT: {'PARSER READY' if all_ok else 'NOT READY'}"
 )
 
-with open(os.environ.get("GITHUB_STEP_SUMMARY", "summary.txt"), "a") as fh:
+with open(
+    os.environ.get("GITHUB_STEP_SUMMARY", "summary.txt"),
+    "a",
+    encoding="utf-8",
+    errors="replace",
+) as fh:
     fh.write("\n".join(summary_lines) + "\n")
 
 if not all_ok:
