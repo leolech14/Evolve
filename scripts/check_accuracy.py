@@ -50,7 +50,8 @@ def extract_total_from_pdf(pdf_path: Path) -> Decimal:
         r"Saldo Total\s*[=R\$\s]*([\d\.]+,\d{2})",
     ]
     for pattern in patterns:
-        match = re.search(pattern, text, re.IGNORECASE)
+        match = re.search(pattern, text)
+
         if match:
             val = match.group(1).replace(".", "").replace(",", ".")
             return Decimal(val)
