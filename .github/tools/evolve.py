@@ -179,6 +179,8 @@ def generate_patch(fail_log: str) -> str:
             {
                 "role": "user",
                 "content": (
+                    "Only touch existing files. Output a single valid unified diff; "
+                    "no markers, no JSON, no markdown.\n"
                     "Return **only** a unified diff between HEAD and fixed code.\n"
                     "Begin with:  diff --git a/... b/...\n"
                     "Use Unix line endings.\n"
@@ -205,6 +207,7 @@ def main() -> int:
     sh("git", "checkout", BEST_BRANCH)
 
     invalid_replies = 0
+    apply_failures = 0
 
     while TOKENS_USED < MAX_TOKENS:
         for attempt in range(1, MAX_ATTEMPTS + 1):
@@ -255,8 +258,13 @@ def main() -> int:
             except subprocess.CalledProcessError as e:
                 print("❌ Patch did not apply.")
                 fail_log = f"patch failed: {e.stderr.strip()}"[:7000]
+                apply_failures += 1
+                if apply_failures > MAX_PATCH_FAILURES:
+                    print(f"❌ Too many patch failures (limit: {MAX_PATCH_FAILURES}). Aborting.")
+                    return 1
                 sh("git", "checkout", BEST_BRANCH)
                 continue
+            apply_failures = 0
             sh("git", "apply", str(tmp))
             # ensure patch produced changes
             try:
