@@ -93,6 +93,20 @@ def looks_like_diff(text: str) -> bool:
     return text.lstrip().startswith("diff --git ")
 
 
+def diff_targets_exist(patch: str) -> tuple[bool, str | None]:
+    """Return True if all files referenced by *patch* exist in the repo."""
+    for line in patch.splitlines():
+        if line.startswith("diff --git "):
+            try:
+                _, _, a_path, b_path = line.split(maxsplit=3)
+            except ValueError:
+                return False, "corrupt header"
+            path = b_path[2:]
+            if not Path(path).exists():
+                return False, path
+    return True, None
+
+
 def current_commit() -> str:
     return sh("git", "rev-parse", "HEAD", capture=True)[:7]
 
@@ -168,6 +182,8 @@ def generate_patch(fail_log: str) -> str:
                     "Return **only** a unified diff between HEAD and fixed code.\n"
                     "Begin with:  diff --git a/... b/...\n"
                     "Use Unix line endings.\n"
+                    "Only modify existing files under src/, scripts/, or tests/.\n"
+                    "Do not create new files.\n"
                     "If nothing to change, reply exactly:  #NOPATCH\n\n"
                     f"{fail_log[:7000]}"
                 ),
@@ -225,15 +241,23 @@ def main() -> int:
                 continue
             invalid_replies = 0
 
+            ok, missing = diff_targets_exist(patch)
+            if not ok:
+                print(f"❌ Diff references non-existent file: {missing}")
+                fail_log = f"diff references non-existent file: {missing}"[:7000]
+                sh("git", "checkout", BEST_BRANCH)
+                continue
+
             tmp = Path("patch.diff")
             tmp.write_text(patch)
             try:
                 sh("git", "apply", "--check", str(tmp))
-                sh("git", "apply", str(tmp))
-            except subprocess.CalledProcessError:
+            except subprocess.CalledProcessError as e:
                 print("❌ Patch did not apply.")
+                fail_log = f"patch failed: {e.stderr.strip()}"[:7000]
                 sh("git", "checkout", BEST_BRANCH)
                 continue
+            sh("git", "apply", str(tmp))
             # ensure patch produced changes
             try:
                 sh("git", "diff", "--quiet")
