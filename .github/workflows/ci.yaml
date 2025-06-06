@@ -11,7 +11,7 @@ on:
 
 env:
   OPENAI_MODEL: gpt-4.1
-  MAX_TOKENS_PER_RUN: '2000000'   # 2 M-token budget
+  MAX_TOKENS_PER_RUN: '200000'    # reduce budget to 200k tokens
   MAX_ATTEMPTS: '5'
   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
   GITHUB_TOKEN:   ${{ secrets.BOT_PAT }}
