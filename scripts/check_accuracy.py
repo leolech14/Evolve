@@ -58,7 +58,6 @@ def extract_total_from_pdf(pdf_path: Path) -> Decimal:
     raise ValueError(f"Could not find total in {pdf_path.name}")
 
 
-
 def compare(pdf_path: Path, out_dir: Path | None = None) -> tuple[bool, float]:
     """Run pdf_to_csv on *pdf_path* and compare to its golden CSV.
 
