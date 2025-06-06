@@ -68,6 +68,13 @@ MAX_TOKENS = int(os.getenv("MAX_TOKENS_PER_RUN", "100000"))
 MAX_PATCH_FAILURES = int(os.getenv("MAX_PATCH_FAILURES", "3"))
 
 
+def log_tokens_to_file(tokens: int) -> None:
+    """Append token usage to diagnostics/tokens.log."""
+    log_file = DIAG_DIR / "tokens.log"
+    with log_file.open("a") as fh:
+        fh.write(f"{int(time.time())},{tokens}\n")
+
+
 # ───────────────────────── helpers ─────────────────────────
 def _run_with_retry(cmd: Tuple[str, ...], capture: bool) -> subprocess.CompletedProcess:
     """Run a shell command with up to 3 retries."""
@@ -161,8 +168,11 @@ def save_best(commit: str, best_score: float, tokens_used: int):
     print(f"🎉 New best! Commit {commit}  score={best_score:.1f}  tokens={tokens_used}")
     log_tokens_to_file(tokens_used)
 
+
 def record_tokens():
     log_tokens_to_file(TOKENS_USED)
+
+
 # ───────────────────────── git helpers ─────────────────────────
 def ensure_best_branch() -> None:
     """Ensure BEST_BRANCH exists locally."""
