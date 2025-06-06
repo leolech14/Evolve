@@ -154,3 +154,7 @@ itau_*.csv
 diagnostics/
 diagnostics/*.csv
 tests/debug/
+
+# Parser outputs
+csv_output/*
+!csv_output/.gitkeep
