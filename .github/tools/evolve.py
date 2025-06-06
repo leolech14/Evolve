@@ -259,8 +259,8 @@ def main() -> int:
                 print("❌ Patch did not apply.")
                 fail_log = f"patch failed: {e.stderr.strip()}"[:7000]
                 apply_failures += 1
-                if apply_failures > 3:
-                    print("❌ Too many patch failures. Aborting.")
+                if apply_failures > MAX_PATCH_FAILURES:
+                    print(f"❌ Too many patch failures (limit: {MAX_PATCH_FAILURES}). Aborting.")
                     return 1
                 sh("git", "checkout", BEST_BRANCH)
                 continue
