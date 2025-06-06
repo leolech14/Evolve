@@ -89,7 +89,7 @@ summary_text = "\n".join(summary_lines) + "\n"
 summary_text = summary_text.encode("utf-8", "replace").decode("utf-8", "replace")
 summary_file = os.environ.get("GITHUB_STEP_SUMMARY", "summary.txt")
 try:
-    with open(summary_file, "w", encoding="utf-8", errors="replace") as fh:
+    with open(summary_file, "a", encoding="utf-8", errors="replace") as fh:
         fh.write(summary_text)
 except Exception:
     sys.stdout.write(summary_text)
