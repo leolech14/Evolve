@@ -1,4 +1,5 @@
 import shutil
+from decimal import Decimal
 from pathlib import Path
 import sys
 import pytest
@@ -34,5 +35,22 @@ def test_check_accuracy_main_fails_on_mismatch(monkeypatch, tmp_path, has_pdfplu
     monkeypatch.setattr(mod, "DATA_DIR", data_dir)
     if not has_pdfplumber:
         monkeypatch.setattr(mod, "HAS_PDFPLUMBER", False)
+    with pytest.raises(SystemExit):
+        mod.main()
+
+
+def test_check_accuracy_fails_on_total_delta(monkeypatch, tmp_path):
+    data_dir = tmp_path / "data"
+    data_dir.mkdir()
+    sample_pdf = Path(__file__).parent / "data" / "itau_2024-10.pdf"
+    sample_txt = Path(__file__).parent / "data" / "itau_2024-10.txt"
+    sample_golden = Path(__file__).parent / "data" / "golden_2024-10.csv"
+    shutil.copy(sample_pdf, data_dir / sample_pdf.name)
+    shutil.copy(sample_txt, data_dir / sample_txt.name)
+    shutil.copy(sample_golden, data_dir / sample_golden.name)
+
+    monkeypatch.setattr(mod, "DATA_DIR", data_dir)
+    monkeypatch.setattr(mod, "extract_total_from_pdf", lambda _: Decimal("0.00"))
+    monkeypatch.setattr(mod, "HAS_PDFPLUMBER", False)
     with pytest.raises(SystemExit):
         mod.main()
