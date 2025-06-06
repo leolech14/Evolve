@@ -1,14 +1,14 @@
 import io
 import contextlib
 import argparse
-from pathlib import Path
+import csv
 import difflib
 import importlib.util
 import json
 import statistics
 import sys, os  # noqa: E401,F401
-import csv
 from decimal import Decimal
+from pathlib import Path
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -58,7 +58,7 @@ def extract_total_from_pdf(pdf_path: Path) -> Decimal:
     raise ValueError(f"Could not find total in {pdf_path.name}")
 
 
-def compare(pdf_path: Path, out_dir: Path | None = None) -> tuple[bool, float]:
+def compare(pdf_path: Path, out_dir: Path | None = None) -> tuple[bool, float, Decimal]:
     """Run pdf_to_csv on *pdf_path* and compare to its golden CSV.
 
     Returns ``(mismatch, percentage)``.
@@ -117,15 +117,17 @@ def compare(pdf_path: Path, out_dir: Path | None = None) -> tuple[bool, float]:
     reader = csv.DictReader(output_lines, delimiter=";")
     csv_total = sum(Decimal(r["amount_brl"]) for r in reader)
 
+    delta = Decimal("0.00")
     try:
         pdf_total = extract_total_from_pdf(pdf_path)
-        if abs(csv_total - pdf_total) > Decimal("0.01"):
+        delta = csv_total - pdf_total
+        if abs(delta) > Decimal("0.01"):
             print(f"Total mismatch: CSV {csv_total} vs PDF {pdf_total}")
             mismatch = True
     except Exception as exc:
         print(f"Could not verify total: {exc}")
 
-    return mismatch, pct
+    return mismatch, pct, delta
 
 
 def main() -> None:
@@ -154,12 +156,14 @@ def main() -> None:
         return
 
     mismatched = False
-    percentages = []
+    percentages: list[float] = []
+    worst_delta = Decimal("0.00")
+    mismatch_count = 0
     total = len(pdfs)
     for idx, pdf in enumerate(pdfs, 1):
         print(f"\nProcessing {idx}/{total}: {pdf.name}")
         try:
-            mis, pct = compare(pdf, Path(args.csv_dir) if args.csv_dir else None)
+            mis, pct, delta = compare(pdf, Path(args.csv_dir) if args.csv_dir else None)
         except FileNotFoundError as exc:
             print(exc)
             mismatched = True
@@ -167,6 +171,10 @@ def main() -> None:
         percentages.append(pct)
         if mis:
             mismatched = True
+        if abs(delta) > worst_delta:
+            worst_delta = abs(delta)
+        if mis or abs(delta) > Decimal("0.01"):
+            mismatch_count += 1
 
     avg = statistics.mean(percentages) if percentages else 0.0
     print(f"Average match across PDFs: {avg:.2f}%")
@@ -174,7 +182,12 @@ def main() -> None:
         print(f"Accuracy {avg:.2f}% below threshold {args.threshold}%")
         mismatched = True
 
-    summary = {"pdf_count": len(pdfs), "average": avg}
+    summary = {
+        "pdf_count": len(pdfs),
+        "average": avg,
+        "mismatched": mismatch_count,
+        "max_delta": float(worst_delta),
+    }
     Path(args.summary_file).write_text(json.dumps(summary))
 
     if mismatched:

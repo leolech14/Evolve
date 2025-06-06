@@ -88,7 +88,7 @@ def sh(*cmd, capture: bool = False) -> str | None:
     return res.stdout.strip() if capture else None
 
 
-def is_valid_diff(text: str) -> bool:
+def looks_like_diff(text: str) -> bool:
     """Return True if text starts with a unified diff header."""
     return text.lstrip().startswith("diff --git ")
 
@@ -188,6 +188,8 @@ def main() -> int:
     sh("git", "fetch", "--all", "--prune")
     sh("git", "checkout", BEST_BRANCH)
 
+    invalid_replies = 0
+
     while TOKENS_USED < MAX_TOKENS:
         for attempt in range(1, MAX_ATTEMPTS + 1):
             branch = f"codex/work-{int(time.time())}-{attempt}"
@@ -211,13 +213,17 @@ def main() -> int:
 
             patch = generate_patch(fail_log)
             if patch.strip() == "#NOPATCH":
-                print("Model returned #NOPATCH; exiting early.")
-                return 0
-            if not is_valid_diff(patch):
-                print("⚠️ No valid patch returned; retrying.")
+                print("Model returned #NOPATCH. Aborting.")
+                raise SystemExit("loop-no-patch")
+            if not looks_like_diff(patch):
+                print("⚠️ No valid patch returned.")
+                invalid_replies += 1
+                if invalid_replies >= 3:
+                    raise SystemExit("loop-no-patch")
                 time.sleep(1)
                 sh("git", "checkout", BEST_BRANCH)
                 continue
+            invalid_replies = 0
 
             tmp = Path("patch.diff")
             tmp.write_text(patch)
