@@ -184,10 +184,13 @@ jobs:
         run: python scripts/check_accuracy.py --threshold 99
 
       - name: Upload coverage
-        if: always() && hashFiles('coverage.xml') != ''
+        if: always() && env.CODECOV_TOKEN != '' && hashFiles('coverage.xml') != ''
         uses: codecov/codecov-action@v4
         with:
           files: coverage.xml
+          fail_ci_if_error: false
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Upload coverage artifact
         if: always()
