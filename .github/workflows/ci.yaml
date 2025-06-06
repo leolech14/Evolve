@@ -191,6 +191,14 @@ jobs:
           name: coverage-xml
           path: coverage.xml
 
+      - name: Parser readiness verdict
+        if: always()
+        env:
+          TESTS_OUTCOME: ${{ steps.tests.outcome }}
+          ACCURACY_OUTCOME: ${{ steps.accuracy.outcome }}
+          EVOLVE_OUTCOME: ${{ steps.evolve.outcome }}
+        run: python scripts/ci_summary.py
+
 
   golden-check:
     needs: tests-evolve
