@@ -1,7 +1,7 @@
 import json
 import os
 import sys
-from datetime import datetime
+from datetime import datetime, UTC
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
@@ -88,7 +88,7 @@ summary_text = summary_text.encode(ENCODING, "replace").decode(ENCODING, "replac
 summary_file = os.environ.get("GITHUB_STEP_SUMMARY", "summary.txt")
 diag_dir = Path("diagnostics")
 diag_dir.mkdir(exist_ok=True)
-diag_path = diag_dir / f"ci_summary_{datetime.utcnow().strftime('%Y%m%d')}.txt"
+diag_path = diag_dir / f"ci_summary_{datetime.now(UTC).strftime('%Y%m%d')}.txt"
 try:
     with open(summary_file, "w", encoding=ENCODING, errors="replace") as fh:
         fh.write(summary_text)
