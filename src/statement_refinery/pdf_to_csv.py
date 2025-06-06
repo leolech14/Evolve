@@ -94,21 +94,36 @@ RE_INTERNATIONAL_PATTERNS = [
 
 
 def parse_amount(amount_str: str) -> Decimal:
-    """Parse Brazilian currency format to Decimal."""
-    # Remove any currency symbols and extra spaces
+    """Parse Brazilian currency format to Decimal.
+
+    The function is tolerant of trailing minus signs and amounts wrapped in
+    parentheses which are sometimes used to denote negative values.
+    """
+
     clean = amount_str.replace("R$", "").strip()
-    # Remove any characters except digits, comma, period, and minus sign
+
+    negative = False
+    if clean.startswith("(") and clean.endswith(")"):
+        negative = True
+        clean = clean[1:-1].strip()
+
+    if clean.endswith("-"):
+        negative = True
+        clean = clean[:-1].strip()
+
     clean = re.sub(r"[^\d,\.\-]", "", clean)
-    # Handle different number formats
+
     if "," in clean and "." in clean:
-        # Brazilian format (1.234,56)
         clean = clean.replace(".", "").replace(",", ".")
     elif "," in clean and "." not in clean:
-        # European/Brazilian format without thousands separator
         clean = clean.replace(",", ".")
-    # Remove any trailing/leading dots
+
     clean = clean.strip(".")
-    return Decimal(clean)
+
+    result = Decimal(clean)
+    if negative and result >= 0:
+        result = -result
+    return result
 
 
 def classify_transaction(description: str, amount: Decimal) -> str:
