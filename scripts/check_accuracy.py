@@ -7,6 +7,9 @@ import importlib.util
 import json
 import statistics
 import sys, os  # noqa: E401,F401
+import csv
+from decimal import Decimal
+import re
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
@@ -21,6 +24,37 @@ from statement_refinery import pdf_to_csv  # noqa: E402
 # without a matching golden file this script fails, ensuring CI stays in sync.
 
 DATA_DIR = ROOT / "tests" / "data"
+
+
+def extract_total_from_pdf(pdf_path: Path) -> Decimal:
+    """Return the total amount printed in the PDF or snapshot text."""
+    txt_path = pdf_path.with_suffix(".txt")
+    if txt_path.exists():
+        text = txt_path.read_text()
+    elif HAS_PDFPLUMBER:
+        import pdfplumber
+
+        with pdfplumber.open(str(pdf_path)) as pdf:
+            text = "\n".join(page.extract_text() or "" for page in pdf.pages)
+        txt_path.write_text(text)
+    else:
+        raise FileNotFoundError(f"No text fallback for {pdf_path.name}")
+
+    patterns = [
+        r"Total desta fatura\s*[=R\$\s]*([\d\.]+,\d{2})",
+        r"Total da fatura\s*[=R\$\s]*([\d\.]+,\d{2})",
+        r"Total\s*[=R\$\s]*([\d\.]+,\d{2})",
+        r"= Total desta fatura\s*[=R\$\s]*([\d\.]+,\d{2})",
+        r"TOTAL\s*[=R\$\s]*([\d\.]+,\d{2})",
+        r"Valor Total\s*[=R\$\s]*([\d\.]+,\d{2})",
+        r"Saldo Total\s*[=R\$\s]*([\d\.]+,\d{2})",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, text)
+        if match:
+            val = match.group(1).replace(".", "").replace(",", ".")
+            return Decimal(val)
+    raise ValueError(f"Could not find total in {pdf_path.name}")
 
 
 def compare(pdf_path: Path, out_dir: Path | None = None) -> tuple[bool, float]:
@@ -58,9 +92,7 @@ def compare(pdf_path: Path, out_dir: Path | None = None) -> tuple[bool, float]:
 
     golden = pdf_path.with_name(f"golden_{pdf_path.stem.split('_')[-1]}.csv")
     if not golden.exists():
-        print(f"Missing golden CSV for {pdf_path.name}: {golden.name}")
-
-        return True, 0.0
+        raise FileNotFoundError(f"Missing golden CSV for {pdf_path.name}")
 
     golden_lines = golden.read_text().splitlines()
     diff = difflib.unified_diff(
@@ -80,6 +112,17 @@ def compare(pdf_path: Path, out_dir: Path | None = None) -> tuple[bool, float]:
     matcher = difflib.SequenceMatcher(None, golden_lines, output_lines)
     pct = matcher.ratio() * 100
     print(f"Match percentage: {pct:.2f}%")
+
+    reader = csv.DictReader(output_lines, delimiter=";")
+    csv_total = sum(Decimal(r["amount_brl"]) for r in reader)
+    try:
+        pdf_total = extract_total_from_pdf(pdf_path)
+        if abs(csv_total - pdf_total) > Decimal("0.01"):
+            print(f"Total mismatch: CSV {csv_total} vs PDF {pdf_total}")
+            mismatch = True
+    except Exception as exc:
+        print(f"Could not verify total: {exc}")
+
     return mismatch, pct
 
 
@@ -113,7 +156,12 @@ def main() -> None:
     total = len(pdfs)
     for idx, pdf in enumerate(pdfs, 1):
         print(f"\nProcessing {idx}/{total}: {pdf.name}")
-        mis, pct = compare(pdf, Path(args.csv_dir) if args.csv_dir else None)
+        try:
+            mis, pct = compare(pdf, Path(args.csv_dir) if args.csv_dir else None)
+        except FileNotFoundError as exc:
+            print(exc)
+            mismatched = True
+            continue
         percentages.append(pct)
         if mis:
             mismatched = True

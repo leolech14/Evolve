@@ -116,6 +116,7 @@ jobs:
         id: evolve_prereqs
         if: |
           steps.tests.outcome == 'failure' ||
+          needs.static.result == 'failure' ||
           steps.accuracy.outcome == 'failure'
 
           
@@ -151,6 +152,7 @@ jobs:
         id: evolve
         if: |
           (steps.tests.outcome == 'failure' ||
+           needs.static.result == 'failure' ||
            steps.accuracy.outcome == 'failure') &&
           steps.evolve_prereqs.outcome == 'success'
         env:

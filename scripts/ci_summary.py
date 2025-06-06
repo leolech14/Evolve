@@ -4,6 +4,8 @@ import sys
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
+FLAG = "\N{CHEQUERED FLAG}"
+
 summary_lines = []
 
 # Static checks result from env
@@ -83,7 +85,7 @@ summary_lines.append(
 all_ok = all_ok and loop_ok
 
 summary_lines.append("")
-summary_lines.append(f"\U0001f3d1 RESULT: {'PARSER READY' if all_ok else 'NOT READY'}")
+summary_lines.append(f"{FLAG} RESULT: {'PARSER READY' if all_ok else 'NOT READY'}")
 
 summary_text = "\n".join(summary_lines) + "\n"
 summary_text = summary_text.encode("utf-8", "replace").decode("utf-8", "replace")
