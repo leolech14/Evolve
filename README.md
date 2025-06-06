@@ -10,11 +10,6 @@ After cloning the repository, install the package in editable mode **with develo
 
     pip install -e '.[dev]'
 
-You can run the same formatting and lint checks as the CI pipeline using
-`pre-commit`:
-
-    pre-commit run --files <path/to/file.py>
-
 ## Common Installation Issues
 
 The installation step fetches `pdfplumber` and its dependencies from PyPI.
