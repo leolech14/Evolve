@@ -15,6 +15,7 @@ env:
   MAX_ATTEMPTS: '5'
   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
   GITHUB_TOKEN:   ${{ secrets.BOT_PAT }}
+  FORCE_EVOLVE: '0'
 
 jobs:
   static:
@@ -71,7 +72,6 @@ jobs:
     env:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       GITHUB_TOKEN:   ${{ secrets.BOT_PAT }}
-      FORCE_EVOLVE: ${{ env.FORCE_EVOLVE }}
     steps:
       - uses: actions/checkout@v4
 
