@@ -159,7 +159,8 @@ def load_best() -> Tuple[str, float]:
 def save_best(commit: str, best_score: float, tokens_used: int):
     SCORE_FILE.write_text(json.dumps({"commit": commit, "score": best_score}))
     print(f"🎉 New best! Commit {commit}  score={best_score:.1f}  tokens={tokens_used}")
-    log_tokens_to_file(tokens_used)
+def record_tokens() -> None:
+    """Append the cumulative token count to the diagnostics log."""
 
 def record_tokens():
     log_tokens_to_file(TOKENS_USED)
