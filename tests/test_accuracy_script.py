@@ -36,3 +36,10 @@ def test_check_accuracy_main_fails_on_mismatch(monkeypatch, tmp_path, has_pdfplu
         monkeypatch.setattr(mod, "HAS_PDFPLUMBER", False)
     with pytest.raises(SystemExit):
         mod.main()
+
+
+def test_extract_total_from_pdf():
+    pdf1 = Path(__file__).parent / "data" / "Itau_2024-07.pdf"
+    pdf2 = Path(__file__).parent / "data" / "itau_2025-06.pdf"
+    assert float(mod.extract_total_from_pdf(pdf1)) == pytest.approx(22524.22)
+    assert float(mod.extract_total_from_pdf(pdf2)) == pytest.approx(15326.81)

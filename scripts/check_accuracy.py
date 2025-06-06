@@ -41,13 +41,18 @@ def extract_total_from_pdf(pdf_path: Path) -> Decimal:
         raise FileNotFoundError(f"No text fallback for {pdf_path.name}")
 
     patterns = [
-        r"Total desta fatura\s*[=R\$\s]*([\d\.]+,\d{2})",
-        r"Total da fatura\s*[=R\$\s]*([\d\.]+,\d{2})",
-        r"Total\s*[=R\$\s]*([\d\.]+,\d{2})",
-        r"= Total desta fatura\s*[=R\$\s]*([\d\.]+,\d{2})",
+        r"Totaldestafatura\s*[=R\$\s]*([\d\.]+,\d{2})",
+        r"Total\s*desta\s*fatura\s*[=R\$\s]*([\d\.]+,\d{2})",
+        r"Totaldafatura\s*[=R\$\s]*([\d\.]+,\d{2})",
+        r"Total\s*da\s*fatura\s*[=R\$\s]*([\d\.]+,\d{2})",
+        r"Valor\s*total\s*a\s*pagar\s*[=R\$\s]*([\d\.]+,\d{2})",
+        r"Valortotalapagar\s*[=R\$\s]*([\d\.]+,\d{2})",
+        r"Total\s*a\s*pagar\s*[=R\$\s]*([\d\.]+,\d{2})",
+        r"Totalapagar\s*[=R\$\s]*([\d\.]+,\d{2})",
         r"TOTAL\s*[=R\$\s]*([\d\.]+,\d{2})",
-        r"Valor Total\s*[=R\$\s]*([\d\.]+,\d{2})",
-        r"Saldo Total\s*[=R\$\s]*([\d\.]+,\d{2})",
+        r"Valor\s*Total\s*[=R\$\s]*([\d\.]+,\d{2})",
+        r"Saldo\s*Total\s*[=R\$\s]*([\d\.]+,\d{2})",
+        r"Total\s*[=R\$\s]*([\d\.]+,\d{2})",
     ]
     for pattern in patterns:
         match = re.search(pattern, text)
