@@ -88,6 +88,11 @@ def sh(*cmd, capture: bool = False) -> str | None:
     return res.stdout.strip() if capture else None
 
 
+def is_valid_diff(text: str) -> bool:
+    """Return True if text starts with a unified diff header."""
+    return text.lstrip().startswith("diff --git ")
+
+
 def current_commit() -> str:
     return sh("git", "rev-parse", "HEAD", capture=True)[:7]
 
@@ -139,11 +144,12 @@ def save_best(commit: str, best_score: float, tokens_used: int):
 # ───────────────────────── git helpers ─────────────────────────
 def ensure_best_branch() -> None:
     """Ensure BEST_BRANCH exists locally."""
-    try:
-        sh("git", "rev-parse", "--verify", BEST_BRANCH)
-    except subprocess.CalledProcessError:
-        print(f"{BEST_BRANCH} missing; creating from main")
-        sh("git", "branch", BEST_BRANCH, "main")
+    res = _run_with_retry(
+        ("git", "rev-parse", "--verify", "-q", BEST_BRANCH), capture=False
+    )
+    if res.returncode != 0:
+        print(f"{BEST_BRANCH} missing; creating from HEAD")
+        sh("git", "branch", BEST_BRANCH)
 
 
 # ───────────────────────── Codex interaction ─────────────────────────
@@ -159,7 +165,10 @@ def generate_patch(fail_log: str) -> str:
             {
                 "role": "user",
                 "content": (
-                    "Aplicar um patch unificado (.diff) que faça os testes passarem.\n\n"
+                    "Return **only** a unified diff between HEAD and fixed code.\n"
+                    "Begin with:  diff --git a/... b/...\n"
+                    "Use Unix line endings.\n"
+                    "If nothing to change, reply exactly:  #NOPATCH\n\n"
                     f"{fail_log[:7000]}"
                 ),
             }
@@ -201,8 +210,12 @@ def main() -> int:
                     fail_log = "Tests failed immediately:\n" + err
 
             patch = generate_patch(fail_log)
-            if not patch.strip() or "diff --git" not in patch:
-                print("⚠️ Patch does not look valid; skipping.")
+            if patch.strip() == "#NOPATCH":
+                print("Model returned #NOPATCH; exiting early.")
+                return 0
+            if not is_valid_diff(patch):
+                print("⚠️ No valid patch returned; retrying.")
+                time.sleep(1)
                 sh("git", "checkout", BEST_BRANCH)
                 continue
 
