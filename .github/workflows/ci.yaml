@@ -11,7 +11,7 @@ on:
 
 env:
   OPENAI_MODEL: gpt-4.1
-  MAX_TOKENS_PER_RUN: '2000000'   # 2 M-token budget
+  MAX_TOKENS_PER_RUN: '200000'    # reduce budget to 200k tokens
   MAX_ATTEMPTS: '5'
   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
   GITHUB_TOKEN:   ${{ secrets.BOT_PAT }}
@@ -104,8 +104,7 @@ jobs:
         run: |
           pytest -ra -vv --cov=statement_refinery \
                  --cov-report=term-missing --cov-report=xml \
-                 --cov-fail-under=90 \
-                 --json-report --json-report-file=report.json
+                 --cov-fail-under=90
 
       - name: Check parser accuracy
         id: accuracy
@@ -135,8 +134,13 @@ jobs:
               sys.stderr.write('OPENAI_API_KEY not set\n')
               missing = True
 
-          if not os.getenv('PERSONAL_ACCESS_TOKEN_CLASSIC'):
-              sys.stderr.write('PERSONAL_ACCESS_TOKEN_CLASSIC not set\n')
+          token = (
+              os.getenv('GITHUB_TOKEN')
+              or os.getenv('PERSONAL_ACCESS_TOKEN_CLASSIC')
+              or os.getenv('GH_TOKEN')
+          )
+          if not token:
+              sys.stderr.write('Missing GitHub token\n')
               missing = True
 
           if missing:
@@ -180,7 +184,7 @@ jobs:
         run: python scripts/check_accuracy.py --threshold 99
 
       - name: Upload coverage
-        if: always()
+        if: always() && hashFiles('coverage.xml') != ''
         uses: codecov/codecov-action@v4
         with:
           files: coverage.xml
