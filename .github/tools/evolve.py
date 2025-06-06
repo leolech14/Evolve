@@ -62,6 +62,8 @@ client = openai.OpenAI(api_key=api_key)
 MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1")
 MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS", "5"))
 MAX_TOKENS = int(os.getenv("MAX_TOKENS_PER_RUN", "100000"))
+# Maximum number of consecutive patch apply failures before aborting
+MAX_PATCH_FAILURES = int(os.getenv("MAX_PATCH_FAILURES", "3"))
 
 
 # ───────────────────────── helpers ─────────────────────────
@@ -260,7 +262,9 @@ def main() -> int:
                 fail_log = f"patch failed: {e.stderr.strip()}"[:7000]
                 apply_failures += 1
                 if apply_failures > MAX_PATCH_FAILURES:
-                    print(f"❌ Too many patch failures (limit: {MAX_PATCH_FAILURES}). Aborting.")
+                    print(
+                        f"❌ Too many patch failures (limit: {MAX_PATCH_FAILURES}). Aborting."
+                    )
                     return 1
                 sh("git", "checkout", BEST_BRANCH)
                 continue
