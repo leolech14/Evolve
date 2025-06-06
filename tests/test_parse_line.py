@@ -125,6 +125,14 @@ def test_parse_amount_negative_european():
     assert parse_amount("-7,50") == Decimal("-7.50")
 
 
+def test_parse_amount_trailing_minus():
+    assert parse_amount("1.234,56-") == Decimal("-1234.56")
+
+
+def test_parse_amount_parentheses():
+    assert parse_amount("(1.234,56)") == Decimal("-1234.56")
+
+
 def test_classify_transaction_high_priority():
     cat = classify_transaction("Cobrança IOF", Decimal("10"))
     assert cat == "ENCARGOS"
