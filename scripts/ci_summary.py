@@ -83,9 +83,7 @@ summary_lines.append(
 all_ok = all_ok and loop_ok
 
 summary_lines.append("")
-summary_lines.append(
-    f"\ud83c\udfd1 RESULT: {'PARSER READY' if all_ok else 'NOT READY'}"
-)
+summary_lines.append(f"\U0001f3d1 RESULT: {'PARSER READY' if all_ok else 'NOT READY'}")
 
 with open(
     os.environ.get("GITHUB_STEP_SUMMARY", "summary.txt"),
