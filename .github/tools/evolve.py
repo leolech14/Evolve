@@ -41,6 +41,8 @@ except ImportError:
 ROOT = Path(__file__).resolve().parents[2]  # repo root
 BEST_BRANCH = "codex/best"
 SCORE_FILE = ROOT / ".github/tools/score_best.json"
+DIAG_DIR = ROOT / "diagnostics"
+DIAG_DIR.mkdir(exist_ok=True)
 
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
@@ -104,7 +106,9 @@ def diff_targets_exist(patch: str) -> tuple[bool, str | None]:
             except ValueError:
                 return False, "corrupt header"
             path = b_path[2:]
-            if not Path(path).exists():
+            try:
+                sh("git", "ls-files", "--error-unmatch", path)
+            except subprocess.CalledProcessError:
                 return False, path
     return True, None
 
@@ -155,6 +159,13 @@ def load_best() -> Tuple[str, float]:
 def save_best(commit: str, best_score: float, tokens_used: int):
     SCORE_FILE.write_text(json.dumps({"commit": commit, "score": best_score}))
     print(f"🎉 New best! Commit {commit}  score={best_score:.1f}  tokens={tokens_used}")
+    with open(DIAG_DIR / "evolve_tokens.txt", "a", encoding="utf-8") as fh:
+        fh.write(f"{int(time.time())}\t{tokens_used}\n")
+
+
+def record_tokens():
+    with open(DIAG_DIR / "evolve_tokens.txt", "a", encoding="utf-8") as fh:
+        fh.write(f"{int(time.time())}\t{TOKENS_USED}\n")
 
 
 # ───────────────────────── git helpers ─────────────────────────
@@ -211,10 +222,11 @@ def main() -> int:
     invalid_replies = 0
     apply_failures = 0
 
-    while TOKENS_USED < MAX_TOKENS:
-        for attempt in range(1, MAX_ATTEMPTS + 1):
-            branch = f"codex/work-{int(time.time())}-{attempt}"
-            sh("git", "checkout", "-b", branch)
+    try:
+        while TOKENS_USED < MAX_TOKENS:
+            for attempt in range(1, MAX_ATTEMPTS + 1):
+                branch = f"codex/work-{int(time.time())}-{attempt}"
+                sh("git", "checkout", "-b", branch)
 
             # Run tests once to capture failure log
             if attempt == 1:
@@ -309,8 +321,10 @@ def main() -> int:
 
         print("No improvement this cycle; restarting from best.")
 
-    print(f"Token budget exhausted ({TOKENS_USED}/{MAX_TOKENS}).")
-    return 1
+        print(f"Token budget exhausted ({TOKENS_USED}/{MAX_TOKENS}).")
+        return 1
+    finally:
+        record_tokens()
 
 
 if __name__ == "__main__":

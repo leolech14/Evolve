@@ -159,7 +159,7 @@ jobs:
           (steps.tests.outcome == 'failure' ||
            needs.static.result == 'failure' ||
            steps.accuracy.outcome == 'failure' ||
-           env.FORCE_EVOLVE == '1') &&
+           (env.FORCE_EVOLVE && env.FORCE_EVOLVE != '0')) &&
           steps.evolve_prereqs.outcome == 'success'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
