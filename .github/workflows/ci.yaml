@@ -104,12 +104,13 @@ jobs:
         run: |
           pytest -ra -vv --cov=statement_refinery \
                  --cov-report=term-missing --cov-report=xml \
-                 --cov-fail-under=90
+                 --cov-fail-under=90 \
+                 --json-report --json-report-file=report.json
 
       - name: Check parser accuracy
         id: accuracy
         continue-on-error: true
-        run: python scripts/check_accuracy.py --threshold 99
+        run: python scripts/check_accuracy.py --threshold 99 --summary-file accuracy_summary.json --csv-dir csv_output
 
       # auto-patch loop runs only when tests or accuracy fail
       - name: Check evolve prerequisites
@@ -191,6 +192,23 @@ jobs:
           name: coverage-xml
           path: coverage.xml
 
+      - name: Upload generated CSVs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: parser-csv
+          path: csv_output/
+
+      - name: Summarize results
+        if: always()
+        env:
+          STATIC_RESULT: ${{ needs.static.result }}
+          TESTS_OUTCOME: ${{ steps.tests.outcome }}
+          ACCURACY_OUTCOME: ${{ steps.accuracy.outcome }}
+          EVOLVE_PREREQS_OUTCOME: ${{ steps.evolve_prereqs.outcome }}
+          EVOLVE_OUTCOME: ${{ steps.evolve.outcome }}
+        run: python scripts/ci_summary.py
+
 
   golden-check:
     needs: tests-evolve
@@ -227,5 +245,5 @@ jobs:
         run: pip install -e '.[dev]'
 
       - name: Check parser accuracy
-        run: python scripts/check_accuracy.py
+        run: python scripts/check_accuracy.py --csv-dir csv_output
 
