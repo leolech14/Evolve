@@ -91,4 +91,4 @@ with open(os.environ.get("GITHUB_STEP_SUMMARY", "summary.txt"), "a") as fh:
     fh.write("\n".join(summary_lines) + "\n")
 
 if not all_ok:
-    sys.exit(1)
+    sys.exit(1
