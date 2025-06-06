@@ -4,6 +4,10 @@ import sys
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
+CHECK = "\N{WHITE HEAVY CHECK MARK}"
+CROSS = "\N{CROSS MARK}"
+ENCODING = "utf-8"
+
 
 FLAG = "\N{CHEQUERED FLAG}"
 
