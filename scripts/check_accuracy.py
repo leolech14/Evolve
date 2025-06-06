@@ -58,7 +58,9 @@ def extract_total_from_pdf(pdf_path: Path) -> Decimal:
     raise ValueError(f"Could not find total in {pdf_path.name}")
 
 
-def compare(pdf_path: Path, out_dir: Path | None = None) -> tuple[bool, float, Decimal]:
+def compare(
+    pdf_path: Path, out_dir: Path | None = None
+) -> tuple[bool, float, Decimal, Decimal, Decimal]:
     """Run pdf_to_csv on *pdf_path* and compare to its golden CSV.
 
     Returns ``(mismatch, percentage)``.
@@ -118,6 +120,7 @@ def compare(pdf_path: Path, out_dir: Path | None = None) -> tuple[bool, float, D
     csv_total = sum(Decimal(r["amount_brl"]) for r in reader)
 
     delta = Decimal("0.00")
+    pdf_total = Decimal("0.00")
     try:
         pdf_total = extract_total_from_pdf(pdf_path)
         delta = csv_total - pdf_total
@@ -127,7 +130,7 @@ def compare(pdf_path: Path, out_dir: Path | None = None) -> tuple[bool, float, D
     except Exception as exc:
         print(f"Could not verify total: {exc}")
 
-    return mismatch, pct, delta
+    return mismatch, pct, delta, csv_total, pdf_total
 
 
 def main() -> None:
@@ -159,15 +162,21 @@ def main() -> None:
     percentages: list[float] = []
     worst_delta = Decimal("0.00")
     mismatch_count = 0
+    sum_csv = Decimal("0.00")
+    sum_pdf = Decimal("0.00")
     total = len(pdfs)
     for idx, pdf in enumerate(pdfs, 1):
         print(f"\nProcessing {idx}/{total}: {pdf.name}")
         try:
-            mis, pct, delta = compare(pdf, Path(args.csv_dir) if args.csv_dir else None)
+            mis, pct, delta, csv_total, pdf_total = compare(
+                pdf, Path(args.csv_dir) if args.csv_dir else None
+            )
         except FileNotFoundError as exc:
             print(exc)
             mismatched = True
             continue
+        sum_csv += csv_total
+        sum_pdf += pdf_total
         percentages.append(pct)
         if mis:
             mismatched = True
@@ -178,6 +187,9 @@ def main() -> None:
 
     avg = statistics.mean(percentages) if percentages else 0.0
     print(f"Average match across PDFs: {avg:.2f}%")
+    if abs(sum_csv - sum_pdf) > Decimal("0.01"):
+        print(f"TOTAL mismatch across PDFs: CSV {sum_csv} vs PDF {sum_pdf}")
+        mismatched = True
     if avg < args.threshold:
         print(f"Accuracy {avg:.2f}% below threshold {args.threshold}%")
         mismatched = True
