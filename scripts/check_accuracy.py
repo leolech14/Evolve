@@ -49,7 +49,7 @@ def compare(pdf_path: Path) -> tuple[bool, float]:
     golden = pdf_path.with_name(f"golden_{pdf_path.stem.split('_')[-1]}.csv")
     if not golden.exists():
         print(f"Missing golden CSV for {pdf_path.name}: {golden.name}")
-        return True, 0.0
+        return False, 0.0
 
     golden_lines = golden.read_text().splitlines()
     diff = difflib.unified_diff(
