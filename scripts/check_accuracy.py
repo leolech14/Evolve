@@ -108,6 +108,7 @@ def main() -> None:
     total = len(pdfs)
     for idx, pdf in enumerate(pdfs, 1):
         print(f"\nProcessing {idx}/{total}: {pdf.name}")
+        mis, pct = compare(pdf, Path(args.csv_dir) if args.csv_dir else None)
         mis, pct = compare(pdf)
         percentages.append(pct)
         if mis:
