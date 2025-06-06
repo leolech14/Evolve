@@ -58,6 +58,7 @@ def extract_total_from_pdf(pdf_path: Path) -> Decimal:
     raise ValueError(f"Could not find total in {pdf_path.name}")
 
 
+
 def compare(pdf_path: Path, out_dir: Path | None = None) -> tuple[bool, float]:
     """Run pdf_to_csv on *pdf_path* and compare to its golden CSV.
 
@@ -116,6 +117,7 @@ def compare(pdf_path: Path, out_dir: Path | None = None) -> tuple[bool, float]:
 
     reader = csv.DictReader(output_lines, delimiter=";")
     csv_total = sum(Decimal(r["amount_brl"]) for r in reader)
+
     try:
         pdf_total = extract_total_from_pdf(pdf_path)
         if abs(csv_total - pdf_total) > Decimal("0.01"):

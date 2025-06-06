@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
+
 FLAG = "\N{CHEQUERED FLAG}"
 
 summary_lines = []
@@ -12,7 +13,7 @@ summary_lines = []
 static_result = os.environ.get("STATIC_RESULT", "success")
 static_ok = static_result == "success"
 summary_lines.append(
-    f"{'\u2705' if static_ok else '\u274c'} Static checks: {'PASS' if static_ok else 'FAIL'}"
+    f"{CHECK if static_ok else CROSS} Static checks: {'PASS' if static_ok else 'FAIL'}"
 )
 all_ok = static_ok
 
@@ -28,7 +29,7 @@ except Exception:
 
 tests_ok = tests_outcome == "success" and skipped == 0
 summary_lines.append(
-    f"{'\u2705' if tests_ok else '\u274c'} Unit tests:    {'PASS' if tests_ok else 'FAIL'} ({skipped} skipped)"
+    f"{CHECK if tests_ok else CROSS} Unit tests:    {'PASS' if tests_ok else 'FAIL'} ({skipped} skipped)"
 )
 all_ok = all_ok and tests_ok
 
@@ -43,7 +44,7 @@ except Exception:
     count = 0
 accuracy_ok = accuracy_outcome == "success"
 summary_lines.append(
-    f"{'\u2705' if accuracy_ok else '\u274c'} Parser accuracy: {'PASS' if accuracy_ok else 'FAIL'} ({pct:.1f} %, {count} PDFs)"
+    f"{CHECK if accuracy_ok else CROSS} Parser accuracy: {'PASS' if accuracy_ok else 'FAIL'} ({pct:.1f} %, {count} PDFs)"
 )
 all_ok = all_ok and accuracy_ok
 
@@ -56,7 +57,7 @@ except Exception:
     pass
 coverage_ok = cov_pct >= 90.0 and tests_outcome == "success"
 summary_lines.append(
-    f"{'\u2705' if coverage_ok else '\u274c'} Coverage:      {'PASS' if coverage_ok else 'FAIL'} ({cov_pct:.1f} %)"
+    f"{CHECK if coverage_ok else CROSS} Coverage:      {'PASS' if coverage_ok else 'FAIL'} ({cov_pct:.1f} %)"
 )
 all_ok = all_ok and coverage_ok
 
@@ -64,7 +65,7 @@ all_ok = all_ok and coverage_ok
 prereq_outcome = os.getenv("EVOLVE_PREREQS_OUTCOME", "skipped")
 prereq_ok = prereq_outcome == "success"
 summary_lines.append(
-    f"{'\u2705' if prereq_ok else '\u274c'} Evolve prereqs: {'PASS' if prereq_ok else 'FAIL'}"
+    f"{CHECK if prereq_ok else CROSS} Evolve prereqs: {'PASS' if prereq_ok else 'FAIL'}"
 )
 all_ok = all_ok and prereq_ok
 
@@ -79,19 +80,17 @@ elif loop_outcome == "success":
 else:
     loop_status = "RAN (still red)"
     loop_ok = False
-summary_lines.append(
-    f"{'\u2705' if loop_ok else '\u274c'} Evolve loop:   {loop_status}"
-)
+summary_lines.append(f"{CHECK if loop_ok else CROSS} Evolve loop:   {loop_status}")
 all_ok = all_ok and loop_ok
 
 summary_lines.append("")
 summary_lines.append(f"{FLAG} RESULT: {'PARSER READY' if all_ok else 'NOT READY'}")
 
 summary_text = "\n".join(summary_lines) + "\n"
-summary_text = summary_text.encode("utf-8", "replace").decode("utf-8", "replace")
+summary_text = summary_text.encode(ENCODING, "replace").decode(ENCODING, "replace")
 summary_file = os.environ.get("GITHUB_STEP_SUMMARY", "summary.txt")
 try:
-    with open(summary_file, "w", encoding="utf-8", errors="replace") as fh:
+    with open(summary_file, "w", encoding=ENCODING, errors="replace") as fh:
         fh.write(summary_text)
 except Exception:
     sys.stdout.write(summary_text)
