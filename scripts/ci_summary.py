@@ -4,16 +4,8 @@ import sys
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
-ENCODING = "utf-8"
-try:
-    "✅".encode(ENCODING)
-    EMOJI = True
-except UnicodeEncodeError:
-    EMOJI = False
 
-CHECK = "✅" if EMOJI else "[OK]"
-CROSS = "❌" if EMOJI else "[X]"
-FLAG = "\N{CHEQUERED FLAG}" if EMOJI else "[RESULT]"
+FLAG = "\N{CHEQUERED FLAG}"
 
 summary_lines = []
 

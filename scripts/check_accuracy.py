@@ -50,16 +50,16 @@ def extract_total_from_pdf(pdf_path: Path) -> Decimal:
         r"Saldo Total\s*[=R\$\s]*([\d\.]+,\d{2})",
     ]
     for pattern in patterns:
-        match = re.search(pattern, text, re.IGNORECASE)
+        match = re.search(pattern, text)
+
         if match:
             val = match.group(1).replace(".", "").replace(",", ".")
             return Decimal(val)
     raise ValueError(f"Could not find total in {pdf_path.name}")
 
 
-def compare(
-    pdf_path: Path, out_dir: Path | None = None, threshold: float = 99.0
-) -> tuple[bool, float]:
+
+def compare(pdf_path: Path, out_dir: Path | None = None) -> tuple[bool, float]:
     """Run pdf_to_csv on *pdf_path* and compare to its golden CSV.
 
     Returns ``(mismatch, percentage)``.
@@ -117,18 +117,14 @@ def compare(
 
     reader = csv.DictReader(output_lines, delimiter=";")
     csv_total = sum(Decimal(r["amount_brl"]) for r in reader)
-    totals_mismatch = False
+
     try:
         pdf_total = extract_total_from_pdf(pdf_path)
         if abs(csv_total - pdf_total) > Decimal("0.01"):
             print(f"Total mismatch: CSV {csv_total} vs PDF {pdf_total}")
-            totals_mismatch = True
+            mismatch = True
     except Exception as exc:
         print(f"Could not verify total: {exc}")
-
-    # treat total mismatch as soft warning if accuracy is high
-    if totals_mismatch and pct < threshold:
-        mismatch = True
 
     return mismatch, pct
 
@@ -164,11 +160,7 @@ def main() -> None:
     for idx, pdf in enumerate(pdfs, 1):
         print(f"\nProcessing {idx}/{total}: {pdf.name}")
         try:
-            mis, pct = compare(
-                pdf,
-                Path(args.csv_dir) if args.csv_dir else None,
-                args.threshold,
-            )
+            mis, pct = compare(pdf, Path(args.csv_dir) if args.csv_dir else None)
         except FileNotFoundError as exc:
             print(exc)
             mismatched = True
