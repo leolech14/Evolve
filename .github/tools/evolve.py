@@ -159,15 +159,10 @@ def load_best() -> Tuple[str, float]:
 def save_best(commit: str, best_score: float, tokens_used: int):
     SCORE_FILE.write_text(json.dumps({"commit": commit, "score": best_score}))
     print(f"🎉 New best! Commit {commit}  score={best_score:.1f}  tokens={tokens_used}")
-    with open(DIAG_DIR / "evolve_tokens.txt", "a", encoding="utf-8") as fh:
-        fh.write(f"{int(time.time())}\t{tokens_used}\n")
-
+    log_tokens_to_file(tokens_used)
 
 def record_tokens():
-    with open(DIAG_DIR / "evolve_tokens.txt", "a", encoding="utf-8") as fh:
-        fh.write(f"{int(time.time())}\t{TOKENS_USED}\n")
-
-
+    log_tokens_to_file(TOKENS_USED)
 # ───────────────────────── git helpers ─────────────────────────
 def ensure_best_branch() -> None:
     """Ensure BEST_BRANCH exists locally."""
