@@ -201,19 +201,28 @@ def main() -> int:
                     fail_log = "Tests failed immediately:\n" + err
 
             patch = generate_patch(fail_log)
-            if not patch.strip():
-                print("⚠️ Empty patch; skipping.")
+            if not patch.strip() or "diff --git" not in patch:
+                print("⚠️ Patch does not look valid; skipping.")
                 sh("git", "checkout", BEST_BRANCH)
                 continue
 
             tmp = Path("patch.diff")
             tmp.write_text(patch)
             try:
+                sh("git", "apply", "--check", str(tmp))
                 sh("git", "apply", str(tmp))
             except subprocess.CalledProcessError:
                 print("❌ Patch did not apply.")
                 sh("git", "checkout", BEST_BRANCH)
                 continue
+            # ensure patch produced changes
+            try:
+                sh("git", "diff", "--quiet")
+                print("⚠️ Patch resulted in no changes; skipping.")
+                sh("git", "checkout", BEST_BRANCH)
+                continue
+            except subprocess.CalledProcessError:
+                pass
 
             sh("git", "commit", "-am", "🤖 Codex auto-patch")
             green, cov = run_tests()

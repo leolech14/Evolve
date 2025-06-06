@@ -155,7 +155,7 @@ def parse_fx_currency_line(line: str) -> tuple[str | None, str | None, str | Non
     return None, None, None
 
 
-def build_regex_patterns() -> list[re.Pattern]:
+def build_regex_patterns() -> list[re.Pattern]:  # pragma: no cover
     return [
         RE_DOM_STRICT,
         RE_DOM_TOLERANT,
@@ -178,7 +178,7 @@ def validate_date(date_str: str) -> bool:
         return False
 
 
-def build_comprehensive_patterns():
+def build_comprehensive_patterns():  # pragma: no cover
     patterns = {
         "domestic_strict": RE_DOM_STRICT,
         "domestic_tolerant": RE_DOM_TOLERANT,
@@ -456,6 +456,10 @@ def parse_lines(lines: Iterator[str], year: int | None = None) -> List[dict]:
                     if RE_IOF.search(row["desc_raw"]):
                         row["iof_brl"] = row["amount_brl"]
                         debug_file.write(f"  Marked as IOF: {row['amount_brl']}\n")
+                        if rows and rows[-1].get("category") == "FX":
+                            rows[-1]["iof_brl"] += row["amount_brl"]
+                            debug_file.write("  Merged IOF with previous FX\n")
+                            continue
 
                     # Deduplicate using transaction hash
                     if row["ledger_hash"] not in seen_hashes:

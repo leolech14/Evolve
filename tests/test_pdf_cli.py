@@ -10,6 +10,7 @@ import csv
 import importlib.util
 import re
 from pathlib import Path
+import sys
 
 import pytest
 
@@ -57,8 +58,11 @@ def test_write_csv_roundtrip():
     assert parsed[0]["desc_raw"] == rows[0]["desc_raw"]
 
 
-@pytest.mark.skipif(not HAS_PDFPLUMBER, reason="pdfplumber not installed")
-def test_main_uses_golden(tmp_path):
+@pytest.mark.parametrize("has_pdfplumber", [True, False])
+def test_main_uses_golden(tmp_path, monkeypatch, has_pdfplumber):
+    if not has_pdfplumber:
+        monkeypatch.setitem(sys.modules, "pdfplumber", None)
+        monkeypatch.setattr(mod, "iter_pdf_lines", lambda _: iter([]))
     out_csv = tmp_path / "out.csv"
     mod.main([str(PDF_SAMPLE), "--out", str(out_csv)])
     golden = DATA / "golden_2024-10.csv"
