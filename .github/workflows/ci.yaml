@@ -60,7 +60,7 @@ jobs:
           pytest -v --cov=statement_refinery \
                  --cov-report=xml \
                  --cov-report=term-missing \
-                --cov-fail-under=70 | tee diagnostics/test.txt
+                 --cov-fail-under=90 | tee diagnostics/test.txt
 
       - name: Check accuracy
         id: accuracy
@@ -100,7 +100,7 @@ jobs:
           pytest -v --cov=statement_refinery \
                  --cov-report=xml \
                  --cov-report=term-missing \
-                 --cov-fail-under=70
+                 --cov-fail-under=90
           python scripts/check_accuracy.py --threshold 99
 
       # Artifacts
