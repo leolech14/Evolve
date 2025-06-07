@@ -26,7 +26,7 @@ dev = [
     "pytest-cov",
     "pytest-xdist",
     "mypy",
-    "openai>=0",
+    "openai>=1",
     "pdfplumber",
     "pre-commit",
 ]
