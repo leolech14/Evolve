@@ -8,10 +8,10 @@ Kept as utility for manual runs or quick hot-fixes.
 
 import os
 import subprocess
-import time
-import tempfile
-from pathlib import Path
 import sys
+import tempfile
+import time
+from pathlib import Path
 
 try:
     import openai

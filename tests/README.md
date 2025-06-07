@@ -65,4 +65,3 @@ Legacy directory containing original test files. Will be deprecated once migrati
 2. Add both PDF and TXT to validation_data/
 3. Run parser tests and analyze results
 4. Once parser successfully handles the file, create golden CSV and move to training_data/
-

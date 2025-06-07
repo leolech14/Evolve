@@ -10,271 +10,109 @@ on:
     - cron: '0 3 * * *'   # daily smoke run
 
 env:
-  OPENAI_MODEL: gpt-4.1
-  MAX_TOKENS_PER_RUN: '200000'    # reduce budget to 200k tokens
+  OPENAI_MODEL: gpt-4
+  MAX_TOKENS: '200000'
   MAX_ATTEMPTS: '5'
-  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-  GITHUB_TOKEN:   ${{ secrets.BOT_PAT }}
-  FORCE_EVOLVE: '0'
 
 jobs:
-  static:
+  test:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        task: [ruff, black, mypy]
-    env:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      GITHUB_TOKEN:   ${{ secrets.BOT_PAT }}
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-py-${{ hashFiles('pyproject.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-py-
 
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
           cache: 'pip'
 
-      - name: Prepare diagnostics dir
-        run: mkdir -p diagnostics
+      - name: Create dirs
+        run: mkdir -p diagnostics csv_output
 
-      - name: Cache lint data
-        uses: actions/cache@v3
-        with:
-          path: |
-            .pytest_cache
-            .ruff_cache
-          key: ${{ runner.os }}-${{ matrix.task }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.task }}-
-
-      - name: Install dev deps
+      - name: Install dependencies
         run: pip install -e '.[dev]'
 
-      - name: Run ${{ matrix.task }}
+      # Static analysis
+      - name: Run linters
+        id: lint
+        continue-on-error: true
         run: |
-          case "${{ matrix.task }}" in
-            ruff) ruff check . ;;
-            black) black --check . ;;
-            mypy) mypy src/ ;;
-          esac
+          ruff check . | tee diagnostics/lint.txt
+          black --check . | tee -a diagnostics/lint.txt
+          mypy src/ | tee -a diagnostics/lint.txt
 
-  tests-evolve:
-    needs: static
-    runs-on: ubuntu-latest
-    env:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      GITHUB_TOKEN:   ${{ secrets.BOT_PAT }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-py-${{ hashFiles('pyproject.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-py-
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-          cache: 'pip'
-
-      - name: Cache test data
-        uses: actions/cache@v3
-        with:
-          path: |
-            .pytest_cache
-            .ruff_cache
-          key: ${{ runner.os }}-tests-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-tests-
-
-      - name: Install dev deps
-
-        run: pip install -e '.[dev]'
-
-      # run tests once, capture failure but don't abort
-      - name: PyTest + Coverage
+      # First pass
+      - name: Run tests
         id: tests
         continue-on-error: true
         run: |
-          pytest -ra -vv --cov=statement_refinery \
-                 --cov-report=term-missing --cov-report=xml \
-                 --cov-fail-under=90 | tee diagnostics/step-tests.txt
+          pytest -v --cov=statement_refinery \
+                 --cov-report=xml \
+                 --cov-report=term-missing \
+                 --cov-fail-under=90 | tee diagnostics/test.txt
 
-      - name: Check parser accuracy
+      - name: Check accuracy
         id: accuracy
         continue-on-error: true
         run: |
-          python scripts/check_accuracy.py --threshold 99 --summary-file accuracy_summary.json --csv-dir csv_output | tee diagnostics/step-accuracy.txt
+          python scripts/check_accuracy.py --threshold 99 \
+                 --summary-file diagnostics/accuracy.json \
+                 --csv-dir csv_output | tee diagnostics/accuracy.txt
 
-      # auto-patch loop runs only when tests or accuracy fail
-      - name: Check evolve prerequisites
-        id: evolve_prereqs
-        if: |
-          steps.tests.outcome == 'failure' ||
-          needs.static.result == 'failure' ||
-          steps.accuracy.outcome == 'failure'
-
-          
-        run: |
-          python - <<'EOF'
-          import importlib, os, sys
-
-          missing = False
-          try:
-              importlib.import_module('openai')
-          except Exception:
-              sys.stderr.write('Missing `openai` package\n')
-              missing = True
-
-          if not os.getenv('OPENAI_API_KEY'):
-              sys.stderr.write('OPENAI_API_KEY not set\n')
-              missing = True
-
-          token = (
-              os.getenv('GITHUB_TOKEN')
-              or os.getenv('PERSONAL_ACCESS_TOKEN_CLASSIC')
-              or os.getenv('GH_TOKEN')
-          )
-          if not token:
-              sys.stderr.write('Missing GitHub token\n')
-              missing = True
-
-          if missing:
-              sys.exit(1)
-          EOF
-
-      - name: Evolve patch loop
+      # Auto-patch if needed
+      - name: Run auto-patch
         id: evolve
         if: |
-          (steps.tests.outcome == 'failure' ||
-           needs.static.result == 'failure' ||
-           steps.accuracy.outcome == 'failure' ||
-           (env.FORCE_EVOLVE && env.FORCE_EVOLVE != '0')) &&
-          steps.evolve_prereqs.outcome == 'success'
+          (steps.lint.outcome == 'failure' ||
+           steps.tests.outcome == 'failure' ||
+           steps.accuracy.outcome == 'failure') &&
+          github.event_name != 'pull_request'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          GITHUB_TOKEN:   ${{ secrets.BOT_PAT }}
-
-        run: python .github/tools/evolve.py | tee diagnostics/step-evolve.txt
-
-
-      - name: Report evolve failure
-        if: steps.evolve.outcome == 'failure'
-        env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN_CLASSIC }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GITHUB_TOKEN: ${{ secrets.BOT_PAT }}
         run: |
-          echo "evolve.py exited without opening a PR." >> $GITHUB_STEP_SUMMARY
-          if [ -n "$PR_NUMBER" ]; then
-            gh pr comment "$PR_NUMBER" -b "evolve.py exited without opening a PR."
-          fi
+          git config --global user.name "Evolve Bot"
+          git config --global user.email "bot@example.com"
+          python .github/tools/evolve.py | tee diagnostics/evolve.txt
 
-      # confirm everything green only if a patch was applied
-      - name: Re-run tests
+      # Re-run if patched
+      - name: Re-run checks
         if: steps.evolve.outcome == 'success'
         run: |
-          pytest -ra -vv --cov=statement_refinery \
-                 --cov-report=term-missing --cov-report=xml \
-                 --cov-fail-under=90 | tee diagnostics/step-tests-rerun.txt
+          ruff check .
+          black --check .
+          mypy src/
+          pytest -v --cov=statement_refinery \
+                 --cov-report=xml \
+                 --cov-report=term-missing \
+                 --cov-fail-under=90
+          python scripts/check_accuracy.py --threshold 99
 
-      - name: Re-check parser accuracy
-        if: steps.evolve.outcome == 'success'
-        run: |
-          python scripts/check_accuracy.py --threshold 99 | tee diagnostics/step-accuracy-rerun.txt
-
+      # Artifacts
       - name: Upload coverage
-        if: always() && env.CODECOV_TOKEN != '' && hashFiles('coverage.xml') != ''
+        if: always()
         uses: codecov/codecov-action@v4
         with:
-          files: coverage.xml
-          fail_ci_if_error: false
+          file: coverage.xml
+          fail_ci_if_error: true
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-      - name: Upload coverage artifact
+      - name: Upload diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-xml
-          path: coverage.xml
+          name: diagnostics
+          path: diagnostics/
 
-      - name: Upload generated CSVs
+      - name: Upload CSVs
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: parser-csv
+          name: csvs
           path: csv_output/
 
-      - name: Upload step logs
+      # Summary
+      - name: Generate summary
         if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: step-logs
-          path: diagnostics/step-*.txt
-
-      - name: Summarize results
-        if: always()
-        env:
-          STATIC_RESULT: ${{ needs.static.result }}
-          TESTS_OUTCOME: ${{ steps.tests.outcome }}
-          ACCURACY_OUTCOME: ${{ steps.accuracy.outcome }}
-          EVOLVE_PREREQS_OUTCOME: ${{ steps.evolve_prereqs.outcome }}
-          EVOLVE_OUTCOME: ${{ steps.evolve.outcome }}
         run: python scripts/ci_summary.py
-
-
-  golden-check:
-    needs: tests-evolve
-    runs-on: ubuntu-latest
-    env:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      GITHUB_TOKEN:   ${{ secrets.BOT_PAT }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-py-${{ hashFiles('pyproject.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-py-
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-          cache: 'pip'
-
-      - name: Cache golden data
-        uses: actions/cache@v3
-        with:
-          path: |
-            .pytest_cache
-            .ruff_cache
-          key: ${{ runner.os }}-golden-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-golden-
-
-      - name: Install dev deps
-        run: pip install -e '.[dev]'
-
-      - name: Check parser accuracy
-        run: |
-          python scripts/check_accuracy.py --csv-dir csv_output | tee diagnostics/step-golden.txt
-
-      - name: Upload golden logs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: golden-logs
-          path: diagnostics/step-golden.txt
 

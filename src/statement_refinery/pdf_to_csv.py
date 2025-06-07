@@ -14,16 +14,15 @@ from __future__ import annotations
 
 import argparse
 import csv
-import logging
-import sys
-from pathlib import Path
-from typing import Iterator, List, Final
-import re
 import hashlib
-from decimal import Decimal
-from datetime import date
+import logging
+import re
 import shutil
-
+import sys
+from datetime import date
+from decimal import Decimal
+from pathlib import Path
+from typing import Final, Iterator, List
 
 # ===== CORE REGEX PATTERNS =====
 
@@ -56,7 +55,10 @@ RE_CARD_FINAL: Final = re.compile(r"\bfinal\s+(\d{4})\b", re.I)
 RE_INSTALLMENT: Final = re.compile(r"(\d{2})/(\d{2})$")
 
 RE_EMBEDDED_TRANSACTION: Final = re.compile(
-    r"(?P<date>\d{1,2}/\d{1,2})\s+(?P<desc>[A-Z][A-Z\s\*\-\.\d]{2,50}?)\s+(?:final\s+\d{4}\s+)?(?P<amt>-?\d{1,3}(?:\.\d{3})*,\d{2})(?:\s+.*)?$"
+    r"(?P<date>\d{1,2}/\d{1,2})\s+"
+    r"(?P<desc>[A-Z][A-Z\s\*\-\.\d]{2,50}?)\s+"
+    r"(?:final\s+\d{4}\s+)?"
+    r"(?P<amt>-?\d{1,3}(?:\.\d{3})*,\d{2})(?:\s+.*)?$"
 )
 
 # ===== CATEGORY CLASSIFICATION PATTERNS =====
@@ -480,9 +482,7 @@ def parse_lines(lines: Iterator[str], year: int | None = None) -> List[dict]:
                     if row["ledger_hash"] not in seen_hashes:
                         rows.append(row)
                         seen_hashes.add(row["ledger_hash"])
-                        debug_file.write(
-                            f"  Parsed: {row['desc_raw']} = R$ {row['amount_brl']}\n"
-                        )
+                        debug_file.write(f"  Parsed: {row['desc_raw']} = R$ {row['amount_brl']}\n")
                     else:
                         debug_file.write("  Skipped: Duplicate transaction\n")
                 else:

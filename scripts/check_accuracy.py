@@ -1,15 +1,15 @@
-import io
-import contextlib
 import argparse
+import contextlib
 import csv
 import difflib
 import importlib.util
+import io
 import json
+import re
 import statistics
-import sys, os  # noqa: E401,F401
+import sys  # noqa: E401,F401
 from decimal import Decimal
 from pathlib import Path
-import re
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))

@@ -1,3 +1,93 @@
+# Evolve - Itaú Statement Parser
+
+A simple and elegant tool for converting Itaú credit card statements from PDF to CSV format.
+
+## Features
+
+- Direct PDF to CSV conversion
+- Two-step conversion through TXT format for validation
+- Enhanced transaction categorization
+- Detailed logging for troubleshooting
+
+## Installation
+
+```bash
+pip install .
+```
+
+## Usage
+
+Evolve provides three main commands:
+
+### Direct PDF to CSV Conversion
+
+```bash
+evolve pdf-to-csv statement.pdf --out transactions.csv
+```
+
+### Two-Step Conversion (for validation)
+
+1. First convert PDF to TXT:
+```bash
+evolve pdf-to-txt statement.pdf --out statement.txt
+```
+
+2. Review and optionally edit the TXT file
+
+3. Convert TXT to CSV:
+```bash
+evolve txt-to-csv statement.txt --out transactions.csv
+```
+
+## Output Format
+
+The CSV output includes:
+
+- Card number (last 4 digits)
+- Transaction date
+- Description
+- Amount in BRL
+- Original amount and currency (for international transactions)
+- Category
+- Merchant location
+- Installment information
+
+## Directory Structure
+
+- `src/statement_refinery/`: Core package code
+  - `cli.py`: Command-line interface
+  - `pdf_to_csv.py`: Direct PDF to CSV conversion
+  - `pdf_to_txt.py`: PDF to TXT conversion
+  - `txt_parser.py`: TXT to CSV conversion with enhanced parsing
+  - `logging_handler.py`: Logging and error tracking
+
+- `tests/`: Test files and data
+  - `training_data/`: Known-good files for testing
+  - `validation_data/`: Files for validation
+  - `test_data/`: Additional test files
+
+## Development
+
+1. Install development dependencies:
+```bash
+pip install -e ".[dev]"
+```
+
+2. Run tests:
+```bash
+pytest
+```
+
+3. Format code:
+```bash
+black src tests
+ruff check src tests
+```
+
+## License
+
+MIT
+
 # ![CI](https://github.com/leolech14/Evolve/actions/workflows/ci.yaml/badge.svg) ![Coverage](https://codecov.io/gh/leolech14/Evolve/branch/main/graph/badge.svg)
 
 # Statement Refinery
@@ -144,8 +234,8 @@ rather than your personal credentials.
 
 ## Project Goals
 
-* **Accuracy first** – robust regex rules tuned for Itaú PDFs.  
-* **Zero-friction analysis** – clean CSVs ready for spreadsheets or BI tools.  
+* **Accuracy first** – robust regex rules tuned for Itaú PDFs.
+* **Zero-friction analysis** – clean CSVs ready for spreadsheets or BI tools.
 * **Open by default** – contributions welcome; see `CONTRIBUTING.md` for guidelines.
 
 ## License

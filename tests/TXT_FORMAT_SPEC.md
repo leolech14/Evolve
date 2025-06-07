@@ -72,4 +72,3 @@
 3. Location information follows the establishment name after a period
 4. International transactions include both original currency and BRL amounts
 5. Line numbers are important for parsing and must be preserved
-

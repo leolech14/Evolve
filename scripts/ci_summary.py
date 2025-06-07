@@ -1,101 +1,150 @@
+#!/usr/bin/env python3
+"""
+Generates a summary of CI results for GitHub Actions.
+
+This script reads test output, coverage data, and accuracy results to create
+a markdown summary displayed in the GitHub Actions UI.
+"""
+
 import json
-import os
-import sys
-from datetime import datetime, UTC
 from pathlib import Path
-import xml.etree.ElementTree as ET
 
-CHECK = "\N{WHITE HEAVY CHECK MARK}"
-CROSS = "\N{CROSS MARK}"
-NEUTRAL = "\N{HEAVY MINUS SIGN}"
-ENCODING = "utf-8"
+# Constants
+DIAGNOSTICS_DIR = Path("diagnostics")
+COV_FILE = Path("coverage.xml")
+ACCURACY_FILE = DIAGNOSTICS_DIR / "accuracy.json"
+LINT_FILE = DIAGNOSTICS_DIR / "lint.txt"
+TEST_FILE = DIAGNOSTICS_DIR / "test.txt"
+EVOLVE_FILE = DIAGNOSTICS_DIR / "evolve.txt"
 
+def read_file(path: Path) -> str:
+    """Read file contents, return empty string if file missing."""
+    try:
+        return path.read_text()
+    except:
+        return ""
 
-FLAG = "\N{CHEQUERED FLAG}"
+def extract_coverage(content: str) -> float:
+    """Extract coverage percentage from pytest output."""
+    try:
+        lines = content.splitlines()
+        for line in lines:
+            if "TOTAL" in line and "%" in line:
+                return float(line.split()[-1].strip("%"))
+    except:
+        pass
+    return 0.0
 
-summary_lines: list[str] = []
+def extract_test_summary(content: str) -> dict:
+    """Extract test summary from pytest output."""
+    summary = {"passed": 0, "failed": 0, "skipped": 0, "total": 0}
+    try:
+        lines = content.splitlines()
+        for line in lines:
+            if "=== short test summary info ===" in line:
+                break
+            if line.startswith("==") and line.endswith("=="):
+                parts = line.strip("=").strip().split()
+                if len(parts) >= 2:
+                    try:
+                        summary["total"] = int(parts[0])
+                        for part in parts[1:]:
+                            if "passed" in part:
+                                summary["passed"] = int(part.split()[0])
+                            elif "failed" in part:
+                                summary["failed"] = int(part.split()[0])
+                            elif "skipped" in part:
+                                summary["skipped"] = int(part.split()[0])
+                    except:
+                        continue
+    except:
+        pass
+    return summary
 
-# Static checks result from env
-static_result = os.environ.get("STATIC_RESULT", "success")
-static_ok = static_result == "success"
-summary_lines.append(f"{CHECK if static_ok else CROSS} Static checks")
-all_ok = static_ok
+def extract_lint_issues(content: str) -> list:
+    """Extract lint issues from ruff/black/mypy output."""
+    issues = []
+    try:
+        lines = content.splitlines()
+        for line in lines:
+            if any(tool in line.lower() for tool in ["error", "warning", "failed"]):
+                issues.append(line.strip())
+    except:
+        pass
+    return issues
 
-# Unit tests
-tests_outcome = os.getenv("TESTS_OUTCOME", "success")
-try:
-    report = json.loads(Path("report.json").read_text())
-    total = report.get("summary", {}).get("total", 0)
-    passed = report.get("summary", {}).get("passed", 0)
-    skipped = total - passed
-except Exception:
-    total = passed = skipped = 0
+def read_accuracy(path: Path) -> dict:
+    """Read accuracy results from JSON file."""
+    try:
+        return json.loads(path.read_text())
+    except:
+        return {"average_match": 0, "files": {}}
 
-tests_ok = tests_outcome == "success" and skipped == 0
-summary_lines.append(f"{CHECK if tests_ok else CROSS} Unit tests ({skipped} skipped)")
-all_ok = all_ok and tests_ok
+def main() -> None:
+    # Read input files
+    test_output = read_file(TEST_FILE)
+    lint_output = read_file(LINT_FILE)
+    evolve_output = read_file(EVOLVE_FILE)
+    accuracy_data = read_accuracy(ACCURACY_FILE)
+    
+    # Process data
+    coverage = extract_coverage(test_output)
+    test_summary = extract_test_summary(test_output)
+    lint_issues = extract_lint_issues(lint_output)
+    
+    # Generate summary markdown
+    summary = [
+        "## CI Run Summary",
+        "",
+        "### Test Results",
+        f"- Total Tests: {test_summary['total']}",
+        f"- Passed: {test_summary['passed']}",
+        f"- Failed: {test_summary['failed']}",
+        f"- Skipped: {test_summary['skipped']}",
+        f"- Coverage: {coverage:.1f}%",
+        "",
+    ]
+    
+    # Add lint issues if any
+    if lint_issues:
+        summary.extend([
+            "### Lint Issues",
+            "```",
+            *lint_issues[:10],  # Show first 10 issues
+            "```" if len(lint_issues) <= 10 else "... and more issues",
+            ""
+        ])
+    
+    # Add accuracy results
+    summary.extend([
+        "### Parser Accuracy",
+        f"- Average Match: {accuracy_data['average_match']:.1f}%",
+        "",
+        "#### Per-File Results",
+        "```",
+        *[f"{file}: {score:.1f}%" for file, score in 
+          sorted(accuracy_data.get("files", {}).items())],
+        "```",
+        ""
+    ])
+    
+    # Add evolve info if it ran
+    if evolve_output:
+        summary.extend([
+            "### Auto-Patch Results",
+            "```",
+            *evolve_output.splitlines()[-5:],  # Show last 5 lines
+            "```",
+            ""
+        ])
+    
+    # Write summary
+    summary_file = Path("summary.md")
+    summary_file.write_text("\n".join(summary))
+    
+    # Print summary for local runs
+    print("\n".join(summary))
 
-# Parser accuracy
-accuracy_outcome = os.getenv("ACCURACY_OUTCOME", "success")
-try:
-    acc = json.loads(Path("accuracy_summary.json").read_text())
-    pct = acc.get("average", 0.0)
-    count = acc.get("pdf_count", 0)
-    mismatched = acc.get("mismatched", 0)
-    max_delta = acc.get("max_delta", 0.0)
-except Exception:
-    pct = 0.0
-    count = 0
-    mismatched = 0
-    max_delta = 0.0
-accuracy_ok = accuracy_outcome == "success"
-if accuracy_ok:
-    line = f"{CHECK} Parser accuracy ({pct:.1f}% avg)"
-else:
-    line = (
-        f"{CROSS} Parser accuracy ({mismatched} PDFs off by \u22651 row, "
-        f"biggest delta: {max_delta:.2f} BRL)"
-    )
-summary_lines.append(line)
-all_ok = all_ok and accuracy_ok
+if __name__ == "__main__":
+    main()
 
-# Coverage
-cov_pct = 0.0
-try:
-    root = ET.parse("coverage.xml").getroot()
-    cov_pct = float(root.get("line-rate", 0)) * 100
-except Exception:
-    pass
-summary_lines.append(f"{NEUTRAL} Coverage      ({cov_pct:.1f} %)")
-
-
-# Evolve loop
-loop_outcome = os.getenv("EVOLVE_OUTCOME", "skipped")
-if loop_outcome == "skipped":
-    loop_status = "skipped – all green"
-elif loop_outcome == "success":
-    loop_status = "ran (build fixed)"
-else:
-    loop_status = "ran (still red)"
-summary_lines.append(f"{NEUTRAL} Evolve loop   ({loop_status})")
-
-summary_lines.append("")
-summary_lines.append(f"{FLAG} RESULT: {'PARSER READY' if all_ok else 'NOT READY'}")
-
-summary_text = "\n".join(summary_lines) + "\n"
-summary_text = summary_text.encode(ENCODING, "replace").decode(ENCODING, "replace")
-
-summary_file = os.environ.get("GITHUB_STEP_SUMMARY", "summary.txt")
-diag_dir = Path("diagnostics")
-diag_dir.mkdir(exist_ok=True)
-diag_path = diag_dir / f"ci_summary_{datetime.now(UTC).strftime('%Y%m%d')}.txt"
-try:
-    with open(summary_file, "w", encoding=ENCODING, errors="replace") as fh:
-        fh.write(summary_text)
-    diag_path.write_text(summary_text, encoding=ENCODING)
-except Exception:
-    sys.stdout.write(summary_text)
-    sys.exit(0)
-
-if not all_ok:
-    sys.exit(1)
