@@ -43,7 +43,7 @@ jobs:
         id: lint
         continue-on-error: true
         run: |
-          ruff check . | tee diagnostics/lint.txt
+          ruff check --fix . | tee diagnostics/lint.txt
           black --check . | tee -a diagnostics/lint.txt
 
       - name: Run mypy
@@ -92,7 +92,8 @@ jobs:
       - name: Re-run checks
         if: steps.evolve.outcome == 'success'
         run: |
-          ruff check .
+          ruff check --fix .
+          black .
           black --check .
           mypy src/
           pytest -v --cov=statement_refinery \
