@@ -113,7 +113,6 @@ def create_patch(suggestion: str) -> Optional[str]:
         current_file = None
         inside_block = False
         buffer = []
-
         for line in suggestion.splitlines():
             if line.startswith("FILE: "):
                 # flush any previous block
@@ -124,6 +123,7 @@ def create_patch(suggestion: str) -> Optional[str]:
                 buffer = []
                 inside_block = False
             elif line.startswith("```") and current_file:
+
                 # toggle state – first ``` opens, second closes
                 inside_block = not inside_block
                 if not inside_block:  # closing back-tick
@@ -132,7 +132,7 @@ def create_patch(suggestion: str) -> Optional[str]:
                     buffer = []
             elif inside_block:
                 buffer.append(line)
-        # handle EOF without closing ```
+
         if current_file and buffer:
             Path(current_file).parent.mkdir(parents=True, exist_ok=True)
             Path(current_file).write_text("\n".join(buffer))
