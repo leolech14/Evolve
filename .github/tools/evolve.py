@@ -112,12 +112,27 @@ def create_patch(suggestion: str) -> Optional[str]:
     try:
         # Parse and apply changes
         current_file = None
+        inside_block = False
+        buffer: list[str] = []
         for line in suggestion.splitlines():
             if line.startswith("FILE: "):
+                if current_file and buffer:
+                    Path(current_file).parent.mkdir(parents=True, exist_ok=True)
+                    Path(current_file).write_text("\n".join(buffer))
                 current_file = line.split(":", 1)[1].strip()
+                buffer = []
+                inside_block = False
             elif line.startswith("```") and current_file:
-                content = line.split("```", 2)[1].strip()
-                Path(current_file).write_text(content)
+                inside_block = not inside_block
+                if not inside_block:
+                    Path(current_file).parent.mkdir(parents=True, exist_ok=True)
+                    Path(current_file).write_text("\n".join(buffer))
+                    buffer = []
+            elif inside_block:
+                buffer.append(line)
+        if current_file and buffer:
+            Path(current_file).parent.mkdir(parents=True, exist_ok=True)
+            Path(current_file).write_text("\n".join(buffer))
 
         # Create patch
         run_command(["git", "add", "."])
