@@ -88,9 +88,9 @@ def collect_context() -> dict:
         except Exception:
             context["errors"].append("Failed to read accuracy results")
 
-    # Get changed files
-    _, output = run_command(["git", "diff", "--name-only"])
-    context["files"] = [f for f in output.splitlines() if f.endswith(".py")]
+    # Get all tracked Python files (not just changed ones)
+    _, output = run_command(["git", "ls-files", "*.py"])
+    context["files"] = [f for f in output.splitlines()]
 
     # Get file contents
     for file in context["files"]:
@@ -229,7 +229,7 @@ def main() -> int:
     print("📝 Collecting context...")
     context = collect_context()
     if not context["files"]:
-        print("No Python files changed")
+        print("No Python files found")
         return 0
 
     # Prepare prompt
