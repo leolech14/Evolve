@@ -12,6 +12,9 @@ except Exception:
 if not os.getenv("OPENAI_API_KEY"):
     sys.stderr.write("OPENAI_API_KEY not set\n")
     missing = True
+elif int(os.getenv("MAX_TOKENS", "0")) > 5_000_000:
+    sys.stderr.write("MAX_TOKENS exceeds allowed limit\n")
+    missing = True
 
 pat = os.getenv("PERSONAL_ACCESS_TOKEN_CLASSIC") or os.getenv("GH_TOKEN")
 gh_token = os.getenv("GITHUB_TOKEN")

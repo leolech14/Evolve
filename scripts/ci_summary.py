@@ -16,13 +16,18 @@ ACCURACY_FILE = DIAGNOSTICS_DIR / "accuracy.json"
 LINT_FILE = DIAGNOSTICS_DIR / "lint.txt"
 TEST_FILE = DIAGNOSTICS_DIR / "test.txt"
 EVOLVE_FILE = DIAGNOSTICS_DIR / "evolve.txt"
+CHECK = "\u2705"
+CROSS = "\u274c"
+ENCODING = "utf-8"
+
 
 def read_file(path: Path) -> str:
     """Read file contents, return empty string if file missing."""
     try:
         return path.read_text()
-    except:
+    except Exception:
         return ""
+
 
 def extract_coverage(content: str) -> float:
     """Extract coverage percentage from pytest output."""
@@ -31,9 +36,10 @@ def extract_coverage(content: str) -> float:
         for line in lines:
             if "TOTAL" in line and "%" in line:
                 return float(line.split()[-1].strip("%"))
-    except:
+    except Exception:
         pass
     return 0.0
+
 
 def extract_test_summary(content: str) -> dict:
     """Extract test summary from pytest output."""
@@ -55,11 +61,12 @@ def extract_test_summary(content: str) -> dict:
                                 summary["failed"] = int(part.split()[0])
                             elif "skipped" in part:
                                 summary["skipped"] = int(part.split()[0])
-                    except:
+                    except Exception:
                         continue
-    except:
+    except Exception:
         pass
     return summary
+
 
 def extract_lint_issues(content: str) -> list:
     """Extract lint issues from ruff/black/mypy output."""
@@ -69,16 +76,18 @@ def extract_lint_issues(content: str) -> list:
         for line in lines:
             if any(tool in line.lower() for tool in ["error", "warning", "failed"]):
                 issues.append(line.strip())
-    except:
+    except Exception:
         pass
     return issues
+
 
 def read_accuracy(path: Path) -> dict:
     """Read accuracy results from JSON file."""
     try:
         return json.loads(path.read_text())
-    except:
+    except Exception:
         return {"average_match": 0, "files": {}}
+
 
 def main() -> None:
     # Read input files
@@ -86,12 +95,12 @@ def main() -> None:
     lint_output = read_file(LINT_FILE)
     evolve_output = read_file(EVOLVE_FILE)
     accuracy_data = read_accuracy(ACCURACY_FILE)
-    
+
     # Process data
     coverage = extract_coverage(test_output)
     test_summary = extract_test_summary(test_output)
     lint_issues = extract_lint_issues(lint_output)
-    
+
     # Generate summary markdown
     summary = [
         "## CI Run Summary",
@@ -104,47 +113,55 @@ def main() -> None:
         f"- Coverage: {coverage:.1f}%",
         "",
     ]
-    
+
     # Add lint issues if any
     if lint_issues:
-        summary.extend([
-            "### Lint Issues",
-            "```",
-            *lint_issues[:10],  # Show first 10 issues
-            "```" if len(lint_issues) <= 10 else "... and more issues",
-            ""
-        ])
-    
+        summary.extend(
+            [
+                "### Lint Issues",
+                "```",
+                *lint_issues[:10],  # Show first 10 issues
+                "```" if len(lint_issues) <= 10 else "... and more issues",
+                "",
+            ]
+        )
+
     # Add accuracy results
-    summary.extend([
-        "### Parser Accuracy",
-        f"- Average Match: {accuracy_data['average_match']:.1f}%",
-        "",
-        "#### Per-File Results",
-        "```",
-        *[f"{file}: {score:.1f}%" for file, score in 
-          sorted(accuracy_data.get("files", {}).items())],
-        "```",
-        ""
-    ])
-    
+    summary.extend(
+        [
+            "### Parser Accuracy",
+            f"- Average Match: {accuracy_data['average_match']:.1f}%",
+            "",
+            "#### Per-File Results",
+            "```",
+            *[
+                f"{file}: {score:.1f}%"
+                for file, score in sorted(accuracy_data.get("files", {}).items())
+            ],
+            "```",
+            "",
+        ]
+    )
+
     # Add evolve info if it ran
     if evolve_output:
-        summary.extend([
-            "### Auto-Patch Results",
-            "```",
-            *evolve_output.splitlines()[-5:],  # Show last 5 lines
-            "```",
-            ""
-        ])
-    
+        summary.extend(
+            [
+                "### Auto-Patch Results",
+                "```",
+                *evolve_output.splitlines()[-5:],  # Show last 5 lines
+                "```",
+                "",
+            ]
+        )
+
     # Write summary
     summary_file = Path("summary.md")
     summary_file.write_text("\n".join(summary))
-    
+
     # Print summary for local runs
     print("\n".join(summary))
 
+
 if __name__ == "__main__":
     main()
-
