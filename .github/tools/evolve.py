@@ -23,12 +23,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from typing import List, Optional, Tuple
-
-try:
-    import openai
-except ImportError:
-    print("Error: openai package required. Install with: pip install openai")
-    sys.exit(1)
+from openai import OpenAI
 
 # Configuration
 DIAGNOSTICS = Path("diagnostics")
@@ -276,10 +271,11 @@ def main() -> int:
         ]
     )
 
-    # Get AI suggestion
+    # Get AI suggestion (OpenAI 1.x API)
     print("🧠 Requesting AI analysis...")
     try:
-        response = openai.ChatCompletion.create(
+        client = OpenAI()
+        response = client.chat.completions.create(
             model=MODEL,
             messages=[{"role": "user", "content": "\n".join(prompt)}],
             max_tokens=MAX_TOKENS,
