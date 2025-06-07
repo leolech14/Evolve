@@ -269,7 +269,9 @@ def apply_direct_file_overwrite(suggestion: str) -> bool:
         if suggestion.lstrip().startswith("From ") and "Subject: [PATCH]" in suggestion:
             patch_path = DIAGNOSTICS / "ai-patch-unapplied.patch"
             patch_path.write_text(suggestion)
-            print(f"[apply_direct_file_overwrite] Detected patch/diff format. Patch saved to {patch_path}. Manual review required. Skipping direct overwrite.")
+            print(
+                f"[apply_direct_file_overwrite] Detected patch/diff format. Patch saved to {patch_path}. Manual review required. Skipping direct overwrite."
+            )
             return False
 
         # Parse file blocks as before
@@ -284,35 +286,49 @@ def apply_direct_file_overwrite(suggestion: str) -> bool:
                     try:
                         Path(current_file).parent.mkdir(parents=True, exist_ok=True)
                         Path(current_file).write_text("\n".join(buffer))
-                        print(f"[apply_direct_file_overwrite] Wrote file: {current_file} (lines {len(buffer)})")
+                        print(
+                            f"[apply_direct_file_overwrite] Wrote file: {current_file} (lines {len(buffer)})"
+                        )
                         wrote_any = True
                     except Exception as file_exc:
-                        print(f"[apply_direct_file_overwrite] Failed to write {current_file}: {file_exc}")
+                        print(
+                            f"[apply_direct_file_overwrite] Failed to write {current_file}: {file_exc}"
+                        )
                 current_file = line.split(":", 1)[1].strip()
                 buffer = []
                 inside_block = False
-                print(f"[apply_direct_file_overwrite] Found file block: {current_file} (at line {idx})")
+                print(
+                    f"[apply_direct_file_overwrite] Found file block: {current_file} (at line {idx})"
+                )
             elif line.startswith("```") and current_file:
                 inside_block = not inside_block
                 if not inside_block and buffer:
                     try:
                         Path(current_file).parent.mkdir(parents=True, exist_ok=True)
                         Path(current_file).write_text("\n".join(buffer))
-                        print(f"[apply_direct_file_overwrite] Wrote file: {current_file} (lines {len(buffer)})")
+                        print(
+                            f"[apply_direct_file_overwrite] Wrote file: {current_file} (lines {len(buffer)})"
+                        )
                         wrote_any = True
                         buffer = []
                     except Exception as file_exc:
-                        print(f"[apply_direct_file_overwrite] Failed to write {current_file}: {file_exc}")
+                        print(
+                            f"[apply_direct_file_overwrite] Failed to write {current_file}: {file_exc}"
+                        )
             elif inside_block:
                 buffer.append(line)
         if current_file and buffer:
             try:
                 Path(current_file).parent.mkdir(parents=True, exist_ok=True)
                 Path(current_file).write_text("\n".join(buffer))
-                print(f"[apply_direct_file_overwrite] Wrote file: {current_file} (lines {len(buffer)})")
+                print(
+                    f"[apply_direct_file_overwrite] Wrote file: {current_file} (lines {len(buffer)})"
+                )
                 wrote_any = True
             except Exception as file_exc:
-                print(f"[apply_direct_file_overwrite] Failed to write {current_file}: {file_exc}")
+                print(
+                    f"[apply_direct_file_overwrite] Failed to write {current_file}: {file_exc}"
+                )
         print(f"[apply_direct_file_overwrite] Done. Any files written: {wrote_any}")
         return wrote_any
     except Exception as e:
