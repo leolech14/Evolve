@@ -30,32 +30,64 @@ except ImportError:
     print("Error: openai package required. Install with: pip install openai")
     sys.exit(1)
 
+# Support both openai<1 and openai>=1 interfaces
+if hasattr(openai, "OpenAI"):
+    _openai_client = openai.OpenAI()
+
+    def create_chat_completion(**kwargs):
+        return _openai_client.chat.completions.create(**kwargs)
+
+else:
+
+    def create_chat_completion(**kwargs):
+        return openai.ChatCompletion.create(**kwargs)
+
+
 # Configuration
 DIAGNOSTICS = Path("diagnostics")
 MAX_TOKENS = min(5_000_000, int(os.getenv("MAX_TOKENS", "5000000")))
 MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS", "5"))
 MODEL = os.getenv("OPENAI_MODEL", "gpt-4")
 
+LOG_FILE = DIAGNOSTICS / "evolve.log"
+
+
+def log(msg: str) -> None:
+    """Print and persist a log message with timestamp."""
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    DIAGNOSTICS.mkdir(exist_ok=True)
+    line = f"[{timestamp}] {msg}"
+    print(line)
+    with open(LOG_FILE, "a") as f:
+        f.write(line + "\n")
+
 
 def ensure_best_branch() -> None:
     """Ensure the codex/best branch exists on fresh clones."""
+    log("Ensuring codex/best branch exists")
     code, _ = run_command(["git", "rev-parse", "--verify", "-q", "codex/best"])
     if code != 0:
         head_rev = run_command(["git", "rev-parse", "HEAD"])[1].strip()
         run_command(["git", "branch", "codex/best", head_rev])
-        print("Created missing codex/best branch at", head_rev)
+        log(f"Created missing codex/best branch at {head_rev}")
 
 
 def run_command(cmd: List[str], capture: bool = True) -> Tuple[int, str]:
     """Run a shell command and return exit code and output."""
+    log(f"$ {' '.join(cmd)}")
     try:
         if capture:
             result = subprocess.run(cmd, capture_output=True, text=True, check=False)
-            return result.returncode, result.stdout + result.stderr
+            output = result.stdout + result.stderr
         else:
             result = subprocess.run(cmd, check=False)
-            return result.returncode, ""
+            output = ""
+        log(f"exit code: {result.returncode}")
+        if capture and output.strip():
+            log(output.strip())
+        return result.returncode, output
     except Exception as e:
+        log(f"command failed: {e}")
         return 1, str(e)
 
 
@@ -107,6 +139,7 @@ def create_patch(suggestion: str) -> Optional[str]:
     """Create a git patch from the AI suggestion."""
     # Create temporary branch
     branch = f"ai-patch-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+    log(f"Creating temporary branch {branch}")
     run_command(["git", "checkout", "-b", branch])
 
     try:
@@ -141,6 +174,7 @@ def create_patch(suggestion: str) -> Optional[str]:
         run_command(["git", "add", "."])
         run_command(["git", "commit", "-m", "AI: Auto-patch improvements"])
 
+        log("Running tests for generated patch")
         test_code, _ = run_command(["pytest", "-q"], capture=True)
         if test_code == 0:
             run_command(
@@ -152,7 +186,7 @@ def create_patch(suggestion: str) -> Optional[str]:
                     "🤖 AUTO-FIX: Auto-patch improvements",
                 ]
             )
-
+        log("Creating git patch")
         code, patch = run_command(["git", "format-patch", "HEAD~1", "--stdout"])
 
         if code == 0:
@@ -175,6 +209,7 @@ def apply_patch(patch: str) -> bool:
         # Write patch
         patch_file = DIAGNOSTICS / "ai-patch.patch"
         patch_file.write_text(patch)
+        log(f"Patch written to {patch_file}")
 
         # Validate patch applies cleanly
         for attempt in range(1, 4):
@@ -182,7 +217,7 @@ def apply_patch(patch: str) -> bool:
             if code == 0:
                 break
             if attempt == 3:
-                print("Patch failed to apply cleanly; skipping")
+                log("Patch failed to apply cleanly; skipping")
                 return False
 
         # Apply patch
@@ -193,6 +228,7 @@ def apply_patch(patch: str) -> bool:
 
         # Create PR
         branch = f"ai-patch-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+        log(f"Creating pull request on branch {branch}")
         run_command(["git", "checkout", "-b", branch])
         run_command(["git", "push", "origin", branch])
         run_command(
@@ -209,27 +245,29 @@ def apply_patch(patch: str) -> bool:
             ]
         )
 
+        log("Pull request created successfully")
         return True
-    except Exception:
+    except Exception as e:
+        log(f"Failed to apply patch: {e}")
         return False
 
 
 def main() -> int:
     """Main entry point."""
-    print("🤖 Starting AI auto-patch process...")
+    log("🤖 Starting AI auto-patch process...")
 
     ensure_best_branch()
 
     # Check API key
     if not os.getenv("OPENAI_API_KEY"):
-        print("Error: OPENAI_API_KEY not set")
+        log("Error: OPENAI_API_KEY not set")
         return 1
 
     # Collect context
-    print("📝 Collecting context...")
+    log("📝 Collecting context...")
     context = collect_context()
     if not context["files"]:
-        print("No Python files found")
+        log("No Python files found")
         return 0
 
     # Prepare prompt
@@ -277,9 +315,9 @@ def main() -> int:
     )
 
     # Get AI suggestion
-    print("🧠 Requesting AI analysis...")
+    log("🧠 Requesting AI analysis...")
     try:
-        response = openai.ChatCompletion.create(
+        response = create_chat_completion(
             model=MODEL,
             messages=[{"role": "user", "content": "\n".join(prompt)}],
             max_tokens=MAX_TOKENS,
@@ -287,22 +325,22 @@ def main() -> int:
         )
         suggestion = response.choices[0].message.content
     except Exception as e:
-        print(f"Error: Failed to get AI suggestion: {e}")
+        log(f"Error: Failed to get AI suggestion: {e}")
         return 1
 
     # Create and apply patch
-    print("🔧 Creating patch...")
+    log("🔧 Creating patch...")
     patch = create_patch(suggestion)
     if not patch:
-        print("Error: Failed to create patch")
+        log("Error: Failed to create patch")
         return 1
 
-    print("⬆️  Creating pull request...")
+    log("⬆️  Creating pull request...")
     if not apply_patch(patch):
-        print("Error: Failed to apply patch")
+        log("Error: Failed to apply patch")
         return 1
 
-    print("✅ Auto-patch complete!")
+    log("✅ Auto-patch complete!")
     return 0
 
 
