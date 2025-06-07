@@ -15,6 +15,6 @@ repos:
       - id: mypy
         args: ["src/"]
   - repo: https://github.com/pytest-dev/pytest
-    rev: v8.1.1
+    rev: 8.1.1
     hooks:
       - id: pytest
