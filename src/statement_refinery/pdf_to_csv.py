@@ -24,6 +24,9 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Final, Iterator, List
 
+# Amount below which transactions are considered adjustments
+ADJUSTMENT_THRESHOLD: Final = Decimal("0.30")
+
 # ===== CORE REGEX PATTERNS =====
 
 RE_DOM_STRICT: Final = re.compile(
@@ -129,10 +132,15 @@ def parse_amount(amount_str: str) -> Decimal:
 
 
 def classify_transaction(description: str, amount: Decimal) -> str:
-    """Classify transaction using Itaú-specific rules."""
+    """Classify transaction using Itaú-specific rules.
+
+    Any non-zero transaction with an absolute value up to
+    ``ADJUSTMENT_THRESHOLD`` is marked as ``"AJUSTE"``.
+    """
     desc_upper = description.upper()
 
-    if abs(amount) <= Decimal("0.30") and abs(amount) > 0:
+    # Small transactions are usually adjustments such as interest or refunds
+    if 0 < abs(amount) <= ADJUSTMENT_THRESHOLD:
         return "AJUSTE"
 
     for pattern, category in RE_CATEGORIES_HIGH_PRIORITY:
@@ -362,7 +370,7 @@ ITAU_PARSING_RULES = {
     "merchant_separators": [".", "*", "-", " "],
     "amount_validation": {
         "min_adjustment": Decimal("0.01"),
-        "max_adjustment": Decimal("0.30"),
+        "max_adjustment": ADJUSTMENT_THRESHOLD,
     },
     "installment_format": r"\d{2}/\d{2}",
     "date_validation": {
