@@ -17,7 +17,6 @@ repos:
       - id: black
         args: [--check]
         name: black check
-        pass_filenames: false
         always_run: true
         description: "Check code style with black."
 
@@ -25,8 +24,8 @@ repos:
     hooks:
       - id: export-ai-patch
         name: Export AI Patch
-        entry: scripts/export_ai_patch.sh
-        language: script
+        entry: bash -c 'cp diagnostics/ai-patch-unapplied.patch exported-ai-patch.patch || true'
+        language: system
         always_run: true
         pass_filenames: false
         verbose: true
