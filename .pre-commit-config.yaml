@@ -1,22 +1,22 @@
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.3.0
+    rev: v0.11.13
     hooks:
       - id: ruff
-        name: ruff (auto-fix and check)
+        args: [--fix, --exit-zero]
+        name: ruff (auto-fix)
         always_run: true
-        description: "Auto-fix and check code style with ruff."
+        description: "Auto-fix code style with ruff."
+      - id: ruff-format
+        name: ruff (format)
+        always_run: true
+        description: "Check code style with ruff."
   - repo: https://github.com/psf/black
-    rev: 24.4.2
+    rev: 25.1.0
     hooks:
       - id: black
-        name: black format (auto-fix)
-        pass_filenames: false
-        always_run: true
-        description: "Auto-format code with black before checking."
-      - id: black
+        args: [--check]
         name: black check
-        args: ["--check", "."]
         pass_filenames: false
         always_run: true
         description: "Check code style with black."
@@ -25,8 +25,8 @@ repos:
     hooks:
       - id: export-ai-patch
         name: Export AI Patch
-        entry: bash -c 'cp diagnostics/ai-patch-unapplied.patch exported-ai-patch.patch || true'
-        language: system
+        entry: scripts/export_ai_patch.sh
+        language: script
         always_run: true
         pass_filenames: false
         verbose: true
