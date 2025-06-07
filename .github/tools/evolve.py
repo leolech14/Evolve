@@ -37,6 +37,15 @@ MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS", "5"))
 MODEL = os.getenv("OPENAI_MODEL", "gpt-4")
 
 
+def ensure_best_branch() -> None:
+    """Ensure the codex/best branch exists on fresh clones."""
+    code, _ = run_command(["git", "rev-parse", "--verify", "-q", "codex/best"])
+    if code != 0:
+        head_rev = run_command(["git", "rev-parse", "HEAD"])[1].strip()
+        run_command(["git", "branch", "codex/best", head_rev])
+        print("Created missing codex/best branch at", head_rev)
+
+
 def run_command(cmd: List[str], capture: bool = True) -> Tuple[int, str]:
     """Run a shell command and return exit code and output."""
     try:
@@ -113,6 +122,19 @@ def create_patch(suggestion: str) -> Optional[str]:
         # Create patch
         run_command(["git", "add", "."])
         run_command(["git", "commit", "-m", "AI: Auto-patch improvements"])
+
+        test_code, _ = run_command(["pytest", "-q"], capture=True)
+        if test_code == 0:
+            run_command(
+                [
+                    "git",
+                    "commit",
+                    "--amend",
+                    "-m",
+                    "🤖 AUTO-FIX: Auto-patch improvements",
+                ]
+            )
+
         code, patch = run_command(["git", "format-patch", "HEAD~1", "--stdout"])
 
         if code == 0:
@@ -128,7 +150,7 @@ def create_patch(suggestion: str) -> Optional[str]:
 
 def apply_patch(patch: str) -> bool:
     """Apply a git patch and create pull request."""
-    if not patch:
+    if not patch or not patch.strip():
         return False
 
     try:
@@ -136,9 +158,19 @@ def apply_patch(patch: str) -> bool:
         patch_file = DIAGNOSTICS / "ai-patch.patch"
         patch_file.write_text(patch)
 
+        # Validate patch applies cleanly
+        for attempt in range(1, 4):
+            code, _ = run_command(["git", "apply", "--check", str(patch_file)])
+            if code == 0:
+                break
+            if attempt == 3:
+                print("Patch failed to apply cleanly; skipping")
+                return False
+
         # Apply patch
         code, _ = run_command(["git", "am", str(patch_file)])
         if code != 0:
+            run_command(["git", "am", "--abort"])
             return False
 
         # Create PR
@@ -167,6 +199,8 @@ def apply_patch(patch: str) -> bool:
 def main() -> int:
     """Main entry point."""
     print("🤖 Starting AI auto-patch process...")
+
+    ensure_best_branch()
 
     # Check API key
     if not os.getenv("OPENAI_API_KEY"):
