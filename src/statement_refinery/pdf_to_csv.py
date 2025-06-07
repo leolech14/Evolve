@@ -98,10 +98,10 @@ RE_INTERNATIONAL_PATTERNS = [
 ]
 
 
-def parse_amount(amount_str: str) -> Optional[Decimal]:
+def parse_amount(amount_str: Optional[str]) -> Optional[Decimal]:
     """
     Parse a Brazilian currency string to a Decimal.
-    Handles formats like 'R$ 1.234,56', negative values, and parentheses for negatives.
+    Handles formats like 'R$ 1.234,56' and negative values.
     Returns None if parsing fails.
     """
     if not amount_str:
@@ -146,7 +146,7 @@ def parse_amount(amount_str: str) -> Optional[Decimal]:
         return None
 
 
-def classify_transaction(description: str, amount: Decimal) -> str:
+def classify_transaction(description: str, amount: Optional[Decimal] = None) -> str:
     """Classify transaction using Itaú-specific rules.
 
     Any non-zero transaction with an absolute value up to
@@ -155,7 +155,7 @@ def classify_transaction(description: str, amount: Decimal) -> str:
     desc_upper = description.upper()
 
     # Small transactions are usually adjustments such as interest or refunds
-    if 0 < abs(amount) <= ADJUSTMENT_THRESHOLD:
+    if amount is not None and 0 < abs(amount) <= ADJUSTMENT_THRESHOLD:
         return "AJUSTE"
 
     for pattern, category in RE_CATEGORIES_HIGH_PRIORITY:
