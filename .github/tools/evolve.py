@@ -88,11 +88,13 @@ def collect_context() -> dict:
     _, output = run_command(["git", "ls-files", "*.py"])
     context["files"] = [f for f in output.splitlines()]
 
-    # Get file contents
+    # Get file contents (truncate to avoid context overflow)
     for file in context["files"]:
         try:
             with open(file) as f:
-                context[file] = f.read()
+                content = f.read()
+                # Truncate to first 4000 characters to avoid context overflow
+                context[file] = content[:4000]
         except Exception:
             context["errors"].append(f"Failed to read {file}")
 
