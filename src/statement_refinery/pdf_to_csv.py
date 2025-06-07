@@ -49,6 +49,40 @@ RE_FX_LINE2: Final = re.compile(
     r"(USD|EUR|GBP|JPY|CHF|CAD|AUD)\s+([\d,\.]+)\s*=\s*([\d,\.]+)\s*BRL(?:\s+(.+))?"
 )
 
+# ===== ENHANCED PATTERNS FOR IMPROVED COVERAGE =====
+
+# Currency conversion rate lines
+RE_CURRENCY_CONVERSION: Final = re.compile(
+    r"Dólar\s+de\s+Conversão\s+R\$\s+(?P<rate1>\d+,\d{2})(?:\s+Dólar\s+de\s+Conversão\s+R\$\s+(?P<rate2>\d+,\d{2}))?",
+    re.I
+)
+
+# International transaction with city and amounts  
+RE_INTL_TRANSACTION: Final = re.compile(
+    r"^(?P<city>\w+)\s+(?P<orig_amt>\d{1,3}(?:\.\d{3})*,\d{2})\s+(?P<currency>[A-Z]{3})\s+(?P<brl_amt>\d{1,3}(?:\.\d{3})*,\d{2})(?:\s+(?P<desc>.+))?$"
+)
+
+# Payment summary lines
+RE_PAYMENT_SUMMARY: Final = re.compile(
+    r"^(?P<type>[A-Z])\s+(?P<desc>[\w\s]+)\s+-\s+(?P<amount>\d{1,3}(?:\.\d{3})*,\d{2})$"
+)
+
+# Transaction reference codes
+RE_TRANSACTION_CODE: Final = re.compile(
+    r"^(?P<code>[A-Z]{2,3})\s+-\s+(?P<ref>\d+\s+\d+\s+[A-Z0-9]+)\s+(?P<date>\d{2}/\d{2}/\d{4})\s+(?P<details>[\w\s]+)$"
+)
+
+# Fee information lines
+RE_FEE_INFO: Final = re.compile(
+    r"^(?P<desc>(?:valor\s+)?(?:juros|multa|encargo|tarifa)[\w\s]*)\s+(?P<amount>\d{1,3}(?:\.\d{3})*,\d{2})$",
+    re.I
+)
+
+# Learned generic transaction pattern (high-confidence catch-all)
+RE_GENERIC_TRANSACTION: Final = re.compile(
+    r"^(?P<desc>.+?)\s+(?P<amount>\d{1,3}(?:\.\d{3})*,\d{2})(?:\s+.*)?$"
+)
+
 RE_PAYMENT: Final = re.compile(r"^\d{1,2}/\d{1,2} PAGAMENTO", re.I)
 RE_AJUSTE: Final = re.compile(r"AJUSTE|ESTORNO|CANCELAMENTO", re.I)
 RE_IOF: Final = re.compile(r"IOF|JUROS|MULTA|ENCARGOS", re.I)
@@ -355,6 +389,151 @@ def parse_statement_line(line: str, year: int | None = None) -> dict | None:
             "currency_orig": "",
             "amount_usd": Decimal("0.00"),
         }
+
+    # ===== ENHANCED PATTERN MATCHING =====
+    
+    # Currency conversion rate information
+    m = RE_CURRENCY_CONVERSION.match(line_no_card)
+    if m:
+        # Extract conversion rates for future FX calculations
+        # These are informational lines, not transactions
+        return None  # Skip but log for FX rate tracking
+    
+    # International transaction with city
+    m = RE_INTL_TRANSACTION.match(line_no_card)
+    if m:
+        city = m.group("city")
+        orig_amt = parse_amount(m.group("orig_amt"))
+        currency = m.group("currency")
+        brl_amt = parse_amount(m.group("brl_amt"))
+        desc = m.group("desc") or f"{city} Transaction"
+        
+        return {
+            "card_last4": card_last4,
+            "post_date": f"{year or date.today().year}-01-01",  # Default date
+            "desc_raw": desc,
+            "amount_brl": brl_amt,
+            "installment_seq": 0,
+            "installment_tot": 0,
+            "fx_rate": Decimal("0.00"),
+            "iof_brl": Decimal("0.00"),
+            "category": "INTERNACIONAL",
+            "merchant_city": city,
+            "ledger_hash": hashlib.sha1(original_line.encode()).hexdigest(),
+            "prev_bill_amount": Decimal("0.00"),
+            "interest_amount": Decimal("0.00"),
+            "amount_orig": orig_amt,
+            "currency_orig": currency,
+            "amount_usd": orig_amt if currency == "USD" else Decimal("0.00"),
+        }
+    
+    # Payment summary lines
+    m = RE_PAYMENT_SUMMARY.match(line_no_card)
+    if m:
+        desc = f"{m.group('type')} {m.group('desc')}"
+        amount = parse_amount(m.group("amount"))
+        
+        return {
+            "card_last4": card_last4,
+            "post_date": f"{year or date.today().year}-12-31",  # End of period
+            "desc_raw": desc,
+            "amount_brl": -amount,  # Payments are negative
+            "installment_seq": 0,
+            "installment_tot": 0,
+            "fx_rate": Decimal("0.00"),
+            "iof_brl": Decimal("0.00"),
+            "category": "PAGAMENTO",
+            "merchant_city": "",
+            "ledger_hash": hashlib.sha1(original_line.encode()).hexdigest(),
+            "prev_bill_amount": Decimal("0.00"),
+            "interest_amount": Decimal("0.00"),
+            "amount_orig": Decimal("0.00"),
+            "currency_orig": "",
+            "amount_usd": Decimal("0.00"),
+        }
+    
+    # Fee information lines
+    m = RE_FEE_INFO.match(line_no_card)
+    if m:
+        desc = m.group("desc")
+        amount = parse_amount(m.group("amount"))
+        
+        return {
+            "card_last4": card_last4,
+            "post_date": f"{year or date.today().year}-12-31",  # End of period
+            "desc_raw": desc,
+            "amount_brl": amount,
+            "installment_seq": 0,
+            "installment_tot": 0,
+            "fx_rate": Decimal("0.00"),
+            "iof_brl": Decimal("0.00"),
+            "category": "ENCARGO",
+            "merchant_city": "",
+            "ledger_hash": hashlib.sha1(original_line.encode()).hexdigest(),
+            "prev_bill_amount": Decimal("0.00"),
+            "interest_amount": Decimal("0.00"),
+            "amount_orig": Decimal("0.00"),
+            "currency_orig": "",
+            "amount_usd": Decimal("0.00"),
+        }
+
+    # ===== LEARNED GENERIC TRANSACTION PATTERN (FINAL CATCH-ALL) =====
+    
+    # Try generic transaction pattern as final fallback
+    m = RE_GENERIC_TRANSACTION.match(line_no_card)
+    if m:
+        desc = m.group("desc").strip()
+        amount = parse_amount(m.group("amount"))
+        
+        # Skip obvious non-transactions
+        skip_keywords = [
+            "FATURA", "VENCIMENTO", "LIMITE", "TOTAL", "PAGINA", "CARTAO",
+            "MASTERCARD", "VISA", "SAC", "OUVIDORIA", "TELEFONE", "EMAIL",
+            "EXTRATO", "RESUMO", "PERIODO", "ATENDIMENTO", "CENTRAL"
+        ]
+        
+        if not any(kw in desc.upper() for kw in skip_keywords):
+            # Extract date if present in description
+            date_match = re.search(r'(\d{1,2}/\d{1,2})', desc)
+            if date_match:
+                date_str = date_match.group(1)
+                if validate_date(date_str):
+                    try:
+                        post_date = _iso_date(date_str, year)
+                        # Remove date from description
+                        desc = re.sub(r'\s*\d{1,2}/\d{1,2}\s*', ' ', desc).strip()
+                    except ValueError:
+                        post_date = f"{year or date.today().year}-01-01"
+                else:
+                    post_date = f"{year or date.today().year}-01-01"
+            else:
+                post_date = f"{year or date.today().year}-01-01"
+            
+            # Determine category based on description
+            category = classify_transaction(desc, amount)
+            if RE_PAYMENT.search(desc):
+                category = "PAGAMENTO"
+            elif RE_AJUSTE.search(desc):
+                category = "AJUSTE"
+            
+            return {
+                "card_last4": card_last4,
+                "post_date": post_date,
+                "desc_raw": desc,
+                "amount_brl": amount,
+                "installment_seq": 0,
+                "installment_tot": 0,
+                "fx_rate": Decimal("0.00"),
+                "iof_brl": Decimal("0.00"),
+                "category": category,
+                "merchant_city": "",
+                "ledger_hash": hashlib.sha1(original_line.encode()).hexdigest(),
+                "prev_bill_amount": Decimal("0.00"),
+                "interest_amount": Decimal("0.00"),
+                "amount_orig": Decimal("0.00"),
+                "currency_orig": "",
+                "amount_usd": Decimal("0.00"),
+            }
 
     # Handle additional edge cases:
     # - Lines with amount but no date pattern (malformed dates)
