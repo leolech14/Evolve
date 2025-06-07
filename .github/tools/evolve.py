@@ -110,12 +110,12 @@ def create_patch(suggestion: str) -> Optional[str]:
     run_command(["git", "checkout", "-b", branch])
 
     try:
-        # Parse and apply changes
         current_file = None
         inside_block = False
-        buffer: list[str] = []
+        buffer = []
         for line in suggestion.splitlines():
             if line.startswith("FILE: "):
+                # flush any previous block
                 if current_file and buffer:
                     Path(current_file).parent.mkdir(parents=True, exist_ok=True)
                     Path(current_file).write_text("\n".join(buffer))
@@ -123,13 +123,16 @@ def create_patch(suggestion: str) -> Optional[str]:
                 buffer = []
                 inside_block = False
             elif line.startswith("```") and current_file:
+
+                # toggle state – first ``` opens, second closes
                 inside_block = not inside_block
-                if not inside_block:
+                if not inside_block:  # closing back-tick
                     Path(current_file).parent.mkdir(parents=True, exist_ok=True)
                     Path(current_file).write_text("\n".join(buffer))
                     buffer = []
             elif inside_block:
                 buffer.append(line)
+
         if current_file and buffer:
             Path(current_file).parent.mkdir(parents=True, exist_ok=True)
             Path(current_file).write_text("\n".join(buffer))
