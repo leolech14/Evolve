@@ -477,63 +477,10 @@ def parse_statement_line(line: str, year: int | None = None) -> dict | None:
             "amount_usd": Decimal("0.00"),
         }
 
-    # ===== LEARNED GENERIC TRANSACTION PATTERN (FINAL CATCH-ALL) =====
-    
-    # Try generic transaction pattern as final fallback
-    m = RE_GENERIC_TRANSACTION.match(line_no_card)
-    if m:
-        desc = m.group("desc").strip()
-        amount = parse_amount(m.group("amount"))
-        
-        # Skip obvious non-transactions
-        skip_keywords = [
-            "FATURA", "VENCIMENTO", "LIMITE", "TOTAL", "PAGINA", "CARTAO",
-            "MASTERCARD", "VISA", "SAC", "OUVIDORIA", "TELEFONE", "EMAIL",
-            "EXTRATO", "RESUMO", "PERIODO", "ATENDIMENTO", "CENTRAL"
-        ]
-        
-        if not any(kw in desc.upper() for kw in skip_keywords):
-            # Extract date if present in description
-            date_match = re.search(r'(\d{1,2}/\d{1,2})', desc)
-            if date_match:
-                date_str = date_match.group(1)
-                if validate_date(date_str):
-                    try:
-                        post_date = _iso_date(date_str, year)
-                        # Remove date from description
-                        desc = re.sub(r'\s*\d{1,2}/\d{1,2}\s*', ' ', desc).strip()
-                    except ValueError:
-                        post_date = f"{year or date.today().year}-01-01"
-                else:
-                    post_date = f"{year or date.today().year}-01-01"
-            else:
-                post_date = f"{year or date.today().year}-01-01"
-            
-            # Determine category based on description
-            category = classify_transaction(desc, amount)
-            if RE_PAYMENT.search(desc):
-                category = "PAGAMENTO"
-            elif RE_AJUSTE.search(desc):
-                category = "AJUSTE"
-            
-            return {
-                "card_last4": card_last4,
-                "post_date": post_date,
-                "desc_raw": desc,
-                "amount_brl": amount,
-                "installment_seq": 0,
-                "installment_tot": 0,
-                "fx_rate": Decimal("0.00"),
-                "iof_brl": Decimal("0.00"),
-                "category": category,
-                "merchant_city": "",
-                "ledger_hash": hashlib.sha1(original_line.encode()).hexdigest(),
-                "prev_bill_amount": Decimal("0.00"),
-                "interest_amount": Decimal("0.00"),
-                "amount_orig": Decimal("0.00"),
-                "currency_orig": "",
-                "amount_usd": Decimal("0.00"),
-            }
+    # ===== PRECISION OVER RECALL: REMOVED GENERIC CATCH-ALL =====
+    # The generic pattern was over-parsing non-transaction lines.
+    # Better to miss some transactions than to include false positives
+    # that corrupt financial totals.
 
     # Handle additional edge cases:
     # - Lines with amount but no date pattern (malformed dates)
