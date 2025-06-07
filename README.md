@@ -84,6 +84,11 @@ black src tests
 ruff check src tests
 ```
 
+## Auto-patch demo
+
+Pull requests with titles starting with `🤖 AUTO-FIX` were created by the
+evolve loop. Review the changes and merge once the automated checks pass.
+
 ## License
 
 MIT
