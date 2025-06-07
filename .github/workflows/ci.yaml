@@ -74,10 +74,12 @@ jobs:
       - name: Run auto-patch
         id: evolve
         if: |
-          (steps.lint.outcome == 'failure' ||
-           steps.tests.outcome == 'failure' ||
-           steps.accuracy.outcome == 'failure') &&
-          github.event_name != 'pull_request'
+          env.FORCE_EVOLVE == '1' || (
+            (steps.lint.outcome == 'failure' ||
+             steps.tests.outcome == 'failure' ||
+             steps.accuracy.outcome == 'failure') &&
+            github.event_name != 'pull_request'
+          )
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.BOT_PAT }}
