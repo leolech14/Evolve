@@ -182,61 +182,48 @@ def apply_patch(patch: str) -> bool:
         patch_file.write_text(patch)
         print(f"[apply_patch] Patch written to {patch_file}")
 
-        # Validate patch applies cleanly
-        for attempt in range(1, 4):
-            code, out = run_command(["git", "apply", "--check", str(patch_file)])
-            print(
-                f"[apply_patch] git apply --check attempt {attempt}: code={code}, output={out[:500]}"
-            )
-            if code == 0:
-                break
-            if attempt == 3:
-                print(
-                    "Patch failed to apply cleanly; attempting direct file overwrite fallback..."
-                )
-                print(
-                    f"[apply_patch] Fallback: AI suggestion (truncated):\n{patch[:1000]}"
-                )
-                # Fallback: parse and write files directly from AI suggestion
-                if not apply_direct_file_overwrite(patch):
-                    print("Fallback direct file overwrite also failed.")
-                    return False
-                # Commit and push as usual
-                branch = f"ai-patch-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
-                run_command(["git", "checkout", "-b", branch])
-                run_command(["git", "add", "."])
-                run_command(
-                    [
-                        "git",
-                        "commit",
-                        "-m",
-                        "🤖 AUTO-FIX: Direct file overwrite fallback",
-                    ]
-                )
-                run_command(["git", "push", "origin", branch])
-                run_command(
-                    [
-                        "gh",
-                        "pr",
-                        "create",
-                        "--title",
-                        "🤖 AI: Auto-patch improvements (fallback)",
-                        "--body",
-                        "Automated fixes from AI assistant (direct file overwrite fallback)",
-                        "--label",
-                        "auto-patch",
-                    ]
-                )
-                print(f"[apply_patch] Fallback PR created on branch {branch}")
-                return True
-
-        # Apply patch
-        code, out = run_command(["git", "am", str(patch_file)])
-        print(f"[apply_patch] git am: code={code}, output={out[:500]}")
+        # Apply patch with 3-way merge and index update
+        code, out = run_command(
+            ["git", "apply", "--index", "--3way", "--whitespace=fix", str(patch_file)]
+        )
+        print(
+            f"[apply_patch] git apply --index --3way --whitespace=fix: code={code}, output={out[:500]}"
+        )
         if code != 0:
-            run_command(["git", "am", "--abort"])
-            print("[apply_patch] git am failed and was aborted.")
-            return False
+            print(
+                "Patch failed to apply cleanly; attempting direct file overwrite fallback..."
+            )
+            print(f"[apply_patch] Fallback: AI suggestion (truncated):\n{patch[:1000]}")
+            if not apply_direct_file_overwrite(patch):
+                print("Fallback direct file overwrite also failed.")
+                return False
+            branch = f"ai-patch-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+            run_command(["git", "checkout", "-b", branch])
+            run_command(["git", "add", "."])
+            run_command(
+                [
+                    "git",
+                    "commit",
+                    "-m",
+                    "🤖 AUTO-FIX: Direct file overwrite fallback",
+                ]
+            )
+            run_command(["git", "push", "origin", branch])
+            run_command(
+                [
+                    "gh",
+                    "pr",
+                    "create",
+                    "--title",
+                    "🤖 AI: Auto-patch improvements (fallback)",
+                    "--body",
+                    "Automated fixes from AI assistant (direct file overwrite fallback)",
+                    "--label",
+                    "auto-patch",
+                ]
+            )
+            print(f"[apply_patch] Fallback PR created on branch {branch}")
+            return True
 
         # Create PR
         branch = f"ai-patch-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
