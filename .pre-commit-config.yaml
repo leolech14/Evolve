@@ -3,23 +3,14 @@ repos:
     rev: v0.3.0
     hooks:
       - id: ruff
-        name: ruff format (auto-fix)
-        args: ["format", "."]
-        pass_filenames: false
+        name: ruff (auto-fix and check)
         always_run: true
-        description: "Auto-format code with ruff before checking."
-      - id: ruff
-        name: ruff check
-        args: ["check", "."]
-        pass_filenames: false
-        always_run: true
-        description: "Check code style with ruff."
+        description: "Auto-fix and check code style with ruff."
   - repo: https://github.com/psf/black
     rev: 24.4.2
     hooks:
       - id: black
         name: black format (auto-fix)
-        args: ["."]
         pass_filenames: false
         always_run: true
         description: "Auto-format code with black before checking."
