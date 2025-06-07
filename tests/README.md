@@ -41,8 +41,8 @@ Contains verified golden files and their corresponding PDFs/TXTs that are known 
 - Serve as examples for adding new test cases
 
 Files:
-- itau_2024-10.csv + itau_2024-10.{pdf,txt}
-- itau_2025-05.csv + itau_2025-05.{pdf,txt}
+- golden_2024-10.csv + itau_2024-10.{pdf,txt}
+- golden_2025-05.csv + itau_2025-05.{pdf,txt}
 
 ## validation_data/
 Contains PDFs that have corresponding TXT files but no golden CSVs yet. Used to:
