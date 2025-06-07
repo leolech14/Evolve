@@ -1,7 +1,7 @@
 from decimal import Decimal
-from pathlib import Path
 import pytest
 from statement_refinery.validation import extract_total_from_pdf
+
 
 def test_extract_total_from_pdf_pdfplumber(monkeypatch, tmp_path):
     # Simulate a PDF file with pdfplumber fallback
@@ -18,8 +18,10 @@ def test_extract_total_from_pdf_pdfplumber(monkeypatch, tmp_path):
 
     class DummyPDF:
         pages = [DummyPage()]
+
         def __enter__(self):
             return self
+
         def __exit__(self, exc_type, exc_val, exc_tb):
             pass
 
@@ -44,6 +46,7 @@ def test_extract_total_from_pdf_no_total(monkeypatch, tmp_path):
 def test_extract_total_from_pdf_pdfplumber_missing(monkeypatch, tmp_path):
     # Simulate a PDF file with no .txt and missing pdfplumber
     import sys
+
     pdf = tmp_path / "sample.pdf"
     pdf.touch()
     txt = pdf.with_suffix(".txt")
@@ -53,10 +56,12 @@ def test_extract_total_from_pdf_pdfplumber_missing(monkeypatch, tmp_path):
     # Remove pdfplumber from sys.modules to simulate ImportError
     sys.modules.pop("pdfplumber", None)
     original_import = __import__
+
     def import_fail(name, *args, **kwargs):
         if name == "pdfplumber":
             raise ImportError("pdfplumber not installed")
         return original_import(name, *args, **kwargs)
+
     monkeypatch.setattr("builtins.__import__", import_fail)
 
     with pytest.raises(FileNotFoundError):

@@ -130,7 +130,11 @@ def main() -> None:
     summary.extend(
         [
             "### Parser Accuracy",
-            f"- Average Match: {accuracy_data['average_match']:.1f}%" if 'average_match' in accuracy_data else "- Average Match: Data not available",
+            (
+                f"- Average Match: {accuracy_data['average_match']:.1f}%"
+                if "average_match" in accuracy_data
+                else "- Average Match: Data not available"
+            ),
             "",
             "#### Per-File Results",
             "```",
