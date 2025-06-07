@@ -185,12 +185,18 @@ def apply_patch(patch: str) -> bool:
         # Validate patch applies cleanly
         for attempt in range(1, 4):
             code, out = run_command(["git", "apply", "--check", str(patch_file)])
-            print(f"[apply_patch] git apply --check attempt {attempt}: code={code}, output={out[:500]}")
+            print(
+                f"[apply_patch] git apply --check attempt {attempt}: code={code}, output={out[:500]}"
+            )
             if code == 0:
                 break
             if attempt == 3:
-                print("Patch failed to apply cleanly; attempting direct file overwrite fallback...")
-                print(f"[apply_patch] Fallback: AI suggestion (truncated):\n{patch[:1000]}")
+                print(
+                    "Patch failed to apply cleanly; attempting direct file overwrite fallback..."
+                )
+                print(
+                    f"[apply_patch] Fallback: AI suggestion (truncated):\n{patch[:1000]}"
+                )
                 # Fallback: parse and write files directly from AI suggestion
                 if not apply_direct_file_overwrite(patch):
                     print("Fallback direct file overwrite also failed.")
@@ -199,12 +205,14 @@ def apply_patch(patch: str) -> bool:
                 branch = f"ai-patch-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
                 run_command(["git", "checkout", "-b", branch])
                 run_command(["git", "add", "."])
-                run_command([
-                    "git",
-                    "commit",
-                    "-m",
-                    "🤖 AUTO-FIX: Direct file overwrite fallback",
-                ])
+                run_command(
+                    [
+                        "git",
+                        "commit",
+                        "-m",
+                        "🤖 AUTO-FIX: Direct file overwrite fallback",
+                    ]
+                )
                 run_command(["git", "push", "origin", branch])
                 run_command(
                     [
@@ -268,35 +276,49 @@ def apply_direct_file_overwrite(suggestion: str) -> bool:
                     try:
                         Path(current_file).parent.mkdir(parents=True, exist_ok=True)
                         Path(current_file).write_text("\n".join(buffer))
-                        print(f"[apply_direct_file_overwrite] Wrote file: {current_file} (lines {len(buffer)})")
+                        print(
+                            f"[apply_direct_file_overwrite] Wrote file: {current_file} (lines {len(buffer)})"
+                        )
                         wrote_any = True
                     except Exception as file_exc:
-                        print(f"[apply_direct_file_overwrite] Failed to write {current_file}: {file_exc}")
+                        print(
+                            f"[apply_direct_file_overwrite] Failed to write {current_file}: {file_exc}"
+                        )
                 current_file = line.split(":", 1)[1].strip()
                 buffer = []
                 inside_block = False
-                print(f"[apply_direct_file_overwrite] Found file block: {current_file} (at line {idx})")
+                print(
+                    f"[apply_direct_file_overwrite] Found file block: {current_file} (at line {idx})"
+                )
             elif line.startswith("```") and current_file:
                 inside_block = not inside_block
                 if not inside_block and buffer:
                     try:
                         Path(current_file).parent.mkdir(parents=True, exist_ok=True)
                         Path(current_file).write_text("\n".join(buffer))
-                        print(f"[apply_direct_file_overwrite] Wrote file: {current_file} (lines {len(buffer)})")
+                        print(
+                            f"[apply_direct_file_overwrite] Wrote file: {current_file} (lines {len(buffer)})"
+                        )
                         wrote_any = True
                         buffer = []
                     except Exception as file_exc:
-                        print(f"[apply_direct_file_overwrite] Failed to write {current_file}: {file_exc}")
+                        print(
+                            f"[apply_direct_file_overwrite] Failed to write {current_file}: {file_exc}"
+                        )
             elif inside_block:
                 buffer.append(line)
         if current_file and buffer:
             try:
                 Path(current_file).parent.mkdir(parents=True, exist_ok=True)
                 Path(current_file).write_text("\n".join(buffer))
-                print(f"[apply_direct_file_overwrite] Wrote file: {current_file} (lines {len(buffer)})")
+                print(
+                    f"[apply_direct_file_overwrite] Wrote file: {current_file} (lines {len(buffer)})"
+                )
                 wrote_any = True
             except Exception as file_exc:
-                print(f"[apply_direct_file_overwrite] Failed to write {current_file}: {file_exc}")
+                print(
+                    f"[apply_direct_file_overwrite] Failed to write {current_file}: {file_exc}"
+                )
         print(f"[apply_direct_file_overwrite] Done. Any files written: {wrote_any}")
         return wrote_any
     except Exception as e:
