@@ -130,19 +130,25 @@ Convert a PDF statement to CSV:
 * **`--out`** specifies where the CSV will be written.
 * If `--out` is omitted, the CSV is printed to **stdout**.
 
-## Local Development
+## Linting and Type Checking
 
-Install the development extras and set up the Git hooks:
+Use the same tools as the CI pipeline to check code style and types:
+
+    ruff check .
+    black --check .
+    mypy src/
+
+## Running the Tests
+
+The test suite depends on the package’s *development* extras, which also
+install `openai` for the Codex tools. After installing the extras run the
+linters and type checker described above, then run the tests with coverage:
 
     pip install -e '.[dev]'
-    pre-commit install
-
-The Makefile provides shortcuts for the common tasks:
-
-    make lint    # ruff, black and mypy
-    make test    # run the full test suite
-    make accuracy  # check parser output against goldens
-    make all     # run everything above
+    ruff check .
+    black --check .
+    mypy src/
+    pytest -ra -vv --cov=statement_refinery --cov-report=term-missing --cov-fail-under=90
 
 These tests rely on the checked-in golden CSV files, so `pdfplumber` is optional
 but recommended for full coverage. When it is missing the tests that parse PDFs

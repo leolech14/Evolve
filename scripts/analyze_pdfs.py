@@ -9,9 +9,9 @@ companion CSV.
 from __future__ import annotations
 
 import argparse
+import sys
 from decimal import Decimal
 from pathlib import Path
-import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
@@ -19,7 +19,7 @@ sys.path.insert(0, str(ROOT))
 
 # Import after path setup
 from statement_refinery.pdf_to_csv import parse_pdf, write_csv  # noqa: E402
-from statement_refinery.validation import (  # noqa: E402
+from tests.test_validation import (  # noqa: E402
     analyze_rows,
     calculate_csv_total,
     extract_total_from_pdf,

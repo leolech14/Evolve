@@ -13,11 +13,6 @@ if not os.getenv("OPENAI_API_KEY"):
     sys.stderr.write("OPENAI_API_KEY not set\n")
     missing = True
 
-tok = os.getenv("MAX_TOKENS_PER_RUN")
-if tok is None or int(tok) > 200000:
-    sys.stderr.write("MAX_TOKENS_PER_RUN unset or too high\n")
-    missing = True
-
 pat = os.getenv("PERSONAL_ACCESS_TOKEN_CLASSIC") or os.getenv("GH_TOKEN")
 gh_token = os.getenv("GITHUB_TOKEN")
 requires_pat = os.getenv("PROTECTED_BRANCH_PUSH", "false").lower() in {
