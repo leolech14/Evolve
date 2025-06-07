@@ -23,6 +23,8 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from typing import List, Optional, Tuple
+
+import openai
 from openai import OpenAI
 
 # Configuration
