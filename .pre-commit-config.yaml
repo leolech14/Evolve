@@ -14,7 +14,7 @@ repos:
     hooks:
       - id: mypy
         args: ["src/"]
-  - repo: https://github.com/pytest-dev/pytest
-    rev: 8.1.1
+  - repo: https://github.com/pre-commit/mirrors-pytest
+    rev: v8.1.1
     hooks:
       - id: pytest
