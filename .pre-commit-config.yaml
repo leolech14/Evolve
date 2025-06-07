@@ -2,10 +2,24 @@ repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.3.0
     hooks:
+      - id: ruff-format
+        name: ruff format (auto-fix)
+        entry: ruff format .
+        language: python
+        pass_filenames: false
+        always_run: true
+        description: "Auto-format code with ruff before checking."
       - id: ruff
   - repo: https://github.com/psf/black
     rev: 24.4.2
     hooks:
+      - id: black-format
+        name: black format (auto-fix)
+        entry: black .
+        language: python
+        pass_filenames: false
+        always_run: true
+        description: "Auto-format code with black before checking."
       - id: black
         args: ["--check", "."]
 
