@@ -4,8 +4,7 @@ import re
 from decimal import Decimal
 from pathlib import Path
 
-
-from statement_refinery.pdf_to_csv import parse_pdf, parse_lines
+from statement_refinery.pdf_to_csv import parse_lines, parse_pdf
 
 HAS_PDFPLUMBER = importlib.util.find_spec("pdfplumber") is not None
 if HAS_PDFPLUMBER:

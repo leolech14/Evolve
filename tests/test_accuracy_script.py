@@ -1,13 +1,13 @@
+import importlib.util
 import shutil
+import sys
 from decimal import Decimal
 from pathlib import Path
-import sys
+
 import pytest
 
 # add project src to path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-
-import importlib.util
 
 mod_spec = importlib.util.spec_from_file_location(
     "check_accuracy",

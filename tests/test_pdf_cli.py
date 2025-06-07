@@ -5,12 +5,12 @@ This file resolves previous merge-conflict markers and adds a mock-based test
 for the edge-case where pdfplumber returns no text.
 """
 
-import io
 import csv
 import importlib.util
+import io
 import re
-from pathlib import Path
 import sys
+from pathlib import Path
 
 import pytest
 
@@ -125,8 +125,8 @@ def test_iter_pdf_lines_skips_empty_page(monkeypatch, caplog):
     def dummy_open(_):
         return DummyPdf()
 
-    import types
     import sys
+    import types
 
     # Inject a dummy pdfplumber module with just an `open` function.
     dummy_module = types.SimpleNamespace(open=dummy_open)
@@ -151,9 +151,7 @@ def test_iter_pdf_lines_missing_pdfplumber(monkeypatch):
 
     monkeypatch.setattr(builtins, "__import__", fake_import)
 
-    expected = (
-        "pdfplumber is required to parse PDFs; install via 'pip install pdfplumber'"
-    )
+    expected = "pdfplumber is required to parse PDFs; install via 'pip install pdfplumber'"
     with pytest.raises(RuntimeError, match=re.escape(expected)):
         list(mod.iter_pdf_lines(Path("dummy.pdf")))
 

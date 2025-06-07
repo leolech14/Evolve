@@ -1,0 +1,20 @@
+# Special Transaction Formats Test Cases
+
+# Mixed format with special characters
+TX-2023/SP-001|USER:john.doe|AMT:$1,234.56|TYPE:SPECIAL|DESC:Test & Validation
+
+# Multiple line transaction
+TX-2023/SP-002
+USER:jane.smith
+AMT:€2,345.67
+TYPE:MULTI_LINE
+DESC:Multiple\nLine\nTransaction
+
+# JSON-style format
+TX-2023/SP-003|{"user":"bob.jones","amount":"¥5000","type":"JSON_LIKE","desc":"JSON format test"}
+
+# Tab-separated format
+TX-2023/SP-004	USER:alice.wong	AMT:£789.12	TYPE:TAB_SEP	DESC:Tab separated
+
+# Custom delimiter format
+TX-2023/SP-005::USER:charlie.brown::AMT:$999.99::TYPE:CUSTOM_DEL::DESC:Custom delimiter test

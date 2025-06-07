@@ -1,0 +1,16 @@
+# International Transaction Edge Cases
+
+# Large amount with international currency
+TX-2023/INT-001|USER:hans.mueller|AMT:€1.000.000,00|TYPE:LARGE_EU|DESC:European large amount
+
+# Arabic numerals and right-to-left text
+TX-2023/INT-002|USER:ahmed.hassan|AMT:١٢٣٤٥.٦٧|TYPE:ARABIC|DESC:Arabic format transaction تحويل
+
+# Chinese currency format
+TX-2023/INT-003|USER:li.wei|AMT:¥10,000,000.00|TYPE:CNY|DESC:中文描述交易
+
+# Indian number format (lakhs/crores)
+TX-2023/INT-004|USER:raj.patel|AMT:₹1,23,45,678.90|TYPE:INR|DESC:Indian format with lakhs
+
+# Mixed script transaction
+TX-2023/INT-005|USER:김민준|AMT:₩1,234,567|TYPE:MIXED|DESC:한글 description with English

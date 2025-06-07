@@ -1,4 +1,5 @@
 from decimal import Decimal
+
 from statement_refinery.pdf_to_csv import parse_amount, parse_lines
 
 

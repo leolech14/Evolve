@@ -1,13 +1,15 @@
 import hashlib
-from decimal import Decimal
 from datetime import date
+from decimal import Decimal
+
 import pytest
+
 from statement_refinery.pdf_to_csv import (
-    parse_statement_line,
-    parse_amount,
-    classify_transaction,
-    parse_fx_currency_line,
     _iso_date,
+    classify_transaction,
+    parse_amount,
+    parse_fx_currency_line,
+    parse_statement_line,
 )
 
 

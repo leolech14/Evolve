@@ -1,6 +1,0 @@
-card_last4;post_date;desc_raw;amount_brl;installment_seq;installment_tot;fx_rate;iof_brl;category;merchant_city;ledger_hash;prev_bill_amount;interest_amount;amount_orig;currency_orig;amount_usd
-1234;2026-01-01;SUPERMERCADO BOM;100.00;0;0;0.00;0.00;SUPERMERCADO;;0c9b48f9eddbb087b92d77e25e9e04b224d94cd3;0.00;0.00;0.00;;0.00
-1234;2026-01-02;FARMACIA SAO JOAO;20.00;0;0;0.00;0.00;FARMÁCIA;;70df8a4a3ca9356d2b2b2eeda87a6afeef2fc88b;0.00;0.00;0.00;;0.00
-1234;2026-01-03;MP*BECLOT;-0.01;0;0;0.00;0.00;AJUSTE;;801a7ba48375326ad0f0bd7c85504b7f65d5d42c;0.00;0.00;0.00;;0.00
-1234;2026-01-04;PAGAMENTO;-50.00;0;0;0.00;0.00;PAGAMENTO;;38f81ee184abc80abcca80a82b77c496b95b4a74;0.00;0.00;0.00;;0.00
-1234;2026-01-05;SumUp *BOTI SRL;56.12;0;0;6.27;0.00;FX;Milano;83d4fa00f4a153fbf7bdb889050050d7d00646db;0.00;0.00;7.90;EUR;0.00

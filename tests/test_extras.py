@@ -1,7 +1,7 @@
 import csv
+import re
 from decimal import Decimal
 from pathlib import Path
-import re
 
 from statement_refinery import pdf_to_csv as mod
 
