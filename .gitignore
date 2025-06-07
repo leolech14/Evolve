@@ -59,6 +59,8 @@ itau_*.csv
 # Keep official golden samples
 !tests/data/itau_*.pdf
 !tests/data/golden_*.csv
+tests/data/*.txt
+accuracy_summary.json
 
 # Build outputs
 outputs/

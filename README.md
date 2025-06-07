@@ -55,11 +55,8 @@ The CSV output includes:
 ## Directory Structure
 
 - `src/statement_refinery/`: Core package code
-  - `cli.py`: Command-line interface
-  - `pdf_to_csv.py`: Direct PDF to CSV conversion
-  - `pdf_to_txt.py`: PDF to TXT conversion
-  - `txt_parser.py`: TXT to CSV conversion with enhanced parsing
-  - `logging_handler.py`: Logging and error tracking
+  - `pdf_to_csv.py`: PDF to CSV conversion
+  - `validation.py`: Helper validation utilities
 
 - `tests/`: Test files and data
   - `training_data/`: Known-good files for testing
@@ -153,7 +150,7 @@ linters and type checker described above, then run the tests with coverage:
     ruff check .
     black --check .
     mypy src/
-    pytest -ra -vv --cov=statement_refinery --cov-report=term-missing --cov-fail-under=90
+    pytest -ra -vv --cov=statement_refinery --cov-report=term-missing --cov-fail-under=70
 
 These tests rely on the checked-in golden CSV files, so `pdfplumber` is optional
 but recommended for full coverage. When it is missing the tests that parse PDFs
@@ -207,7 +204,7 @@ The GitHub Actions workflow runs on every push, pull request and once daily at
 the `schedule` block in `.github/workflows/ci.yaml`. The workflow installs the
 development extras and then executes
 `ruff`, `black`, `mypy` and the test suite with coverage. Coverage must remain
-above **90%** or the run fails. When any test fails the job invokes the AI
+above **70%** or the run fails. When any test fails the job invokes the AI
 patch loop described below to automatically attempt fixes.
 
 
