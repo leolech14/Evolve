@@ -43,7 +43,7 @@ jobs:
         run: |
           ruff check . | tee diagnostics/lint.txt
           black --check . | tee -a diagnostics/lint.txt
-          mypy src/ | tee -a diagnostics/lint.txt
+          mypy src/ --explicit-package-bases | tee -a diagnostics/lint.txt
 
       # First pass
       - name: Run tests
