@@ -145,8 +145,42 @@ def create_patch(suggestion: str) -> Optional[str]:
         run_command(["git", "add", "."])
         run_command(["git", "commit", "-m", "AI: Auto-patch improvements"])
 
-        test_code, _ = run_command(["pytest", "-q"], capture=True)
-        if test_code == 0:
+        # Run the same validation as CI re-run checks
+        print("Running full validation suite...")
+
+        lint_code, lint_out = run_command(["ruff", "check", "--fix", "."], capture=True)
+        print(f"Ruff: {'✅' if lint_code == 0 else '❌'}")
+
+        black_code, _ = run_command(["black", "."], capture=True)
+        black_check_code, black_out = run_command(
+            ["black", "--check", "."], capture=True
+        )
+        print(f"Black: {'✅' if black_check_code == 0 else '❌'}")
+
+        mypy_code, mypy_out = run_command(["mypy", "src/"], capture=True)
+        print(f"MyPy: {'✅' if mypy_code == 0 else '❌'}")
+
+        test_code, test_out = run_command(
+            ["pytest", "-v", "--cov=statement_refinery", "--cov-fail-under=70"],
+            capture=True,
+        )
+        print(f"Tests: {'✅' if test_code == 0 else '❌'}")
+
+        accuracy_code, accuracy_out = run_command(
+            ["python", "scripts/check_accuracy.py", "--threshold", "99"], capture=True
+        )
+        print(f"Accuracy: {'✅' if accuracy_code == 0 else '❌'}")
+
+        if all(
+            code == 0
+            for code in [
+                lint_code,
+                black_check_code,
+                mypy_code,
+                test_code,
+                accuracy_code,
+            ]
+        ):
             run_command(
                 [
                     "git",

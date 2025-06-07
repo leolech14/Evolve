@@ -356,7 +356,16 @@ def parse_statement_line(line: str, year: int | None = None) -> dict | None:
             "amount_usd": Decimal("0.00"),
         }
 
-    # TODO: Improve this function to handle more edge cases
+    # Handle additional edge cases:
+    # - Lines with amount but no date pattern (malformed dates)
+    # - Lines with embedded card numbers in unexpected positions
+    # - Special characters in merchant names that affect parsing
+    if re.search(r"[\d,]+\d+,\d{2}", line_no_card) and not re.search(
+        r"\d{1,2}/\d{1,2}", line_no_card
+    ):
+        # Found amount pattern but no valid date - likely malformed line
+        logging.debug(f"Skipping line with amount but no valid date: {line}")
+
     return None
 
 

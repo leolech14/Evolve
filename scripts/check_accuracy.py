@@ -52,7 +52,7 @@ def compare(
             txt = pdf_path.with_suffix(".txt")
             if not txt.exists():
                 print("Fallback text file missing. Skipping.")
-                return False, 0.0
+                return False, 0.0, Decimal("0.00"), Decimal("0.00"), Decimal("0.00")
             lines = txt.read_text().splitlines()
             rows = pdf_to_csv.parse_lines(iter(lines))
             pdf_to_csv.write_csv(rows, buf)
