@@ -186,7 +186,9 @@ def apply_patch(patch: str) -> bool:
             if code == 0:
                 break
             if attempt == 3:
-                print("Patch failed to apply cleanly; attempting direct file overwrite fallback...")
+                print(
+                    "Patch failed to apply cleanly; attempting direct file overwrite fallback..."
+                )
                 # Fallback: parse and write files directly from AI suggestion
                 if not apply_direct_file_overwrite(patch):
                     print("Fallback direct file overwrite also failed.")
@@ -195,19 +197,28 @@ def apply_patch(patch: str) -> bool:
                 branch = f"ai-patch-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
                 run_command(["git", "checkout", "-b", branch])
                 run_command(["git", "add", "."])
-                run_command(["git", "commit", "-m", "🤖 AUTO-FIX: Direct file overwrite fallback"])
+                run_command(
+                    [
+                        "git",
+                        "commit",
+                        "-m",
+                        "🤖 AUTO-FIX: Direct file overwrite fallback",
+                    ]
+                )
                 run_command(["git", "push", "origin", branch])
-                run_command([
-                    "gh",
-                    "pr",
-                    "create",
-                    "--title",
-                    "🤖 AI: Auto-patch improvements (fallback)",
-                    "--body",
-                    "Automated fixes from AI assistant (direct file overwrite fallback)",
-                    "--label",
-                    "auto-patch",
-                ])
+                run_command(
+                    [
+                        "gh",
+                        "pr",
+                        "create",
+                        "--title",
+                        "🤖 AI: Auto-patch improvements (fallback)",
+                        "--body",
+                        "Automated fixes from AI assistant (direct file overwrite fallback)",
+                        "--label",
+                        "auto-patch",
+                    ]
+                )
                 return True
 
         # Apply patch
