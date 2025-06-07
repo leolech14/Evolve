@@ -28,7 +28,8 @@ from openai import OpenAI
 
 # Configuration
 DIAGNOSTICS = Path("diagnostics")
-MAX_TOKENS = min(5_000_000, int(os.getenv("MAX_TOKENS", "5000000")))
+# Set a safe default for max_tokens to avoid context overflow
+MAX_TOKENS = int(os.getenv("MAX_TOKENS", "1024"))
 MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS", "5"))
 MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1")
 
