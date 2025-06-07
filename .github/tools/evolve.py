@@ -63,7 +63,11 @@ if not github_token:
 client = openai.OpenAI(api_key=api_key)
 MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1")
 MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS", "5"))
+# Abort if token budget looks unreasonable
 MAX_TOKENS = int(os.getenv("MAX_TOKENS_PER_RUN", "100000"))
+if MAX_TOKENS > 200000:
+    print("Token budget too high; aborting", file=sys.stderr)
+    raise SystemExit(1)
 # Maximum number of consecutive patch apply failures before aborting
 MAX_PATCH_FAILURES = int(os.getenv("MAX_PATCH_FAILURES", "3"))
 

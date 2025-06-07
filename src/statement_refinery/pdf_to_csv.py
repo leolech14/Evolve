@@ -235,6 +235,12 @@ def _iso_date(date_str: str, year: int | None = None) -> str:
 
 
 def parse_statement_line(line: str, year: int | None = None) -> dict | None:
+    """Return a parsed transaction row or ``None`` for non-matches.
+
+    The returned dict uses the :data:`CSV_HEADER` keys. ``year`` forces the
+    ISO date when the statement does not include the year explicitly.
+    """
+
     original_line = line
     line = line.strip()
     if not line:
@@ -558,6 +564,11 @@ def main(argv: list[str] | None = None) -> None:
     )
     parser.add_argument("pdf", type=Path, help="Input PDF")
     parser.add_argument("--out", type=Path, default=None, help="Output CSV path")
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Write parsed rows to diagnostics/<pdf>.debug.csv",
+    )
     args = parser.parse_args(argv)
 
     stem_suffix = args.pdf.stem.split("_")[-1]
@@ -578,6 +589,14 @@ def main(argv: list[str] | None = None) -> None:
 
     rows = parse_pdf(args.pdf, yr)
     _LOGGER.info("Parsed %d transactions", len(rows))
+
+    if args.debug:
+        diag_dir = Path("diagnostics")
+        diag_dir.mkdir(exist_ok=True)
+        debug_csv = diag_dir / f"{args.pdf.stem}.debug.csv"
+        with debug_csv.open("w", newline="", encoding="utf-8") as fh:
+            write_csv(rows, fh)
+        _LOGGER.info("Debug CSV written → %s", debug_csv)
 
     if args.out:
         with args.out.open("w", newline="", encoding="utf-8") as fh:
