@@ -42,3 +42,6 @@ line-length = 88
 [tool.black]
 target-version = ["py312"]
 line-length = 88
+
+[tool.mypy]
+explicit_package_bases = true
