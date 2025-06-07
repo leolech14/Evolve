@@ -88,6 +88,12 @@ def collect_context() -> dict:
     _, output = run_command(["git", "ls-files", "*.py"])
     context["files"] = [f for f in output.splitlines()]
 
+    # Only include the main parser and the sentinel test to avoid context overflow
+    context["files"] = [
+        "src/statement_refinery/pdf_to_csv.py",
+        "tests/test_evolve_sentinel.py",
+    ]
+
     # Get file contents (truncate to avoid context overflow)
     for file in context["files"]:
         try:
