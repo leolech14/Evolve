@@ -171,7 +171,7 @@ def create_patch(suggestion: str) -> Optional[str]:
 
 
 def apply_patch(patch: str) -> bool:
-    """Apply a git patch and create pull request."""
+    """Apply a git patch and create pull request. Fallback to direct file overwrite if patch fails."""
     if not patch or not patch.strip():
         return False
 
@@ -186,8 +186,29 @@ def apply_patch(patch: str) -> bool:
             if code == 0:
                 break
             if attempt == 3:
-                print("Patch failed to apply cleanly; skipping")
-                return False
+                print("Patch failed to apply cleanly; attempting direct file overwrite fallback...")
+                # Fallback: parse and write files directly from AI suggestion
+                if not apply_direct_file_overwrite(patch):
+                    print("Fallback direct file overwrite also failed.")
+                    return False
+                # Commit and push as usual
+                branch = f"ai-patch-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+                run_command(["git", "checkout", "-b", branch])
+                run_command(["git", "add", "."])
+                run_command(["git", "commit", "-m", "🤖 AUTO-FIX: Direct file overwrite fallback"])
+                run_command(["git", "push", "origin", branch])
+                run_command([
+                    "gh",
+                    "pr",
+                    "create",
+                    "--title",
+                    "🤖 AI: Auto-patch improvements (fallback)",
+                    "--body",
+                    "Automated fixes from AI assistant (direct file overwrite fallback)",
+                    "--label",
+                    "auto-patch",
+                ])
+                return True
 
         # Apply patch
         code, _ = run_command(["git", "am", str(patch_file)])
@@ -215,6 +236,41 @@ def apply_patch(patch: str) -> bool:
 
         return True
     except Exception:
+        return False
+
+
+def apply_direct_file_overwrite(suggestion: str) -> bool:
+    """Parse AI suggestion blocks and overwrite files directly."""
+    try:
+        current_file = None
+        inside_block = False
+        buffer = []
+        wrote_any = False
+        for line in suggestion.splitlines():
+            if line.startswith("FILE: "):
+                if current_file and buffer:
+                    Path(current_file).parent.mkdir(parents=True, exist_ok=True)
+                    Path(current_file).write_text("\n".join(buffer))
+                    wrote_any = True
+                current_file = line.split(":", 1)[1].strip()
+                buffer = []
+                inside_block = False
+            elif line.startswith("```") and current_file:
+                inside_block = not inside_block
+                if not inside_block and buffer:
+                    Path(current_file).parent.mkdir(parents=True, exist_ok=True)
+                    Path(current_file).write_text("\n".join(buffer))
+                    wrote_any = True
+                    buffer = []
+            elif inside_block:
+                buffer.append(line)
+        if current_file and buffer:
+            Path(current_file).parent.mkdir(parents=True, exist_ok=True)
+            Path(current_file).write_text("\n".join(buffer))
+            wrote_any = True
+        return wrote_any
+    except Exception as e:
+        print(f"Direct file overwrite failed: {e}")
         return False
 
 
