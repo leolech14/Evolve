@@ -78,6 +78,22 @@ RE_FEE_INFO: Final = re.compile(
     re.I
 )
 
+# More specific patterns from failed line analysis
+RE_INTEREST_VALUE: Final = re.compile(
+    r"^Valor\s+juros\s+(?P<amount>\d{1,3}(?:\.\d{3})*,\d{2})$",
+    re.I
+)
+
+RE_CET_RATE: Final = re.compile(
+    r"^CET\s+da\s+compra\s+parcelada\s+(?P<monthly>\d+,\d{2})\s+%\s+am\s+(?P<annual>\d{1,3},\d{2})\s+%\s+aa$",
+    re.I
+)
+
+RE_INSTALLMENT_VALUE: Final = re.compile(
+    r"^Valor\s+da\s+parcela\s+(?P<amount>\d{1,3}(?:\.\d{3})*,\d{2})$",
+    re.I
+)
+
 # Learned generic transaction pattern (high-confidence catch-all)
 RE_GENERIC_TRANSACTION: Final = re.compile(
     r"^(?P<desc>.+?)\s+(?P<amount>\d{1,3}(?:\.\d{3})*,\d{2})(?:\s+.*)?$"
@@ -391,6 +407,22 @@ def parse_statement_line(line: str, year: int | None = None) -> dict | None:
         }
 
     # ===== ENHANCED PATTERN MATCHING =====
+    
+    # Specific fee patterns from failed line analysis
+    m = RE_INTEREST_VALUE.match(line_no_card)
+    if m:
+        # "Valor juros 477,06" - Interest value information
+        return None  # Skip informational fee lines
+    
+    m = RE_CET_RATE.match(line_no_card)
+    if m:
+        # "CET da compra parcelada 6,32 % am 110,71 % aa" - Rate information
+        return None  # Skip informational rate lines
+    
+    m = RE_INSTALLMENT_VALUE.match(line_no_card)
+    if m:
+        # "Valor da parcela 41,35" - Installment value information
+        return None  # Skip informational installment lines
     
     # Currency conversion rate information
     m = RE_CURRENCY_CONVERSION.match(line_no_card)
