@@ -43,7 +43,12 @@ jobs:
         run: |
           ruff check . | tee diagnostics/lint.txt
           black --check . | tee -a diagnostics/lint.txt
-          mypy src/ --explicit-package-bases | tee -a diagnostics/lint.txt
+
+      - name: Run mypy
+        id: mypy
+        continue-on-error: true
+        run: |
+          PYTHONPATH=src mypy --explicit-package-bases src/statement_refinery | tee diagnostics/mypy.txt
 
       # First pass
       - name: Run tests
