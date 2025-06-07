@@ -24,11 +24,14 @@ def test_repos_key_exists():
 def test_each_repo_has_required_fields():
     config = load_config()
     for i, repo in enumerate(config["repos"]):
-        assert "repo" in repo or repo.get("repo", None) == "local", f"Repo #{i} missing 'repo' key"
+        assert "repo" in repo or repo.get("repo", None) == "local", (
+            f"Repo #{i} missing 'repo' key"
+        )
         if repo.get("repo", None) != "local":
             assert "rev" in repo, f"Repo #{i} missing 'rev' key"
         assert "hooks" in repo, f"Repo #{i} missing 'hooks' key"
         assert isinstance(repo["hooks"], list), f"Repo #{i} 'hooks' should be a list"
+
 
 def test_each_hook_has_required_fields():
     config = load_config()
@@ -38,11 +41,13 @@ def test_each_hook_has_required_fields():
             assert "name" in hook, f"Repo #{i} Hook #{j} missing 'name'"
             assert "description" in hook, f"Repo #{i} Hook #{j} missing 'description'"
 
+
 def test_no_duplicate_hook_ids_within_repo():
     config = load_config()
     for i, repo in enumerate(config["repos"]):
         ids = [hook["id"] for hook in repo["hooks"] if "id" in hook]
         assert len(ids) == len(set(ids)), f"Duplicate hook ids in repo #{i}: {ids}"
+
 
 def test_local_repo_hooks_have_entry():
     config = load_config()
