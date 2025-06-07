@@ -3,7 +3,6 @@ repos:
     rev: v0.3.0
     hooks:
       - id: ruff
-        args: ["check", "."]
   - repo: https://github.com/psf/black
     rev: 24.4.2
     hooks:
@@ -13,4 +12,4 @@ repos:
     rev: v1.10.0
     hooks:
       - id: mypy
-        args: ["src/"]
+        args: ["statement_refinery"]
