@@ -34,7 +34,7 @@ jobs:
         run: pip install -e '.[dev]'
 
       - name: Run pre-commit
-        run: pre-commit run --all-files --show-diff-on-failure || echo "::warning::lint failed (ignored)"
+        run: pre-commit run --all-files --show-diff-on-failure
         env:
           GIT_ASKPASS: "true"
 
@@ -43,8 +43,16 @@ jobs:
         id: lint
         continue-on-error: true
         run: |
+          set +e  # Don't exit on error, but still report failure status
           ruff check --fix . | tee diagnostics/lint.txt
+          RUFF_EXIT=$?
           black --check . | tee -a diagnostics/lint.txt
+          BLACK_EXIT=$?
+          # Exit with failure if either tool failed
+          if [ $RUFF_EXIT -ne 0 ] || [ $BLACK_EXIT -ne 0 ]; then
+            echo "Linting failed: ruff($RUFF_EXIT) black($BLACK_EXIT)"
+            exit 1
+          fi
 
       - name: Run mypy
         id: mypy

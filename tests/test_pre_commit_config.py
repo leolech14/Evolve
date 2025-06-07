@@ -16,10 +16,12 @@ def test_pre_commit_config_valid():
     except Exception as e:
         pytest.fail(f"YAML syntax error: {e}")
 
+
 def test_repos_key_exists():
     config = load_config()
     assert "repos" in config, "Missing 'repos' key in pre-commit config"
     assert isinstance(config["repos"], list), "'repos' should be a list"
+
 
 def test_each_repo_has_required_fields():
     config = load_config()
