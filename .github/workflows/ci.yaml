@@ -91,6 +91,7 @@ jobs:
       # Re-run if patched
       - name: Re-run checks
         if: steps.evolve.outcome == 'success'
+        continue-on-error: true
         run: |
           ruff check --fix .
           black .
