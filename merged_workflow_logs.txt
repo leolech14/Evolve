@@ -1,0 +1,1674 @@
+# GitHub Actions Workflow Logs
+# Generated on Sat Jun  7 19:50:00 -03 2025
+
+
+### 0_test
+
+﻿2025-06-07T22:38:03.2692325Z Current runner version: '2.325.0'
+2025-06-07T22:38:03.2718255Z ##[group]Operating System
+2025-06-07T22:38:03.2719296Z Ubuntu
+2025-06-07T22:38:03.2719940Z 24.04.2
+2025-06-07T22:38:03.2720430Z LTS
+2025-06-07T22:38:03.2720864Z ##[endgroup]
+2025-06-07T22:38:03.2721446Z ##[group]Runner Image
+2025-06-07T22:38:03.2722049Z Image: ubuntu-24.04
+2025-06-07T22:38:03.2722599Z Version: 20250602.3.0
+2025-06-07T22:38:03.2723587Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20250602.3/images/ubuntu/Ubuntu2404-Readme.md
+2025-06-07T22:38:03.2724938Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20250602.3
+2025-06-07T22:38:03.2725880Z ##[endgroup]
+2025-06-07T22:38:03.2726449Z ##[group]Runner Image Provisioner
+2025-06-07T22:38:03.2726994Z 2.0.437.1
+2025-06-07T22:38:03.2727498Z ##[endgroup]
+2025-06-07T22:38:03.2728879Z ##[group]GITHUB_TOKEN Permissions
+2025-06-07T22:38:03.2730770Z Contents: read
+2025-06-07T22:38:03.2731476Z Metadata: read
+2025-06-07T22:38:03.2732141Z Packages: read
+2025-06-07T22:38:03.2732782Z ##[endgroup]
+2025-06-07T22:38:03.2734890Z Secret source: Actions
+2025-06-07T22:38:03.2736200Z Prepare workflow directory
+2025-06-07T22:38:03.3199446Z Prepare all required actions
+2025-06-07T22:38:03.3236832Z Getting action download info
+2025-06-07T22:38:03.7407911Z ##[group]Download immutable action package 'actions/checkout@v4'
+2025-06-07T22:38:03.7409192Z Version: 4.2.2
+2025-06-07T22:38:03.7410352Z Digest: sha256:ccb2698953eaebd21c7bf6268a94f9c26518a7e38e27e0b83c1fe1ad049819b1
+2025-06-07T22:38:03.7411527Z Source commit SHA: 11bd71901bbe5b1630ceea73d27597364c9af683
+2025-06-07T22:38:03.7412296Z ##[endgroup]
+2025-06-07T22:38:03.8219568Z ##[group]Download immutable action package 'actions/setup-python@v5'
+2025-06-07T22:38:03.8220470Z Version: 5.6.0
+2025-06-07T22:38:03.8221210Z Digest: sha256:0b35a0c11c97499e4e0576589036d450b9f5f9da74b7774225b3614b57324404
+2025-06-07T22:38:03.8222182Z Source commit SHA: a26af69be951a213d495a4c3e4e4022e16d87065
+2025-06-07T22:38:03.8222954Z ##[endgroup]
+2025-06-07T22:38:04.2183943Z Download action repository 'codecov/codecov-action@v4' (SHA:b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238)
+2025-06-07T22:38:04.7849462Z ##[group]Download immutable action package 'actions/upload-artifact@v4'
+2025-06-07T22:38:04.7850423Z Version: 4.6.2
+2025-06-07T22:38:04.7851304Z Digest: sha256:290722aa3281d5caf23d0acdc3dbeb3424786a1a01a9cc97e72f147225e37c38
+2025-06-07T22:38:04.7852398Z Source commit SHA: ea165f8d65b6e75b540449e92b4886f43607fa02
+2025-06-07T22:38:04.7853120Z ##[endgroup]
+2025-06-07T22:38:04.9953465Z Complete job name: test
+2025-06-07T22:38:05.0697689Z ##[group]Run actions/checkout@v4
+2025-06-07T22:38:05.0698774Z with:
+2025-06-07T22:38:05.0699224Z   repository: leolech14/Evolve
+2025-06-07T22:38:05.0699938Z   token: ***
+2025-06-07T22:38:05.0700350Z   ssh-strict: true
+2025-06-07T22:38:05.0700768Z   ssh-user: git
+2025-06-07T22:38:05.0701198Z   persist-credentials: true
+2025-06-07T22:38:05.0701674Z   clean: true
+2025-06-07T22:38:05.0702122Z   sparse-checkout-cone-mode: true
+2025-06-07T22:38:05.0702667Z   fetch-depth: 1
+2025-06-07T22:38:05.0703085Z   fetch-tags: false
+2025-06-07T22:38:05.0703500Z   show-progress: true
+2025-06-07T22:38:05.0703931Z   lfs: false
+2025-06-07T22:38:05.0704328Z   submodules: false
+2025-06-07T22:38:05.0704760Z   set-safe-directory: true
+2025-06-07T22:38:05.0705473Z env:
+2025-06-07T22:38:05.0706182Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:05.0706635Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:05.0707072Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:05.0707491Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:05.0707915Z ##[endgroup]
+2025-06-07T22:38:05.2467994Z Syncing repository: leolech14/Evolve
+2025-06-07T22:38:05.2470116Z ##[group]Getting Git version info
+2025-06-07T22:38:05.2470803Z Working directory is '/home/runner/work/Evolve/Evolve'
+2025-06-07T22:38:05.2471715Z [command]/usr/bin/git version
+2025-06-07T22:38:05.2569053Z git version 2.49.0
+2025-06-07T22:38:05.2599300Z ##[endgroup]
+2025-06-07T22:38:05.2622453Z Temporarily overriding HOME='/home/runner/work/_temp/6fbbb3f5-0bd4-4a2c-9389-bd0390441020' before making global git config changes
+2025-06-07T22:38:05.2625247Z Adding repository directory to the temporary git global config as a safe directory
+2025-06-07T22:38:05.2629439Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Evolve/Evolve
+2025-06-07T22:38:05.2669082Z Deleting the contents of '/home/runner/work/Evolve/Evolve'
+2025-06-07T22:38:05.2673030Z ##[group]Initializing the repository
+2025-06-07T22:38:05.2677836Z [command]/usr/bin/git init /home/runner/work/Evolve/Evolve
+2025-06-07T22:38:05.2751364Z hint: Using 'master' as the name for the initial branch. This default branch name
+2025-06-07T22:38:05.2752788Z hint: is subject to change. To configure the initial branch name to use in all
+2025-06-07T22:38:05.2753800Z hint: of your new repositories, which will suppress this warning, call:
+2025-06-07T22:38:05.2754562Z hint:
+2025-06-07T22:38:05.2755154Z hint: 	git config --global init.defaultBranch <name>
+2025-06-07T22:38:05.2755808Z hint:
+2025-06-07T22:38:05.2756498Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2025-06-07T22:38:05.2757732Z hint: 'development'. The just-created branch can be renamed via this command:
+2025-06-07T22:38:05.2759098Z hint:
+2025-06-07T22:38:05.2759688Z hint: 	git branch -m <name>
+2025-06-07T22:38:05.2761003Z Initialized empty Git repository in /home/runner/work/Evolve/Evolve/.git/
+2025-06-07T22:38:05.2771750Z [command]/usr/bin/git remote add origin https://github.com/leolech14/Evolve
+2025-06-07T22:38:05.2807113Z ##[endgroup]
+2025-06-07T22:38:05.2808361Z ##[group]Disabling automatic garbage collection
+2025-06-07T22:38:05.2812460Z [command]/usr/bin/git config --local gc.auto 0
+2025-06-07T22:38:05.2841584Z ##[endgroup]
+2025-06-07T22:38:05.2842812Z ##[group]Setting up auth
+2025-06-07T22:38:05.2849390Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-06-07T22:38:05.2880064Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-06-07T22:38:05.3250234Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-06-07T22:38:05.3291484Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-06-07T22:38:05.3566196Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2025-06-07T22:38:05.3618301Z ##[endgroup]
+2025-06-07T22:38:05.3627083Z ##[group]Fetching the repository
+2025-06-07T22:38:05.3628429Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +ffae1b1416e40894c0eacea8098ae84bec42c97c:refs/remotes/origin/main
+2025-06-07T22:38:06.1970187Z From https://github.com/leolech14/Evolve
+2025-06-07T22:38:06.1974169Z  * [new ref]         ffae1b1416e40894c0eacea8098ae84bec42c97c -> origin/main
+2025-06-07T22:38:06.2004432Z ##[endgroup]
+2025-06-07T22:38:06.2005466Z ##[group]Determining the checkout info
+2025-06-07T22:38:06.2006792Z ##[endgroup]
+2025-06-07T22:38:06.2013738Z [command]/usr/bin/git sparse-checkout disable
+2025-06-07T22:38:06.2058088Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2025-06-07T22:38:06.2088383Z ##[group]Checking out the ref
+2025-06-07T22:38:06.2091830Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2025-06-07T22:38:06.2316447Z Switched to a new branch 'main'
+2025-06-07T22:38:06.2318115Z branch 'main' set up to track 'origin/main'.
+2025-06-07T22:38:06.2325113Z ##[endgroup]
+2025-06-07T22:38:06.2363422Z [command]/usr/bin/git log -1 --format=%H
+2025-06-07T22:38:06.2387483Z ffae1b1416e40894c0eacea8098ae84bec42c97c
+2025-06-07T22:38:06.2753661Z ##[group]Run actions/setup-python@v5
+2025-06-07T22:38:06.2754775Z with:
+2025-06-07T22:38:06.2755505Z   python-version: 3.12
+2025-06-07T22:38:06.2756590Z   cache: pip
+2025-06-07T22:38:06.2757345Z   check-latest: false
+2025-06-07T22:38:06.2758658Z   token: ***
+2025-06-07T22:38:06.2759490Z   update-environment: true
+2025-06-07T22:38:06.2760452Z   allow-prereleases: false
+2025-06-07T22:38:06.2761376Z   freethreaded: false
+2025-06-07T22:38:06.2762192Z env:
+2025-06-07T22:38:06.2762892Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:06.2763734Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:06.2764575Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:06.2765367Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:06.2766154Z ##[endgroup]
+2025-06-07T22:38:06.4459403Z ##[group]Installed versions
+2025-06-07T22:38:06.4524043Z Successfully set up CPython (3.12.10)
+2025-06-07T22:38:06.4526692Z ##[endgroup]
+2025-06-07T22:38:06.5528836Z [command]/opt/hostedtoolcache/Python/3.12.10/x64/bin/pip cache dir
+2025-06-07T22:38:07.0436921Z /home/runner/.cache/pip
+2025-06-07T22:38:07.2763521Z Cache hit for: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.10-pip-16e89f17d8a7ffc7da5ff034a3d02d9aac7c9a988a734c71f332e0e45a4cb0d9
+2025-06-07T22:38:08.4646476Z Received 88748529 of 88748529 (100.0%), 85.1 MBs/sec
+2025-06-07T22:38:08.4647302Z Cache Size: ~85 MB (88748529 B)
+2025-06-07T22:38:08.4676974Z [command]/usr/bin/tar -xf /home/runner/work/_temp/03aab7f2-54b7-48d2-abf8-1f9910210b2d/cache.tzst -P -C /home/runner/work/Evolve/Evolve --use-compress-program unzstd
+2025-06-07T22:38:08.6310099Z Cache restored successfully
+2025-06-07T22:38:08.6487157Z Cache restored from key: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.10-pip-16e89f17d8a7ffc7da5ff034a3d02d9aac7c9a988a734c71f332e0e45a4cb0d9
+2025-06-07T22:38:08.6656596Z ##[group]Run mkdir -p diagnostics csv_output
+2025-06-07T22:38:08.6657011Z [36;1mmkdir -p diagnostics csv_output[0m
+2025-06-07T22:38:08.6730485Z shell: /usr/bin/bash -e {0}
+2025-06-07T22:38:08.6730772Z env:
+2025-06-07T22:38:08.6730984Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:08.6731212Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:08.6731421Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:08.6731635Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:08.6731909Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:08.6732353Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib/pkgconfig
+2025-06-07T22:38:08.6732775Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:08.6733154Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:08.6733532Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:08.6733909Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib
+2025-06-07T22:38:08.6734236Z ##[endgroup]
+2025-06-07T22:38:08.6880608Z ##[group]Run pip install -e '.[dev]'
+2025-06-07T22:38:08.6880956Z [36;1mpip install -e '.[dev]'[0m
+2025-06-07T22:38:08.6934173Z shell: /usr/bin/bash -e {0}
+2025-06-07T22:38:08.6934448Z env:
+2025-06-07T22:38:08.6934667Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:08.6934888Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:08.6935089Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:08.6935283Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:08.6935568Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:08.6936011Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib/pkgconfig
+2025-06-07T22:38:08.6936449Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:08.6936819Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:08.6937186Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:08.6937561Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib
+2025-06-07T22:38:08.6937864Z ##[endgroup]
+2025-06-07T22:38:09.5357629Z Obtaining file:///home/runner/work/Evolve/Evolve
+2025-06-07T22:38:09.5376941Z   Installing build dependencies: started
+2025-06-07T22:38:10.3043115Z   Installing build dependencies: finished with status 'done'
+2025-06-07T22:38:10.3049700Z   Checking if build backend supports build_editable: started
+2025-06-07T22:38:10.6563663Z   Checking if build backend supports build_editable: finished with status 'done'
+2025-06-07T22:38:10.6571791Z   Getting requirements to build editable: started
+2025-06-07T22:38:11.0071864Z   Getting requirements to build editable: finished with status 'done'
+2025-06-07T22:38:11.0081445Z   Preparing editable metadata (pyproject.toml): started
+2025-06-07T22:38:11.2042454Z   Preparing editable metadata (pyproject.toml): finished with status 'done'
+2025-06-07T22:38:11.2931190Z Collecting pdfplumber (from statement_refinery==0.1.0)
+2025-06-07T22:38:11.2945641Z   Using cached pdfplumber-0.11.6-py3-none-any.whl.metadata (42 kB)
+2025-06-07T22:38:11.6657936Z Collecting ruff (from statement_refinery==0.1.0)
+2025-06-07T22:38:11.6671920Z   Using cached ruff-0.11.13-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (25 kB)
+2025-06-07T22:38:11.7235772Z Collecting black (from statement_refinery==0.1.0)
+2025-06-07T22:38:11.7249321Z   Using cached black-25.1.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_28_x86_64.whl.metadata (81 kB)
+2025-06-07T22:38:11.7815934Z Collecting pytest (from statement_refinery==0.1.0)
+2025-06-07T22:38:11.7828728Z   Using cached pytest-8.4.0-py3-none-any.whl.metadata (7.7 kB)
+2025-06-07T22:38:11.8120746Z Collecting pytest-cov (from statement_refinery==0.1.0)
+2025-06-07T22:38:11.8132836Z   Using cached pytest_cov-6.1.1-py3-none-any.whl.metadata (28 kB)
+2025-06-07T22:38:11.8433143Z Collecting pytest-xdist (from statement_refinery==0.1.0)
+2025-06-07T22:38:11.8445577Z   Using cached pytest_xdist-3.7.0-py3-none-any.whl.metadata (3.0 kB)
+2025-06-07T22:38:11.9494578Z Collecting mypy (from statement_refinery==0.1.0)
+2025-06-07T22:38:11.9508317Z   Using cached mypy-1.16.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_28_x86_64.whl.metadata (2.1 kB)
+2025-06-07T22:38:12.0379953Z Collecting openai>=0 (from statement_refinery==0.1.0)
+2025-06-07T22:38:12.0392783Z   Using cached openai-1.84.0-py3-none-any.whl.metadata (25 kB)
+2025-06-07T22:38:12.0925139Z Collecting pre-commit (from statement_refinery==0.1.0)
+2025-06-07T22:38:12.0938965Z   Using cached pre_commit-4.2.0-py2.py3-none-any.whl.metadata (1.3 kB)
+2025-06-07T22:38:12.1265978Z Collecting anyio<5,>=3.5.0 (from openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.1279723Z   Using cached anyio-4.9.0-py3-none-any.whl.metadata (4.7 kB)
+2025-06-07T22:38:12.1523667Z Collecting distro<2,>=1.7.0 (from openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.1537007Z   Using cached distro-1.9.0-py3-none-any.whl.metadata (6.8 kB)
+2025-06-07T22:38:12.1848774Z Collecting httpx<1,>=0.23.0 (from openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.1861826Z   Using cached httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+2025-06-07T22:38:12.2585476Z Collecting jiter<1,>=0.4.0 (from openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.2599323Z   Using cached jiter-0.10.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (5.2 kB)
+2025-06-07T22:38:12.3884872Z Collecting pydantic<3,>=1.9.0 (from openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.3898236Z   Using cached pydantic-2.11.5-py3-none-any.whl.metadata (67 kB)
+2025-06-07T22:38:12.4120905Z Collecting sniffio (from openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.4132632Z   Using cached sniffio-1.3.1-py3-none-any.whl.metadata (3.9 kB)
+2025-06-07T22:38:12.4837256Z Collecting tqdm>4 (from openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.4851042Z   Using cached tqdm-4.67.1-py3-none-any.whl.metadata (57 kB)
+2025-06-07T22:38:12.5178026Z Collecting typing-extensions<5,>=4.11 (from openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.5191554Z   Using cached typing_extensions-4.14.0-py3-none-any.whl.metadata (3.0 kB)
+2025-06-07T22:38:12.5491691Z Collecting idna>=2.8 (from anyio<5,>=3.5.0->openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.5503576Z   Using cached idna-3.10-py3-none-any.whl.metadata (10 kB)
+2025-06-07T22:38:12.5896070Z Collecting certifi (from httpx<1,>=0.23.0->openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.5908189Z   Using cached certifi-2025.4.26-py3-none-any.whl.metadata (2.5 kB)
+2025-06-07T22:38:12.6222395Z Collecting httpcore==1.* (from httpx<1,>=0.23.0->openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.6235221Z   Using cached httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+2025-06-07T22:38:12.6466673Z Collecting h11>=0.16 (from httpcore==1.*->httpx<1,>=0.23.0->openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.6478438Z   Using cached h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+2025-06-07T22:38:12.6714528Z Collecting annotated-types>=0.6.0 (from pydantic<3,>=1.9.0->openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.6727727Z   Using cached annotated_types-0.7.0-py3-none-any.whl.metadata (15 kB)
+2025-06-07T22:38:13.2609516Z Collecting pydantic-core==2.33.2 (from pydantic<3,>=1.9.0->openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:13.2623306Z   Using cached pydantic_core-2.33.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.8 kB)
+2025-06-07T22:38:13.2871741Z Collecting typing-inspection>=0.4.0 (from pydantic<3,>=1.9.0->openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:13.2883447Z   Using cached typing_inspection-0.4.1-py3-none-any.whl.metadata (2.6 kB)
+2025-06-07T22:38:13.3727445Z Collecting click>=8.0.0 (from black->statement_refinery==0.1.0)
+2025-06-07T22:38:13.3739610Z   Using cached click-8.2.1-py3-none-any.whl.metadata (2.5 kB)
+2025-06-07T22:38:13.3935116Z Collecting mypy-extensions>=0.4.3 (from black->statement_refinery==0.1.0)
+2025-06-07T22:38:13.3946722Z   Using cached mypy_extensions-1.1.0-py3-none-any.whl.metadata (1.1 kB)
+2025-06-07T22:38:13.4207503Z Collecting packaging>=22.0 (from black->statement_refinery==0.1.0)
+2025-06-07T22:38:13.4219717Z   Using cached packaging-25.0-py3-none-any.whl.metadata (3.3 kB)
+2025-06-07T22:38:13.4463904Z Collecting pathspec>=0.9.0 (from black->statement_refinery==0.1.0)
+2025-06-07T22:38:13.4475493Z   Using cached pathspec-0.12.1-py3-none-any.whl.metadata (21 kB)
+2025-06-07T22:38:13.4770934Z Collecting platformdirs>=2 (from black->statement_refinery==0.1.0)
+2025-06-07T22:38:13.4783016Z   Using cached platformdirs-4.3.8-py3-none-any.whl.metadata (12 kB)
+2025-06-07T22:38:13.5120672Z Collecting pdfminer.six==20250327 (from pdfplumber->statement_refinery==0.1.0)
+2025-06-07T22:38:13.5132684Z   Using cached pdfminer_six-20250327-py3-none-any.whl.metadata (4.1 kB)
+2025-06-07T22:38:13.7113686Z Collecting Pillow>=9.1 (from pdfplumber->statement_refinery==0.1.0)
+2025-06-07T22:38:13.7126548Z   Using cached pillow-11.2.1-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (8.9 kB)
+2025-06-07T22:38:13.8045422Z Collecting pypdfium2>=4.18.0 (from pdfplumber->statement_refinery==0.1.0)
+2025-06-07T22:38:13.8058169Z   Using cached pypdfium2-4.30.1-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (48 kB)
+2025-06-07T22:38:13.8922657Z Collecting charset-normalizer>=2.0.0 (from pdfminer.six==20250327->pdfplumber->statement_refinery==0.1.0)
+2025-06-07T22:38:13.8935548Z   Using cached charset_normalizer-3.4.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (35 kB)
+2025-06-07T22:38:14.0775903Z Collecting cryptography>=36.0.0 (from pdfminer.six==20250327->pdfplumber->statement_refinery==0.1.0)
+2025-06-07T22:38:14.0791257Z   Using cached cryptography-45.0.3-cp311-abi3-manylinux_2_34_x86_64.whl.metadata (5.7 kB)
+2025-06-07T22:38:14.1928235Z Collecting cffi>=1.14 (from cryptography>=36.0.0->pdfminer.six==20250327->pdfplumber->statement_refinery==0.1.0)
+2025-06-07T22:38:14.1941311Z   Using cached cffi-1.17.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (1.5 kB)
+2025-06-07T22:38:14.2201115Z Collecting pycparser (from cffi>=1.14->cryptography>=36.0.0->pdfminer.six==20250327->pdfplumber->statement_refinery==0.1.0)
+2025-06-07T22:38:14.2212237Z   Using cached pycparser-2.22-py3-none-any.whl.metadata (943 bytes)
+2025-06-07T22:38:14.2453945Z Collecting cfgv>=2.0.0 (from pre-commit->statement_refinery==0.1.0)
+2025-06-07T22:38:14.2465658Z   Using cached cfgv-3.4.0-py2.py3-none-any.whl.metadata (8.5 kB)
+2025-06-07T22:38:14.3032995Z Collecting identify>=1.0.0 (from pre-commit->statement_refinery==0.1.0)
+2025-06-07T22:38:14.3046221Z   Using cached identify-2.6.12-py2.py3-none-any.whl.metadata (4.4 kB)
+2025-06-07T22:38:14.3303539Z Collecting nodeenv>=0.11.1 (from pre-commit->statement_refinery==0.1.0)
+2025-06-07T22:38:14.3316074Z   Using cached nodeenv-1.9.1-py2.py3-none-any.whl.metadata (21 kB)
+2025-06-07T22:38:14.4274107Z Collecting pyyaml>=5.1 (from pre-commit->statement_refinery==0.1.0)
+2025-06-07T22:38:14.4288356Z   Using cached PyYAML-6.0.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (2.1 kB)
+2025-06-07T22:38:14.4822145Z Collecting virtualenv>=20.10.0 (from pre-commit->statement_refinery==0.1.0)
+2025-06-07T22:38:14.4835169Z   Using cached virtualenv-20.31.2-py3-none-any.whl.metadata (4.5 kB)
+2025-06-07T22:38:14.5150021Z Collecting distlib<1,>=0.3.7 (from virtualenv>=20.10.0->pre-commit->statement_refinery==0.1.0)
+2025-06-07T22:38:14.5162443Z   Using cached distlib-0.3.9-py2.py3-none-any.whl.metadata (5.2 kB)
+2025-06-07T22:38:14.5457288Z Collecting filelock<4,>=3.12.2 (from virtualenv>=20.10.0->pre-commit->statement_refinery==0.1.0)
+2025-06-07T22:38:14.5470077Z   Using cached filelock-3.18.0-py3-none-any.whl.metadata (2.9 kB)
+2025-06-07T22:38:14.5778903Z Collecting iniconfig>=1 (from pytest->statement_refinery==0.1.0)
+2025-06-07T22:38:14.5791693Z   Using cached iniconfig-2.1.0-py3-none-any.whl.metadata (2.7 kB)
+2025-06-07T22:38:14.6046274Z Collecting pluggy<2,>=1.5 (from pytest->statement_refinery==0.1.0)
+2025-06-07T22:38:14.6058269Z   Using cached pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+2025-06-07T22:38:14.6365927Z Collecting pygments>=2.7.2 (from pytest->statement_refinery==0.1.0)
+2025-06-07T22:38:14.6378256Z   Using cached pygments-2.19.1-py3-none-any.whl.metadata (2.5 kB)
+2025-06-07T22:38:14.9494896Z Collecting coverage>=7.5 (from coverage[toml]>=7.5->pytest-cov->statement_refinery==0.1.0)
+2025-06-07T22:38:14.9508820Z   Using cached coverage-7.8.2-cp312-cp312-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (8.9 kB)
+2025-06-07T22:38:14.9796083Z Collecting execnet>=2.1 (from pytest-xdist->statement_refinery==0.1.0)
+2025-06-07T22:38:14.9807284Z   Using cached execnet-2.1.1-py3-none-any.whl.metadata (2.9 kB)
+2025-06-07T22:38:15.0017345Z Using cached openai-1.84.0-py3-none-any.whl (725 kB)
+2025-06-07T22:38:15.0034314Z Using cached anyio-4.9.0-py3-none-any.whl (100 kB)
+2025-06-07T22:38:15.0046624Z Using cached distro-1.9.0-py3-none-any.whl (20 kB)
+2025-06-07T22:38:15.0057509Z Using cached httpx-0.28.1-py3-none-any.whl (73 kB)
+2025-06-07T22:38:15.0069291Z Using cached httpcore-1.0.9-py3-none-any.whl (78 kB)
+2025-06-07T22:38:15.0081123Z Using cached jiter-0.10.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (352 kB)
+2025-06-07T22:38:15.0094705Z Using cached pydantic-2.11.5-py3-none-any.whl (444 kB)
+2025-06-07T22:38:15.0109080Z Using cached pydantic_core-2.33.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.0 MB)
+2025-06-07T22:38:15.0134959Z Using cached typing_extensions-4.14.0-py3-none-any.whl (43 kB)
+2025-06-07T22:38:15.0146437Z Using cached annotated_types-0.7.0-py3-none-any.whl (13 kB)
+2025-06-07T22:38:15.0157356Z Using cached h11-0.16.0-py3-none-any.whl (37 kB)
+2025-06-07T22:38:15.0169305Z Using cached idna-3.10-py3-none-any.whl (70 kB)
+2025-06-07T22:38:15.0181233Z Using cached sniffio-1.3.1-py3-none-any.whl (10 kB)
+2025-06-07T22:38:15.0192614Z Using cached tqdm-4.67.1-py3-none-any.whl (78 kB)
+2025-06-07T22:38:15.0204384Z Using cached typing_inspection-0.4.1-py3-none-any.whl (14 kB)
+2025-06-07T22:38:15.0216805Z Using cached black-25.1.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_28_x86_64.whl (1.8 MB)
+2025-06-07T22:38:15.0244019Z Using cached click-8.2.1-py3-none-any.whl (102 kB)
+2025-06-07T22:38:15.0256208Z Using cached mypy_extensions-1.1.0-py3-none-any.whl (5.0 kB)
+2025-06-07T22:38:15.0267612Z Using cached packaging-25.0-py3-none-any.whl (66 kB)
+2025-06-07T22:38:15.0279302Z Using cached pathspec-0.12.1-py3-none-any.whl (31 kB)
+2025-06-07T22:38:15.0291151Z Using cached platformdirs-4.3.8-py3-none-any.whl (18 kB)
+2025-06-07T22:38:15.0302654Z Using cached certifi-2025.4.26-py3-none-any.whl (159 kB)
+2025-06-07T22:38:15.0315338Z Using cached mypy-1.16.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_28_x86_64.whl (12.7 MB)
+2025-06-07T22:38:15.0417877Z Using cached pdfplumber-0.11.6-py3-none-any.whl (60 kB)
+2025-06-07T22:38:15.0429759Z Using cached pdfminer_six-20250327-py3-none-any.whl (5.6 MB)
+2025-06-07T22:38:15.0481062Z Using cached charset_normalizer-3.4.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (148 kB)
+2025-06-07T22:38:15.0494069Z Using cached cryptography-45.0.3-cp311-abi3-manylinux_2_34_x86_64.whl (4.5 MB)
+2025-06-07T22:38:15.0537062Z Using cached cffi-1.17.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (479 kB)
+2025-06-07T22:38:15.0552142Z Using cached pillow-11.2.1-cp312-cp312-manylinux_2_28_x86_64.whl (4.6 MB)
+2025-06-07T22:38:15.0602301Z Using cached pypdfium2-4.30.1-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.9 MB)
+2025-06-07T22:38:15.0636949Z Using cached pre_commit-4.2.0-py2.py3-none-any.whl (220 kB)
+2025-06-07T22:38:15.0650309Z Using cached cfgv-3.4.0-py2.py3-none-any.whl (7.2 kB)
+2025-06-07T22:38:15.0662153Z Using cached identify-2.6.12-py2.py3-none-any.whl (99 kB)
+2025-06-07T22:38:15.0674182Z Using cached nodeenv-1.9.1-py2.py3-none-any.whl (22 kB)
+2025-06-07T22:38:15.0686020Z Using cached PyYAML-6.0.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (767 kB)
+2025-06-07T22:38:15.0702849Z Using cached virtualenv-20.31.2-py3-none-any.whl (6.1 MB)
+2025-06-07T22:38:15.0759715Z Using cached distlib-0.3.9-py2.py3-none-any.whl (468 kB)
+2025-06-07T22:38:15.0774093Z Using cached filelock-3.18.0-py3-none-any.whl (16 kB)
+2025-06-07T22:38:15.0786422Z Using cached pycparser-2.22-py3-none-any.whl (117 kB)
+2025-06-07T22:38:15.0798333Z Using cached pytest-8.4.0-py3-none-any.whl (363 kB)
+2025-06-07T22:38:15.0812202Z Using cached pluggy-1.6.0-py3-none-any.whl (20 kB)
+2025-06-07T22:38:15.0823453Z Using cached iniconfig-2.1.0-py3-none-any.whl (6.0 kB)
+2025-06-07T22:38:15.0834594Z Using cached pygments-2.19.1-py3-none-any.whl (1.2 MB)
+2025-06-07T22:38:15.0854327Z Using cached pytest_cov-6.1.1-py3-none-any.whl (23 kB)
+2025-06-07T22:38:15.0866002Z Using cached coverage-7.8.2-cp312-cp312-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (245 kB)
+2025-06-07T22:38:15.0878202Z Using cached pytest_xdist-3.7.0-py3-none-any.whl (46 kB)
+2025-06-07T22:38:15.0889721Z Using cached execnet-2.1.1-py3-none-any.whl (40 kB)
+2025-06-07T22:38:15.0901469Z Using cached ruff-0.11.13-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (11.6 MB)
+2025-06-07T22:38:15.1886129Z Building wheels for collected packages: statement_refinery
+2025-06-07T22:38:15.1895309Z   Building editable for statement_refinery (pyproject.toml): started
+2025-06-07T22:38:15.4215851Z   Building editable for statement_refinery (pyproject.toml): finished with status 'done'
+2025-06-07T22:38:15.4224274Z   Created wheel for statement_refinery: filename=statement_refinery-0.1.0-0.editable-py3-none-any.whl size=6066 sha256=0a43d93104ce083e18dd89ac755a34d57bfc7feffab5571660b534e5090bb660
+2025-06-07T22:38:15.4226925Z   Stored in directory: /tmp/pip-ephem-wheel-cache-r1yvi57n/wheels/28/ef/08/2643d2d3176a016c9998941a41d908b9230622f970a4566ebe
+2025-06-07T22:38:15.4249754Z Successfully built statement_refinery
+2025-06-07T22:38:15.5179545Z Installing collected packages: distlib, typing-extensions, tqdm, sniffio, ruff, pyyaml, pypdfium2, pygments, pycparser, pluggy, platformdirs, Pillow, pathspec, packaging, nodeenv, mypy-extensions, jiter, iniconfig, idna, identify, h11, filelock, execnet, distro, coverage, click, charset-normalizer, cfgv, certifi, annotated-types, virtualenv, typing-inspection, pytest, pydantic-core, mypy, httpcore, cffi, black, anyio, pytest-xdist, pytest-cov, pydantic, pre-commit, httpx, cryptography, pdfminer.six, openai, pdfplumber, statement_refinery
+2025-06-07T22:38:21.1393843Z 
+2025-06-07T22:38:21.1444907Z Successfully installed Pillow-11.2.1 annotated-types-0.7.0 anyio-4.9.0 black-25.1.0 certifi-2025.4.26 cffi-1.17.1 cfgv-3.4.0 charset-normalizer-3.4.2 click-8.2.1 coverage-7.8.2 cryptography-45.0.3 distlib-0.3.9 distro-1.9.0 execnet-2.1.1 filelock-3.18.0 h11-0.16.0 httpcore-1.0.9 httpx-0.28.1 identify-2.6.12 idna-3.10 iniconfig-2.1.0 jiter-0.10.0 mypy-1.16.0 mypy-extensions-1.1.0 nodeenv-1.9.1 openai-1.84.0 packaging-25.0 pathspec-0.12.1 pdfminer.six-20250327 pdfplumber-0.11.6 platformdirs-4.3.8 pluggy-1.6.0 pre-commit-4.2.0 pycparser-2.22 pydantic-2.11.5 pydantic-core-2.33.2 pygments-2.19.1 pypdfium2-4.30.1 pytest-8.4.0 pytest-cov-6.1.1 pytest-xdist-3.7.0 pyyaml-6.0.2 ruff-0.11.13 sniffio-1.3.1 statement_refinery-0.1.0 tqdm-4.67.1 typing-extensions-4.14.0 typing-inspection-0.4.1 virtualenv-20.31.2
+2025-06-07T22:38:21.6716608Z ##[group]Run pre-commit run --all-files --show-diff-on-failure || echo "::warning::lint failed (ignored)"
+2025-06-07T22:38:21.6717312Z [36;1mpre-commit run --all-files --show-diff-on-failure || echo "::warning::lint failed (ignored)"[0m
+2025-06-07T22:38:21.6769679Z shell: /usr/bin/bash -e {0}
+2025-06-07T22:38:21.6769920Z env:
+2025-06-07T22:38:21.6770106Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:21.6770322Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:21.6770529Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:21.6770723Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:21.6770989Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:21.6771407Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib/pkgconfig
+2025-06-07T22:38:21.6771812Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:21.6772172Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:21.6772528Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:21.6772930Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib
+2025-06-07T22:38:21.6773236Z   GIT_ASKPASS: true
+2025-06-07T22:38:21.6773434Z ##[endgroup]
+2025-06-07T22:38:21.8513301Z [INFO] Initializing environment for https://github.com/astral-sh/ruff-pre-commit.
+2025-06-07T22:38:22.2783864Z [INFO] Initializing environment for https://github.com/psf/black.
+2025-06-07T22:38:22.9295664Z [INFO] Installing environment for https://github.com/astral-sh/ruff-pre-commit.
+2025-06-07T22:38:22.9296543Z [INFO] Once installed this environment will be reused.
+2025-06-07T22:38:22.9297105Z [INFO] This may take a few minutes...
+2025-06-07T22:38:26.7943772Z [INFO] Installing environment for https://github.com/psf/black.
+2025-06-07T22:38:26.7944465Z [INFO] Once installed this environment will be reused.
+2025-06-07T22:38:26.7944971Z [INFO] This may take a few minutes...
+2025-06-07T22:38:30.2420876Z ruff (auto-fix)..........................................................Passed
+2025-06-07T22:38:30.2700511Z ruff (format)............................................................Failed
+2025-06-07T22:38:30.2700982Z - hook id: ruff-format
+2025-06-07T22:38:30.2701263Z - files were modified by this hook
+2025-06-07T22:38:30.2701458Z 
+2025-06-07T22:38:30.2701569Z 2 files reformatted, 16 files left unchanged
+2025-06-07T22:38:30.2701773Z 
+2025-06-07T22:38:30.8147971Z black check..............................................................Failed
+2025-06-07T22:38:30.8148800Z - hook id: black
+2025-06-07T22:38:30.8149183Z - exit code: 1
+2025-06-07T22:38:30.8149412Z 
+2025-06-07T22:38:30.8149642Z would reformat tests/test_pre_commit_config.py
+2025-06-07T22:38:30.8150011Z 
+2025-06-07T22:38:30.8150456Z Oh no! 💥 💔 💥
+2025-06-07T22:38:30.8150989Z 1 file would be reformatted, 17 files would be left unchanged.
+2025-06-07T22:38:30.8151401Z 
+2025-06-07T22:38:30.8345649Z Export AI Patch..........................................................Passed
+2025-06-07T22:38:30.8346279Z - hook id: export-ai-patch
+2025-06-07T22:38:30.8346586Z - duration: 0s
+2025-06-07T22:38:30.8346715Z 
+2025-06-07T22:38:30.8346952Z cp: cannot stat 'diagnostics/ai-patch-unapplied.patch': No such file or directory
+2025-06-07T22:38:30.8347394Z 
+2025-06-07T22:38:30.8347903Z pre-commit hook(s) made changes.
+2025-06-07T22:38:30.8348456Z If you are seeing this message in CI, reproduce locally with: `pre-commit run --all-files`.
+2025-06-07T22:38:30.8349222Z To run `pre-commit` as part of git workflow, use `pre-commit install`.
+2025-06-07T22:38:30.8349732Z All changes made by hooks:
+2025-06-07T22:38:30.8506760Z diff --git a/tests/test_pdf_to_csv.py b/tests/test_pdf_to_csv.py
+2025-06-07T22:38:30.8507276Z index 1e26162..6933721 100644
+2025-06-07T22:38:30.8507602Z --- a/tests/test_pdf_to_csv.py
+2025-06-07T22:38:30.8507940Z +++ b/tests/test_pdf_to_csv.py
+2025-06-07T22:38:30.8508323Z @@ -8,8 +8,10 @@ def test_parse_lines_simple():
+2025-06-07T22:38:30.8508955Z      rows = parse_lines(iter(lines))
+2025-06-07T22:38:30.8509557Z      assert rows[0]["amount_brl"] == Decimal("9.99")
+2025-06-07T22:38:30.8510469Z      assert rows[0]["card_last4"] == "1234"
+2025-06-07T22:38:30.8510993Z +
+2025-06-07T22:38:30.8511259Z +
+2025-06-07T22:38:30.8511523Z  # ... previous code ...
+2025-06-07T22:38:30.8511847Z  
+2025-06-07T22:38:30.8512142Z -assert pdf_to_csv.parse_amount('') is None
+2025-06-07T22:38:30.8512587Z +assert pdf_to_csv.parse_amount("") is None
+2025-06-07T22:38:30.8513004Z  
+2025-06-07T22:38:30.8513261Z -# ... rest of the code ...
+2025-06-07T22:38:30.8513611Z \ No newline at end of file
+2025-06-07T22:38:30.8513937Z +# ... rest of the code ...
+2025-06-07T22:38:30.8514456Z diff --git a/tests/test_pre_commit_config.py b/tests/test_pre_commit_config.py
+2025-06-07T22:38:30.8515064Z index 0dcbd2d..943ba36 100644
+2025-06-07T22:38:30.8515444Z --- a/tests/test_pre_commit_config.py
+2025-06-07T22:38:30.8515861Z +++ b/tests/test_pre_commit_config.py
+2025-06-07T22:38:30.8516265Z @@ -4,10 +4,12 @@ from pathlib import Path
+2025-06-07T22:38:30.8516625Z  
+2025-06-07T22:38:30.8516939Z  CONFIG_PATH = Path(".pre-commit-config.yaml")
+2025-06-07T22:38:30.8517356Z  
+2025-06-07T22:38:30.8517581Z +
+2025-06-07T22:38:30.8517820Z  def load_config():
+2025-06-07T22:38:30.8518181Z      with CONFIG_PATH.open("r", encoding="utf-8") as f:
+2025-06-07T22:38:30.8518889Z          return yaml.safe_load(f)
+2025-06-07T22:38:30.8519229Z  
+2025-06-07T22:38:30.8519453Z +
+2025-06-07T22:38:30.8519717Z  def test_pre_commit_config_valid():
+2025-06-07T22:38:30.8520204Z      """Test that the .pre-commit-config.yaml file is valid YAML."""
+2025-06-07T22:38:30.8520678Z      try:
+2025-06-07T22:38:30.8520995Z @@ -16,20 +18,25 @@ def test_pre_commit_config_valid():
+2025-06-07T22:38:30.8521412Z      except Exception as e:
+2025-06-07T22:38:30.8521778Z          pytest.fail(f"YAML syntax error: {e}")
+2025-06-07T22:38:30.8522231Z  
+2025-06-07T22:38:30.8522588Z +
+2025-06-07T22:38:30.8522948Z  def test_repos_key_exists():
+2025-06-07T22:38:30.8523448Z      config = load_config()
+2025-06-07T22:38:30.8524042Z      assert "repos" in config, "Missing 'repos' key in pre-commit config"
+2025-06-07T22:38:30.8524692Z      assert isinstance(config["repos"], list), "'repos' should be a list"
+2025-06-07T22:38:30.8525170Z  
+2025-06-07T22:38:30.8525398Z +
+2025-06-07T22:38:30.8525694Z  def test_each_repo_has_required_fields():
+2025-06-07T22:38:30.8526096Z      config = load_config()
+2025-06-07T22:38:30.8526457Z      for i, repo in enumerate(config["repos"]):
+2025-06-07T22:38:30.8527077Z -        assert "repo" in repo or repo.get("repo", None) == "local", f"Repo #{i} missing 'repo' key"
+2025-06-07T22:38:30.8527744Z +        assert "repo" in repo or repo.get("repo", None) == "local", (
+2025-06-07T22:38:30.8528227Z +            f"Repo #{i} missing 'repo' key"
+2025-06-07T22:38:30.8528735Z +        )
+2025-06-07T22:38:30.8529016Z          if repo.get("repo", None) != "local":
+2025-06-07T22:38:30.8529459Z              assert "rev" in repo, f"Repo #{i} missing 'rev' key"
+2025-06-07T22:38:30.8529965Z          assert "hooks" in repo, f"Repo #{i} missing 'hooks' key"
+2025-06-07T22:38:30.8530588Z          assert isinstance(repo["hooks"], list), f"Repo #{i} 'hooks' should be a list"
+2025-06-07T22:38:30.8531099Z  
+2025-06-07T22:38:30.8531327Z +
+2025-06-07T22:38:30.8531597Z  def test_each_hook_has_required_fields():
+2025-06-07T22:38:30.8532219Z      config = load_config()
+2025-06-07T22:38:30.8532579Z      for i, repo in enumerate(config["repos"]):
+2025-06-07T22:38:30.8533032Z @@ -38,15 +45,17 @@ def test_each_hook_has_required_fields():
+2025-06-07T22:38:30.8533559Z              assert "name" in hook, f"Repo #{i} Hook #{j} missing 'name'"
+2025-06-07T22:38:30.8534189Z              assert "description" in hook, f"Repo #{i} Hook #{j} missing 'description'"
+2025-06-07T22:38:30.8534799Z  
+2025-06-07T22:38:30.8535055Z +
+2025-06-07T22:38:30.8535348Z  def test_no_duplicate_hook_ids_within_repo():
+2025-06-07T22:38:30.8535762Z      config = load_config()
+2025-06-07T22:38:30.8536140Z      for i, repo in enumerate(config["repos"]):
+2025-06-07T22:38:30.8536804Z          ids = [hook["id"] for hook in repo["hooks"] if "id" in hook]
+2025-06-07T22:38:30.8537394Z          assert len(ids) == len(set(ids)), f"Duplicate hook ids in repo #{i}: {ids}"
+2025-06-07T22:38:30.8537893Z  
+2025-06-07T22:38:30.8538122Z +
+2025-06-07T22:38:30.8538398Z  def test_local_repo_hooks_have_entry():
+2025-06-07T22:38:30.8538949Z      config = load_config()
+2025-06-07T22:38:30.8539313Z      for i, repo in enumerate(config["repos"]):
+2025-06-07T22:38:30.8539722Z          if repo.get("repo", None) == "local":
+2025-06-07T22:38:30.8540145Z              for j, hook in enumerate(repo["hooks"]):
+2025-06-07T22:38:30.8540640Z -                assert "entry" in hook, f"Local repo hook #{j} missing 'entry'"
+2025-06-07T22:38:30.8541242Z \ No newline at end of file
+2025-06-07T22:38:30.8541672Z +                assert "entry" in hook, f"Local repo hook #{j} missing 'entry'"
+2025-06-07T22:38:30.8712867Z ##[warning]lint failed (ignored)
+2025-06-07T22:38:30.8803470Z ##[group]Run ruff check --fix . | tee diagnostics/lint.txt
+2025-06-07T22:38:30.8803888Z [36;1mruff check --fix . | tee diagnostics/lint.txt[0m
+2025-06-07T22:38:30.8804234Z [36;1mblack --check . | tee -a diagnostics/lint.txt[0m
+2025-06-07T22:38:30.8855670Z shell: /usr/bin/bash -e {0}
+2025-06-07T22:38:30.8855917Z env:
+2025-06-07T22:38:30.8856106Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:30.8856324Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:30.8856520Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:30.8856712Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:30.8856978Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:30.8857397Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib/pkgconfig
+2025-06-07T22:38:30.8857804Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:30.8858168Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:30.8858701Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:30.8859110Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib
+2025-06-07T22:38:30.8859419Z ##[endgroup]
+2025-06-07T22:38:30.9026596Z tests/test_pdf_to_csv.py:15:8: F821 Undefined name `pdf_to_csv`
+2025-06-07T22:38:30.9027173Z    |
+2025-06-07T22:38:30.9027389Z 13 | # ... previous code ...
+2025-06-07T22:38:30.9027641Z 14 |
+2025-06-07T22:38:30.9027866Z 15 | assert pdf_to_csv.parse_amount("") is None
+2025-06-07T22:38:30.9028159Z    |        ^^^^^^^^^^ F821
+2025-06-07T22:38:30.9028370Z 16 |
+2025-06-07T22:38:30.9028750Z 17 | # ... rest of the code ...
+2025-06-07T22:38:30.9028973Z    |
+2025-06-07T22:38:30.9029067Z 
+2025-06-07T22:38:30.9029146Z Found 1 error.
+2025-06-07T22:38:31.2487895Z would reformat /home/runner/work/Evolve/Evolve/tests/test_pre_commit_config.py
+2025-06-07T22:38:31.2805924Z 
+2025-06-07T22:38:31.2807402Z Oh no! 💥 💔 💥
+2025-06-07T22:38:31.2808186Z 1 file would be reformatted, 17 files would be left unchanged.
+2025-06-07T22:38:31.3049164Z ##[group]Run PYTHONPATH=src mypy --explicit-package-bases src/statement_refinery | tee diagnostics/mypy.txt
+2025-06-07T22:38:31.3049961Z [36;1mPYTHONPATH=src mypy --explicit-package-bases src/statement_refinery | tee diagnostics/mypy.txt[0m
+2025-06-07T22:38:31.3102590Z shell: /usr/bin/bash -e {0}
+2025-06-07T22:38:31.3102840Z env:
+2025-06-07T22:38:31.3103035Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:31.3103435Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:31.3103644Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:31.3103852Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:31.3104133Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:31.3104587Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib/pkgconfig
+2025-06-07T22:38:31.3105032Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:31.3105426Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:31.3105820Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:31.3106251Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib
+2025-06-07T22:38:31.3106584Z ##[endgroup]
+2025-06-07T22:38:37.1086143Z Success: no issues found in 3 source files
+2025-06-07T22:38:37.1228148Z ##[group]Run pytest -v --cov=statement_refinery \
+2025-06-07T22:38:37.1229059Z [36;1mpytest -v --cov=statement_refinery \[0m
+2025-06-07T22:38:37.1229553Z [36;1m       --cov-report=xml \[0m
+2025-06-07T22:38:37.1230032Z [36;1m       --cov-report=term-missing \[0m
+2025-06-07T22:38:37.1230586Z [36;1m       --cov-fail-under=90 | tee diagnostics/test.txt[0m
+2025-06-07T22:38:37.1304484Z shell: /usr/bin/bash -e {0}
+2025-06-07T22:38:37.1304870Z env:
+2025-06-07T22:38:37.1305180Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:37.1305541Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:37.1305893Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:37.1306226Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:37.1306671Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:37.1307404Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib/pkgconfig
+2025-06-07T22:38:37.1308117Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:37.1309024Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:37.1309670Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:37.1310318Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib
+2025-06-07T22:38:37.1310853Z ##[endgroup]
+2025-06-07T22:38:37.6923429Z ============================= test session starts ==============================
+2025-06-07T22:38:37.6924216Z platform linux -- Python 3.12.10, pytest-8.4.0, pluggy-1.6.0 -- /opt/hostedtoolcache/Python/3.12.10/x64/bin/python
+2025-06-07T22:38:37.6924696Z cachedir: .pytest_cache
+2025-06-07T22:38:37.6924941Z rootdir: /home/runner/work/Evolve/Evolve
+2025-06-07T22:38:37.6925219Z configfile: pyproject.toml
+2025-06-07T22:38:37.6925476Z plugins: xdist-3.7.0, anyio-4.9.0, cov-6.1.1
+2025-06-07T22:38:38.1389595Z collecting ... collected 40 items / 1 error
+2025-06-07T22:38:38.1389934Z 
+2025-06-07T22:38:38.1390247Z ERROR: Coverage failure: total of 17 is less than fail-under=90
+2025-06-07T22:38:38.1390629Z 
+2025-06-07T22:38:38.1390821Z ==================================== ERRORS ====================================
+2025-06-07T22:38:38.1391358Z __________________ ERROR collecting tests/test_pdf_to_csv.py ___________________
+2025-06-07T22:38:38.1391860Z tests/test_pdf_to_csv.py:15: in <module>
+2025-06-07T22:38:38.1392274Z     assert pdf_to_csv.parse_amount("") is None
+2025-06-07T22:38:38.1392637Z            ^^^^^^^^^^
+2025-06-07T22:38:38.1392951Z E   NameError: name 'pdf_to_csv' is not defined
+2025-06-07T22:38:38.1393378Z ================================ tests coverage ================================
+2025-06-07T22:38:38.1393905Z _______________ coverage: platform linux, python 3.12.10-final-0 _______________
+2025-06-07T22:38:38.1394269Z 
+2025-06-07T22:38:38.1394434Z Name                                   Stmts   Miss  Cover   Missing
+2025-06-07T22:38:38.1394879Z --------------------------------------------------------------------
+2025-06-07T22:38:38.1395384Z src/statement_refinery/__init__.py         3      0   100%
+2025-06-07T22:38:38.1396221Z src/statement_refinery/pdf_to_csv.py     279    236    15%   107-146, 155-176, 180-185, 189-195, 214-218, 254-259, 263-369, 454-470, 475-527, 541-576, 580-595, 600-645
+2025-06-07T22:38:38.1397162Z src/statement_refinery/validation.py      54     42    22%   21-47, 52-55, 60-68, 95-100, 105-110
+2025-06-07T22:38:38.1398371Z --------------------------------------------------------------------
+2025-06-07T22:38:38.1399127Z TOTAL                                    336    278    17%
+2025-06-07T22:38:38.1399688Z Coverage XML written to file coverage.xml
+2025-06-07T22:38:38.1400390Z FAIL Required test coverage of 90% not reached. Total coverage: 17.26%
+2025-06-07T22:38:38.1401091Z =========================== short test summary info ============================
+2025-06-07T22:38:38.1401574Z ERROR tests/test_pdf_to_csv.py - NameError: name 'pdf_to_csv' is not defined
+2025-06-07T22:38:38.1402072Z !!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+2025-06-07T22:38:38.1403047Z =============================== 1 error in 0.42s ===============================
+2025-06-07T22:38:38.1833119Z ##[group]Run python scripts/check_accuracy.py --threshold 99 \
+2025-06-07T22:38:38.1833621Z [36;1mpython scripts/check_accuracy.py --threshold 99 \[0m
+2025-06-07T22:38:38.1834035Z [36;1m       --summary-file diagnostics/accuracy.json \[0m
+2025-06-07T22:38:38.1834423Z [36;1m       --csv-dir csv_output | tee diagnostics/accuracy.txt[0m
+2025-06-07T22:38:38.1886716Z shell: /usr/bin/bash -e {0}
+2025-06-07T22:38:38.1886975Z env:
+2025-06-07T22:38:38.1887165Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:38.1887398Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:38.1887612Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:38.1887817Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:38.1888100Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:38.1888811Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib/pkgconfig
+2025-06-07T22:38:38.1889273Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:38.1889670Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:38.1890127Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:38.1890529Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib
+2025-06-07T22:38:38.1890867Z ##[endgroup]
+2025-06-07T22:38:38.2502326Z INFO: CSV written → csv_output/Itau_2024-10.csv
+2025-06-07T22:38:38.3172083Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.3186534Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.3198879Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.3208146Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.3219324Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.3228812Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8106138Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8106986Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8107801Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8108708Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8109463Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8110094Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8127545Z INFO: CSV written → csv_output/Itau_2025-05.csv
+2025-06-07T22:38:38.8163158Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8165855Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8168668Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8171292Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8173744Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8176274Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8178953Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8181414Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:39.7619355Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:39.7620786Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:39.7621505Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:39.7622206Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:39.7622892Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:39.7623528Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:39.7624122Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:39.7624703Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:39.7644972Z mismatched parser output or low accuracy
+2025-06-07T22:38:39.7645455Z 
+2025-06-07T22:38:39.7645672Z Processing 1/2: Itau_2024-10.pdf
+2025-06-07T22:38:39.7646040Z 
+2025-06-07T22:38:39.7646480Z === Itau_2024-10.pdf ===
+2025-06-07T22:38:39.7646993Z Output matches golden file exactly.
+2025-06-07T22:38:39.7647559Z Match percentage: 100.00%
+2025-06-07T22:38:39.7648097Z Total mismatch: CSV 4772.90 vs PDF 8595.02
+2025-06-07T22:38:39.7648668Z 
+2025-06-07T22:38:39.7648864Z Processing 2/2: Itau_2025-05.pdf
+2025-06-07T22:38:39.7649093Z 
+2025-06-07T22:38:39.7649219Z === Itau_2025-05.pdf ===
+2025-06-07T22:38:39.7649535Z Output matches golden file exactly.
+2025-06-07T22:38:39.7649885Z Match percentage: 100.00%
+2025-06-07T22:38:39.7650203Z Average match across PDFs: 100.00%
+2025-06-07T22:38:39.7650610Z TOTAL mismatch across PDFs: CSV 25633.50 vs PDF 29455.62
+2025-06-07T22:38:39.8356681Z ##[group]Run codecov/codecov-action@v4
+2025-06-07T22:38:39.8356982Z with:
+2025-06-07T22:38:39.8357156Z   file: coverage.xml
+2025-06-07T22:38:39.8357369Z   fail_ci_if_error: true
+2025-06-07T22:38:39.8357584Z env:
+2025-06-07T22:38:39.8357755Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:39.8357956Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:39.8358150Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:39.8358339Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:39.8358743Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:39.8359189Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib/pkgconfig
+2025-06-07T22:38:39.8359596Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:39.8359956Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:39.8360309Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:39.8360666Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib
+2025-06-07T22:38:39.8361315Z   CODECOV_TOKEN: ***
+2025-06-07T22:38:39.8361533Z ##[endgroup]
+2025-06-07T22:38:39.9202764Z eventName: push
+2025-06-07T22:38:39.9211385Z ==> linux OS detected
+2025-06-07T22:38:40.3599730Z https://cli.codecov.io/latest/linux/codecov.SHA256SUM
+2025-06-07T22:38:40.5206346Z gpg: directory '/home/runner/.gnupg' created
+2025-06-07T22:38:40.5209768Z gpg: keybox '/home/runner/.gnupg/pubring.kbx' created
+2025-06-07T22:38:40.5231253Z gpg: /home/runner/.gnupg/trustdb.gpg: trustdb created
+2025-06-07T22:38:40.5232279Z gpg: key 806BB28AED779869: public key "Codecov Uploader (Codecov Uploader Verification Key) <security@codecov.io>" imported
+2025-06-07T22:38:40.5343343Z gpg: Total number processed: 1
+2025-06-07T22:38:40.5343815Z gpg:               imported: 1
+2025-06-07T22:38:40.5393897Z gpg: Signature made Thu May 29 21:23:31 2025 UTC
+2025-06-07T22:38:40.5394489Z gpg:                using RSA key 27034E7FDB850E0BBC2C62FF806BB28AED779869
+2025-06-07T22:38:40.5396663Z gpg: Good signature from "Codecov Uploader (Codecov Uploader Verification Key) <security@codecov.io>" [unknown]
+2025-06-07T22:38:40.5397415Z gpg: WARNING: This key is not certified with a trusted signature!
+2025-06-07T22:38:40.5397851Z gpg:          There is no indication that the signature belongs to the owner.
+2025-06-07T22:38:40.5398320Z Primary key fingerprint: 2703 4E7F DB85 0E0B BC2C  62FF 806B B28A ED77 9869
+2025-06-07T22:38:40.5614275Z ==> Uploader SHASUM verified (8e0a7ea74f31ee893d11051143fa223cc30f110287ad275e275ca493ddd78eaa  codecov)
+2025-06-07T22:38:40.5615678Z ==> Running version latest
+2025-06-07T22:38:40.6539298Z Could not pull latest version information: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+2025-06-07T22:38:40.6540797Z ==> Running git config --global --add safe.directory /home/runner/work/Evolve/Evolve
+2025-06-07T22:38:40.6634782Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Evolve/Evolve
+2025-06-07T22:38:40.6683913Z ==> Running command '/home/runner/work/_actions/codecov/codecov-action/v4/dist/codecov create-commit'
+2025-06-07T22:38:40.6686826Z [command]/home/runner/work/_actions/codecov/codecov-action/v4/dist/codecov create-commit --git-service github -Z
+2025-06-07T22:38:41.0404650Z info - 2025-06-07 22:38:41,039 -- ci service found: github-actions
+2025-06-07T22:38:41.0499233Z warning - 2025-06-07 22:38:41,049 -- No config file could be found. Ignoring config.
+2025-06-07T22:38:41.0800913Z info - 2025-06-07 22:38:41,079 -- Using token to create a commit for protected branch `main`
+2025-06-07T22:38:41.5184754Z info - 2025-06-07 22:38:41,518 -- Process Commit creating complete
+2025-06-07T22:38:41.6203115Z Sentry is attempting to send 2 pending events
+2025-06-07T22:38:41.6203941Z Waiting up to 2 seconds
+2025-06-07T22:38:41.6204437Z Press Ctrl-C to quit
+2025-06-07T22:38:41.6959816Z ==> Running command '/home/runner/work/_actions/codecov/codecov-action/v4/dist/codecov create-report'
+2025-06-07T22:38:41.6962719Z [command]/home/runner/work/_actions/codecov/codecov-action/v4/dist/codecov create-report --git-service github -Z
+2025-06-07T22:38:42.0579924Z info - 2025-06-07 22:38:42,057 -- ci service found: github-actions
+2025-06-07T22:38:42.0690987Z warning - 2025-06-07 22:38:42,068 -- No config file could be found. Ignoring config.
+2025-06-07T22:38:42.5053070Z info - 2025-06-07 22:38:42,504 -- Process Report creating complete
+2025-06-07T22:38:42.5059114Z info - 2025-06-07 22:38:42,505 -- Finished creating report successfully --- {"response": "{\"status\":\"queued\"}\n"}
+2025-06-07T22:38:42.6081617Z Sentry is attempting to send 2 pending events
+2025-06-07T22:38:42.6104045Z Waiting up to 2 seconds
+2025-06-07T22:38:42.6104441Z Press Ctrl-C to quit
+2025-06-07T22:38:42.6976827Z ==> Running command '/home/runner/work/_actions/codecov/codecov-action/v4/dist/codecov do-upload'
+2025-06-07T22:38:42.6978840Z [command]/home/runner/work/_actions/codecov/codecov-action/v4/dist/codecov do-upload -Z -f coverage.xml --git-service github
+2025-06-07T22:38:43.0514554Z info - 2025-06-07 22:38:43,050 -- ci service found: github-actions
+2025-06-07T22:38:43.0619024Z warning - 2025-06-07 22:38:43,061 -- No config file could be found. Ignoring config.
+2025-06-07T22:38:43.0952651Z warning - 2025-06-07 22:38:43,094 -- xcrun is not installed or can't be found.
+2025-06-07T22:38:43.1079686Z warning - 2025-06-07 22:38:43,107 -- No gcov data found.
+2025-06-07T22:38:43.1086100Z info - 2025-06-07 22:38:43,108 -- Generating coverage.xml report in /home/runner/work/Evolve/Evolve
+2025-06-07T22:38:43.2471652Z info - 2025-06-07 22:38:43,246 -- Wrote XML report to coverage.xml
+2025-06-07T22:38:43.2884089Z info - 2025-06-07 22:38:43,287 -- Found 1 coverage files to report
+2025-06-07T22:38:43.2885057Z info - 2025-06-07 22:38:43,288 -- > /home/runner/work/Evolve/Evolve/coverage.xml
+2025-06-07T22:38:43.6722061Z info - 2025-06-07 22:38:43,671 -- Your upload is now processing. When finished, results will be available at: https://app.codecov.io/github/leolech14/Evolve/commit/ffae1b1416e40894c0eacea8098ae84bec42c97c
+2025-06-07T22:38:43.9990582Z info - 2025-06-07 22:38:43,998 -- Process Upload complete
+2025-06-07T22:38:44.1513847Z ##[group]Run actions/upload-artifact@v4
+2025-06-07T22:38:44.1514147Z with:
+2025-06-07T22:38:44.1514343Z   name: diagnostics
+2025-06-07T22:38:44.1514552Z   path: diagnostics/
+2025-06-07T22:38:44.1514772Z   if-no-files-found: warn
+2025-06-07T22:38:44.1514993Z   compression-level: 6
+2025-06-07T22:38:44.1515200Z   overwrite: false
+2025-06-07T22:38:44.1515407Z   include-hidden-files: false
+2025-06-07T22:38:44.1515629Z env:
+2025-06-07T22:38:44.1515982Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:44.1516187Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:44.1516389Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:44.1516573Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:44.1516822Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:44.1517239Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib/pkgconfig
+2025-06-07T22:38:44.1517634Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:44.1517989Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:44.1518386Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:44.1519258Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib
+2025-06-07T22:38:44.1519561Z ##[endgroup]
+2025-06-07T22:38:44.3664211Z With the provided path, there will be 5 files uploaded
+2025-06-07T22:38:44.3672788Z Artifact name is valid!
+2025-06-07T22:38:44.3674384Z Root directory input is valid!
+2025-06-07T22:38:44.5889685Z Beginning upload of artifact content to blob storage
+2025-06-07T22:38:44.7821987Z Uploaded bytes 1823
+2025-06-07T22:38:44.8297731Z Finished uploading artifact content to blob storage!
+2025-06-07T22:38:44.8300708Z SHA256 digest of uploaded artifact zip is fa7f22f39f4ce15d9e408241798db85e5a2cce7ae39b7291cee9925634a4eecc
+2025-06-07T22:38:44.8302236Z Finalizing artifact upload
+2025-06-07T22:38:44.9313440Z Artifact diagnostics.zip successfully finalized. Artifact ID 3282200474
+2025-06-07T22:38:44.9314510Z Artifact diagnostics has been successfully uploaded! Final size is 1823 bytes. Artifact ID is 3282200474
+2025-06-07T22:38:44.9322074Z Artifact download URL: https://github.com/leolech14/Evolve/actions/runs/15512328389/artifacts/3282200474
+2025-06-07T22:38:44.9449423Z ##[group]Run actions/upload-artifact@v4
+2025-06-07T22:38:44.9449723Z with:
+2025-06-07T22:38:44.9449903Z   name: csvs
+2025-06-07T22:38:44.9450095Z   path: csv_output/
+2025-06-07T22:38:44.9450309Z   if-no-files-found: warn
+2025-06-07T22:38:44.9450541Z   compression-level: 6
+2025-06-07T22:38:44.9450772Z   overwrite: false
+2025-06-07T22:38:44.9450984Z   include-hidden-files: false
+2025-06-07T22:38:44.9451213Z env:
+2025-06-07T22:38:44.9451390Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:44.9451594Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:44.9451791Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:44.9451982Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:44.9452240Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:44.9452655Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib/pkgconfig
+2025-06-07T22:38:44.9453055Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:44.9453414Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:44.9453810Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:44.9454179Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib
+2025-06-07T22:38:44.9454478Z ##[endgroup]
+2025-06-07T22:38:45.1634337Z With the provided path, there will be 2 files uploaded
+2025-06-07T22:38:45.1639128Z Artifact name is valid!
+2025-06-07T22:38:45.1641047Z Root directory input is valid!
+2025-06-07T22:38:45.3269060Z Beginning upload of artifact content to blob storage
+2025-06-07T22:38:45.5648724Z Uploaded bytes 12510
+2025-06-07T22:38:45.6251141Z Finished uploading artifact content to blob storage!
+2025-06-07T22:38:45.6254078Z SHA256 digest of uploaded artifact zip is 2047f672000958b87ea6c06d0e747cac0014a8b226f4fb35df1c11ff5fdc32bf
+2025-06-07T22:38:45.6255864Z Finalizing artifact upload
+2025-06-07T22:38:45.7220719Z Artifact csvs.zip successfully finalized. Artifact ID 3282200492
+2025-06-07T22:38:45.7222244Z Artifact csvs has been successfully uploaded! Final size is 12510 bytes. Artifact ID is 3282200492
+2025-06-07T22:38:45.7230164Z Artifact download URL: https://github.com/leolech14/Evolve/actions/runs/15512328389/artifacts/3282200492
+2025-06-07T22:38:45.7339660Z ##[group]Run python scripts/ci_summary.py
+2025-06-07T22:38:45.7340319Z [36;1mpython scripts/ci_summary.py[0m
+2025-06-07T22:38:45.7407596Z shell: /usr/bin/bash -e {0}
+2025-06-07T22:38:45.7407851Z env:
+2025-06-07T22:38:45.7408045Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:45.7408278Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:45.7408679Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:45.7408899Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:45.7409175Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:45.7409609Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib/pkgconfig
+2025-06-07T22:38:45.7410033Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:45.7410414Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:45.7410804Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:45.7411203Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib
+2025-06-07T22:38:45.7411526Z ##[endgroup]
+2025-06-07T22:38:45.7733431Z ## CI Run Summary
+2025-06-07T22:38:45.7733765Z 
+2025-06-07T22:38:45.7733950Z ### Test Results
+2025-06-07T22:38:45.7734403Z - Total Tests: 0
+2025-06-07T22:38:45.7734886Z - Passed: 0
+2025-06-07T22:38:45.7735278Z - Failed: 0
+2025-06-07T22:38:45.7735682Z - Skipped: 0
+2025-06-07T22:38:45.7736098Z - Coverage: 17.0%
+2025-06-07T22:38:45.7736385Z 
+2025-06-07T22:38:45.7736496Z ### Lint Issues
+2025-06-07T22:38:45.7736751Z ```
+2025-06-07T22:38:45.7736983Z Found 1 error.
+2025-06-07T22:38:45.7737234Z ```
+2025-06-07T22:38:45.7737365Z 
+2025-06-07T22:38:45.7737476Z ### Parser Accuracy
+2025-06-07T22:38:45.7737799Z - Average Match: Data not available
+2025-06-07T22:38:45.7738050Z 
+2025-06-07T22:38:45.7738177Z #### Per-File Results
+2025-06-07T22:38:45.7738456Z ```
+2025-06-07T22:38:45.7738900Z ```
+2025-06-07T22:38:45.7739030Z 
+2025-06-07T22:38:45.7824215Z Post job cleanup.
+2025-06-07T22:38:45.9332107Z Cache hit occurred on the primary key setup-python-Linux-x64-24.04-Ubuntu-python-3.12.10-pip-16e89f17d8a7ffc7da5ff034a3d02d9aac7c9a988a734c71f332e0e45a4cb0d9, not saving cache.
+2025-06-07T22:38:45.9461125Z Post job cleanup.
+2025-06-07T22:38:46.0403360Z [command]/usr/bin/git version
+2025-06-07T22:38:46.0442826Z git version 2.49.0
+2025-06-07T22:38:46.0484775Z Copying '/home/runner/.gitconfig' to '/home/runner/work/_temp/c538ffaa-1261-4f94-b224-cdb8a16916f7/.gitconfig'
+2025-06-07T22:38:46.0494921Z Temporarily overriding HOME='/home/runner/work/_temp/c538ffaa-1261-4f94-b224-cdb8a16916f7' before making global git config changes
+2025-06-07T22:38:46.0495901Z Adding repository directory to the temporary git global config as a safe directory
+2025-06-07T22:38:46.0501261Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Evolve/Evolve
+2025-06-07T22:38:46.0540867Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-06-07T22:38:46.0573834Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-06-07T22:38:46.0809285Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-06-07T22:38:46.0831773Z http.https://github.com/.extraheader
+2025-06-07T22:38:46.0845625Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2025-06-07T22:38:46.0877846Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-06-07T22:38:46.1220998Z Cleaning up orphan processes
+
+### system
+
+2025-06-07T22:37:58.4203388Z Requested labels: ubuntu-latest
+2025-06-07T22:37:58.4203388Z Job defined at: leolech14/Evolve/.github/workflows/ci.yaml@refs/heads/main
+2025-06-07T22:37:58.4203388Z Waiting for a runner to pick up this job...
+2025-06-07T22:37:58.7976245Z Job is waiting for a hosted runner to come online.
+2025-06-07T22:37:58.7976351Z Job is about to start running on the hosted runner: GitHub Actions 1000001180
+### 1_Set up job
+
+﻿2025-06-07T22:38:03.2691613Z Current runner version: '2.325.0'
+2025-06-07T22:38:03.2718232Z ##[group]Operating System
+2025-06-07T22:38:03.2719285Z Ubuntu
+2025-06-07T22:38:03.2719934Z 24.04.2
+2025-06-07T22:38:03.2720428Z LTS
+2025-06-07T22:38:03.2720861Z ##[endgroup]
+2025-06-07T22:38:03.2721443Z ##[group]Runner Image
+2025-06-07T22:38:03.2722047Z Image: ubuntu-24.04
+2025-06-07T22:38:03.2722595Z Version: 20250602.3.0
+2025-06-07T22:38:03.2723583Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20250602.3/images/ubuntu/Ubuntu2404-Readme.md
+2025-06-07T22:38:03.2724935Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20250602.3
+2025-06-07T22:38:03.2725875Z ##[endgroup]
+2025-06-07T22:38:03.2726446Z ##[group]Runner Image Provisioner
+2025-06-07T22:38:03.2726991Z 2.0.437.1
+2025-06-07T22:38:03.2727494Z ##[endgroup]
+2025-06-07T22:38:03.2728871Z ##[group]GITHUB_TOKEN Permissions
+2025-06-07T22:38:03.2730752Z Contents: read
+2025-06-07T22:38:03.2731471Z Metadata: read
+2025-06-07T22:38:03.2731978Z Packages: read
+2025-06-07T22:38:03.2732779Z ##[endgroup]
+2025-06-07T22:38:03.2734873Z Secret source: Actions
+2025-06-07T22:38:03.2736190Z Prepare workflow directory
+2025-06-07T22:38:03.3199367Z Prepare all required actions
+2025-06-07T22:38:03.3236804Z Getting action download info
+2025-06-07T22:38:03.7407877Z ##[group]Download immutable action package 'actions/checkout@v4'
+2025-06-07T22:38:03.7409180Z Version: 4.2.2
+2025-06-07T22:38:03.7410340Z Digest: sha256:ccb2698953eaebd21c7bf6268a94f9c26518a7e38e27e0b83c1fe1ad049819b1
+2025-06-07T22:38:03.7411518Z Source commit SHA: 11bd71901bbe5b1630ceea73d27597364c9af683
+2025-06-07T22:38:03.7412292Z ##[endgroup]
+2025-06-07T22:38:03.8219531Z ##[group]Download immutable action package 'actions/setup-python@v5'
+2025-06-07T22:38:03.8220465Z Version: 5.6.0
+2025-06-07T22:38:03.8221206Z Digest: sha256:0b35a0c11c97499e4e0576589036d450b9f5f9da74b7774225b3614b57324404
+2025-06-07T22:38:03.8222157Z Source commit SHA: a26af69be951a213d495a4c3e4e4022e16d87065
+2025-06-07T22:38:03.8222950Z ##[endgroup]
+2025-06-07T22:38:04.2183909Z Download action repository 'codecov/codecov-action@v4' (SHA:b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238)
+2025-06-07T22:38:04.7849421Z ##[group]Download immutable action package 'actions/upload-artifact@v4'
+2025-06-07T22:38:04.7850414Z Version: 4.6.2
+2025-06-07T22:38:04.7851298Z Digest: sha256:290722aa3281d5caf23d0acdc3dbeb3424786a1a01a9cc97e72f147225e37c38
+2025-06-07T22:38:04.7852391Z Source commit SHA: ea165f8d65b6e75b540449e92b4886f43607fa02
+2025-06-07T22:38:04.7853116Z ##[endgroup]
+2025-06-07T22:38:04.9953431Z Complete job name: test
+
+### 2_Run actions_checkout@v4
+
+﻿2025-06-07T22:38:05.0697657Z ##[group]Run actions/checkout@v4
+2025-06-07T22:38:05.0698759Z with:
+2025-06-07T22:38:05.0699219Z   repository: leolech14/Evolve
+2025-06-07T22:38:05.0699933Z   token: ***
+2025-06-07T22:38:05.0700346Z   ssh-strict: true
+2025-06-07T22:38:05.0700764Z   ssh-user: git
+2025-06-07T22:38:05.0701194Z   persist-credentials: true
+2025-06-07T22:38:05.0701663Z   clean: true
+2025-06-07T22:38:05.0702102Z   sparse-checkout-cone-mode: true
+2025-06-07T22:38:05.0702663Z   fetch-depth: 1
+2025-06-07T22:38:05.0703081Z   fetch-tags: false
+2025-06-07T22:38:05.0703496Z   show-progress: true
+2025-06-07T22:38:05.0703927Z   lfs: false
+2025-06-07T22:38:05.0704324Z   submodules: false
+2025-06-07T22:38:05.0704756Z   set-safe-directory: true
+2025-06-07T22:38:05.0705462Z env:
+2025-06-07T22:38:05.0706175Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:05.0706631Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:05.0707067Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:05.0707488Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:05.0707911Z ##[endgroup]
+2025-06-07T22:38:05.2467894Z Syncing repository: leolech14/Evolve
+2025-06-07T22:38:05.2470098Z ##[group]Getting Git version info
+2025-06-07T22:38:05.2470799Z Working directory is '/home/runner/work/Evolve/Evolve'
+2025-06-07T22:38:05.2471711Z [command]/usr/bin/git version
+2025-06-07T22:38:05.2569024Z git version 2.49.0
+2025-06-07T22:38:05.2599276Z ##[endgroup]
+2025-06-07T22:38:05.2622425Z Temporarily overriding HOME='/home/runner/work/_temp/6fbbb3f5-0bd4-4a2c-9389-bd0390441020' before making global git config changes
+2025-06-07T22:38:05.2625236Z Adding repository directory to the temporary git global config as a safe directory
+2025-06-07T22:38:05.2629412Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Evolve/Evolve
+2025-06-07T22:38:05.2669054Z Deleting the contents of '/home/runner/work/Evolve/Evolve'
+2025-06-07T22:38:05.2673009Z ##[group]Initializing the repository
+2025-06-07T22:38:05.2677809Z [command]/usr/bin/git init /home/runner/work/Evolve/Evolve
+2025-06-07T22:38:05.2751299Z hint: Using 'master' as the name for the initial branch. This default branch name
+2025-06-07T22:38:05.2752775Z hint: is subject to change. To configure the initial branch name to use in all
+2025-06-07T22:38:05.2753796Z hint: of your new repositories, which will suppress this warning, call:
+2025-06-07T22:38:05.2754558Z hint:
+2025-06-07T22:38:05.2755151Z hint: 	git config --global init.defaultBranch <name>
+2025-06-07T22:38:05.2755805Z hint:
+2025-06-07T22:38:05.2756494Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2025-06-07T22:38:05.2757716Z hint: 'development'. The just-created branch can be renamed via this command:
+2025-06-07T22:38:05.2759086Z hint:
+2025-06-07T22:38:05.2759679Z hint: 	git branch -m <name>
+2025-06-07T22:38:05.2760986Z Initialized empty Git repository in /home/runner/work/Evolve/Evolve/.git/
+2025-06-07T22:38:05.2771716Z [command]/usr/bin/git remote add origin https://github.com/leolech14/Evolve
+2025-06-07T22:38:05.2807092Z ##[endgroup]
+2025-06-07T22:38:05.2808332Z ##[group]Disabling automatic garbage collection
+2025-06-07T22:38:05.2812434Z [command]/usr/bin/git config --local gc.auto 0
+2025-06-07T22:38:05.2841561Z ##[endgroup]
+2025-06-07T22:38:05.2842794Z ##[group]Setting up auth
+2025-06-07T22:38:05.2849364Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-06-07T22:38:05.2880036Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-06-07T22:38:05.3250162Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-06-07T22:38:05.3291423Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-06-07T22:38:05.3565799Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2025-06-07T22:38:05.3618261Z ##[endgroup]
+2025-06-07T22:38:05.3627069Z ##[group]Fetching the repository
+2025-06-07T22:38:05.3628424Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +ffae1b1416e40894c0eacea8098ae84bec42c97c:refs/remotes/origin/main
+2025-06-07T22:38:06.1970107Z From https://github.com/leolech14/Evolve
+2025-06-07T22:38:06.1974147Z  * [new ref]         ffae1b1416e40894c0eacea8098ae84bec42c97c -> origin/main
+2025-06-07T22:38:06.2004412Z ##[endgroup]
+2025-06-07T22:38:06.2005461Z ##[group]Determining the checkout info
+2025-06-07T22:38:06.2006779Z ##[endgroup]
+2025-06-07T22:38:06.2013712Z [command]/usr/bin/git sparse-checkout disable
+2025-06-07T22:38:06.2058059Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2025-06-07T22:38:06.2088359Z ##[group]Checking out the ref
+2025-06-07T22:38:06.2091814Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2025-06-07T22:38:06.2316300Z Switched to a new branch 'main'
+2025-06-07T22:38:06.2318097Z branch 'main' set up to track 'origin/main'.
+2025-06-07T22:38:06.2325100Z ##[endgroup]
+2025-06-07T22:38:06.2363401Z [command]/usr/bin/git log -1 --format=%H
+2025-06-07T22:38:06.2387443Z ffae1b1416e40894c0eacea8098ae84bec42c97c
+
+### 3_Run actions_setup-python@v5
+
+﻿2025-06-07T22:38:06.2753634Z ##[group]Run actions/setup-python@v5
+2025-06-07T22:38:06.2754770Z with:
+2025-06-07T22:38:06.2755501Z   python-version: 3.12
+2025-06-07T22:38:06.2756586Z   cache: pip
+2025-06-07T22:38:06.2757341Z   check-latest: false
+2025-06-07T22:38:06.2758648Z   token: ***
+2025-06-07T22:38:06.2759486Z   update-environment: true
+2025-06-07T22:38:06.2760448Z   allow-prereleases: false
+2025-06-07T22:38:06.2761373Z   freethreaded: false
+2025-06-07T22:38:06.2762189Z env:
+2025-06-07T22:38:06.2762888Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:06.2763730Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:06.2764572Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:06.2765364Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:06.2766150Z ##[endgroup]
+2025-06-07T22:38:06.4459360Z ##[group]Installed versions
+2025-06-07T22:38:06.4524007Z Successfully set up CPython (3.12.10)
+2025-06-07T22:38:06.4526680Z ##[endgroup]
+2025-06-07T22:38:06.5528790Z [command]/opt/hostedtoolcache/Python/3.12.10/x64/bin/pip cache dir
+2025-06-07T22:38:07.0436780Z /home/runner/.cache/pip
+2025-06-07T22:38:07.2763490Z Cache hit for: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.10-pip-16e89f17d8a7ffc7da5ff034a3d02d9aac7c9a988a734c71f332e0e45a4cb0d9
+2025-06-07T22:38:08.4646430Z Received 88748529 of 88748529 (100.0%), 85.1 MBs/sec
+2025-06-07T22:38:08.4647282Z Cache Size: ~85 MB (88748529 B)
+2025-06-07T22:38:08.4676963Z [command]/usr/bin/tar -xf /home/runner/work/_temp/03aab7f2-54b7-48d2-abf8-1f9910210b2d/cache.tzst -P -C /home/runner/work/Evolve/Evolve --use-compress-program unzstd
+2025-06-07T22:38:08.6310043Z Cache restored successfully
+2025-06-07T22:38:08.6487125Z Cache restored from key: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.10-pip-16e89f17d8a7ffc7da5ff034a3d02d9aac7c9a988a734c71f332e0e45a4cb0d9
+
+### 4_Create dirs
+
+﻿2025-06-07T22:38:08.6656581Z ##[group]Run mkdir -p diagnostics csv_output
+2025-06-07T22:38:08.6657007Z [36;1mmkdir -p diagnostics csv_output[0m
+2025-06-07T22:38:08.6730470Z shell: /usr/bin/bash -e {0}
+2025-06-07T22:38:08.6730769Z env:
+2025-06-07T22:38:08.6730982Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:08.6731210Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:08.6731419Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:08.6731631Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:08.6731906Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:08.6732350Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib/pkgconfig
+2025-06-07T22:38:08.6732771Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:08.6733150Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:08.6733529Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:08.6733906Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib
+2025-06-07T22:38:08.6734233Z ##[endgroup]
+
+### 5_Install dependencies
+
+﻿2025-06-07T22:38:08.6880594Z ##[group]Run pip install -e '.[dev]'
+2025-06-07T22:38:08.6880953Z [36;1mpip install -e '.[dev]'[0m
+2025-06-07T22:38:08.6934161Z shell: /usr/bin/bash -e {0}
+2025-06-07T22:38:08.6934445Z env:
+2025-06-07T22:38:08.6934664Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:08.6934885Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:08.6935087Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:08.6935280Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:08.6935564Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:08.6936007Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib/pkgconfig
+2025-06-07T22:38:08.6936445Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:08.6936814Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:08.6937183Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:08.6937557Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib
+2025-06-07T22:38:08.6937860Z ##[endgroup]
+2025-06-07T22:38:09.5357502Z Obtaining file:///home/runner/work/Evolve/Evolve
+2025-06-07T22:38:09.5376933Z   Installing build dependencies: started
+2025-06-07T22:38:10.3043077Z   Installing build dependencies: finished with status 'done'
+2025-06-07T22:38:10.3049694Z   Checking if build backend supports build_editable: started
+2025-06-07T22:38:10.6563617Z   Checking if build backend supports build_editable: finished with status 'done'
+2025-06-07T22:38:10.6571777Z   Getting requirements to build editable: started
+2025-06-07T22:38:11.0071818Z   Getting requirements to build editable: finished with status 'done'
+2025-06-07T22:38:11.0081427Z   Preparing editable metadata (pyproject.toml): started
+2025-06-07T22:38:11.2042410Z   Preparing editable metadata (pyproject.toml): finished with status 'done'
+2025-06-07T22:38:11.2931140Z Collecting pdfplumber (from statement_refinery==0.1.0)
+2025-06-07T22:38:11.2945633Z   Using cached pdfplumber-0.11.6-py3-none-any.whl.metadata (42 kB)
+2025-06-07T22:38:11.6657858Z Collecting ruff (from statement_refinery==0.1.0)
+2025-06-07T22:38:11.6671896Z   Using cached ruff-0.11.13-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (25 kB)
+2025-06-07T22:38:11.7235723Z Collecting black (from statement_refinery==0.1.0)
+2025-06-07T22:38:11.7249307Z   Using cached black-25.1.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_28_x86_64.whl.metadata (81 kB)
+2025-06-07T22:38:11.7815897Z Collecting pytest (from statement_refinery==0.1.0)
+2025-06-07T22:38:11.7828714Z   Using cached pytest-8.4.0-py3-none-any.whl.metadata (7.7 kB)
+2025-06-07T22:38:11.8120703Z Collecting pytest-cov (from statement_refinery==0.1.0)
+2025-06-07T22:38:11.8132829Z   Using cached pytest_cov-6.1.1-py3-none-any.whl.metadata (28 kB)
+2025-06-07T22:38:11.8433104Z Collecting pytest-xdist (from statement_refinery==0.1.0)
+2025-06-07T22:38:11.8445568Z   Using cached pytest_xdist-3.7.0-py3-none-any.whl.metadata (3.0 kB)
+2025-06-07T22:38:11.9494535Z Collecting mypy (from statement_refinery==0.1.0)
+2025-06-07T22:38:11.9508178Z   Using cached mypy-1.16.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_28_x86_64.whl.metadata (2.1 kB)
+2025-06-07T22:38:12.0379917Z Collecting openai>=0 (from statement_refinery==0.1.0)
+2025-06-07T22:38:12.0392777Z   Using cached openai-1.84.0-py3-none-any.whl.metadata (25 kB)
+2025-06-07T22:38:12.0925098Z Collecting pre-commit (from statement_refinery==0.1.0)
+2025-06-07T22:38:12.0938949Z   Using cached pre_commit-4.2.0-py2.py3-none-any.whl.metadata (1.3 kB)
+2025-06-07T22:38:12.1265936Z Collecting anyio<5,>=3.5.0 (from openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.1279705Z   Using cached anyio-4.9.0-py3-none-any.whl.metadata (4.7 kB)
+2025-06-07T22:38:12.1523617Z Collecting distro<2,>=1.7.0 (from openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.1536982Z   Using cached distro-1.9.0-py3-none-any.whl.metadata (6.8 kB)
+2025-06-07T22:38:12.1848720Z Collecting httpx<1,>=0.23.0 (from openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.1861428Z   Using cached httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+2025-06-07T22:38:12.2585425Z Collecting jiter<1,>=0.4.0 (from openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.2599298Z   Using cached jiter-0.10.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (5.2 kB)
+2025-06-07T22:38:12.3884825Z Collecting pydantic<3,>=1.9.0 (from openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.3898219Z   Using cached pydantic-2.11.5-py3-none-any.whl.metadata (67 kB)
+2025-06-07T22:38:12.4120865Z Collecting sniffio (from openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.4132621Z   Using cached sniffio-1.3.1-py3-none-any.whl.metadata (3.9 kB)
+2025-06-07T22:38:12.4837208Z Collecting tqdm>4 (from openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.4851026Z   Using cached tqdm-4.67.1-py3-none-any.whl.metadata (57 kB)
+2025-06-07T22:38:12.5177979Z Collecting typing-extensions<5,>=4.11 (from openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.5191496Z   Using cached typing_extensions-4.14.0-py3-none-any.whl.metadata (3.0 kB)
+2025-06-07T22:38:12.5491647Z Collecting idna>=2.8 (from anyio<5,>=3.5.0->openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.5503562Z   Using cached idna-3.10-py3-none-any.whl.metadata (10 kB)
+2025-06-07T22:38:12.5896032Z Collecting certifi (from httpx<1,>=0.23.0->openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.5908174Z   Using cached certifi-2025.4.26-py3-none-any.whl.metadata (2.5 kB)
+2025-06-07T22:38:12.6222354Z Collecting httpcore==1.* (from httpx<1,>=0.23.0->openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.6235209Z   Using cached httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+2025-06-07T22:38:12.6466631Z Collecting h11>=0.16 (from httpcore==1.*->httpx<1,>=0.23.0->openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.6478430Z   Using cached h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+2025-06-07T22:38:12.6714484Z Collecting annotated-types>=0.6.0 (from pydantic<3,>=1.9.0->openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:12.6727678Z   Using cached annotated_types-0.7.0-py3-none-any.whl.metadata (15 kB)
+2025-06-07T22:38:13.2609470Z Collecting pydantic-core==2.33.2 (from pydantic<3,>=1.9.0->openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:13.2623290Z   Using cached pydantic_core-2.33.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.8 kB)
+2025-06-07T22:38:13.2871710Z Collecting typing-inspection>=0.4.0 (from pydantic<3,>=1.9.0->openai>=0->statement_refinery==0.1.0)
+2025-06-07T22:38:13.2883431Z   Using cached typing_inspection-0.4.1-py3-none-any.whl.metadata (2.6 kB)
+2025-06-07T22:38:13.3727396Z Collecting click>=8.0.0 (from black->statement_refinery==0.1.0)
+2025-06-07T22:38:13.3739599Z   Using cached click-8.2.1-py3-none-any.whl.metadata (2.5 kB)
+2025-06-07T22:38:13.3935082Z Collecting mypy-extensions>=0.4.3 (from black->statement_refinery==0.1.0)
+2025-06-07T22:38:13.3946715Z   Using cached mypy_extensions-1.1.0-py3-none-any.whl.metadata (1.1 kB)
+2025-06-07T22:38:13.4207450Z Collecting packaging>=22.0 (from black->statement_refinery==0.1.0)
+2025-06-07T22:38:13.4219705Z   Using cached packaging-25.0-py3-none-any.whl.metadata (3.3 kB)
+2025-06-07T22:38:13.4463874Z Collecting pathspec>=0.9.0 (from black->statement_refinery==0.1.0)
+2025-06-07T22:38:13.4475484Z   Using cached pathspec-0.12.1-py3-none-any.whl.metadata (21 kB)
+2025-06-07T22:38:13.4770894Z Collecting platformdirs>=2 (from black->statement_refinery==0.1.0)
+2025-06-07T22:38:13.4782998Z   Using cached platformdirs-4.3.8-py3-none-any.whl.metadata (12 kB)
+2025-06-07T22:38:13.5120636Z Collecting pdfminer.six==20250327 (from pdfplumber->statement_refinery==0.1.0)
+2025-06-07T22:38:13.5132665Z   Using cached pdfminer_six-20250327-py3-none-any.whl.metadata (4.1 kB)
+2025-06-07T22:38:13.7113643Z Collecting Pillow>=9.1 (from pdfplumber->statement_refinery==0.1.0)
+2025-06-07T22:38:13.7126539Z   Using cached pillow-11.2.1-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (8.9 kB)
+2025-06-07T22:38:13.8045005Z Collecting pypdfium2>=4.18.0 (from pdfplumber->statement_refinery==0.1.0)
+2025-06-07T22:38:13.8058160Z   Using cached pypdfium2-4.30.1-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (48 kB)
+2025-06-07T22:38:13.8922609Z Collecting charset-normalizer>=2.0.0 (from pdfminer.six==20250327->pdfplumber->statement_refinery==0.1.0)
+2025-06-07T22:38:13.8935538Z   Using cached charset_normalizer-3.4.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (35 kB)
+2025-06-07T22:38:14.0775877Z Collecting cryptography>=36.0.0 (from pdfminer.six==20250327->pdfplumber->statement_refinery==0.1.0)
+2025-06-07T22:38:14.0791249Z   Using cached cryptography-45.0.3-cp311-abi3-manylinux_2_34_x86_64.whl.metadata (5.7 kB)
+2025-06-07T22:38:14.1928196Z Collecting cffi>=1.14 (from cryptography>=36.0.0->pdfminer.six==20250327->pdfplumber->statement_refinery==0.1.0)
+2025-06-07T22:38:14.1941267Z   Using cached cffi-1.17.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (1.5 kB)
+2025-06-07T22:38:14.2201053Z Collecting pycparser (from cffi>=1.14->cryptography>=36.0.0->pdfminer.six==20250327->pdfplumber->statement_refinery==0.1.0)
+2025-06-07T22:38:14.2212228Z   Using cached pycparser-2.22-py3-none-any.whl.metadata (943 bytes)
+2025-06-07T22:38:14.2453916Z Collecting cfgv>=2.0.0 (from pre-commit->statement_refinery==0.1.0)
+2025-06-07T22:38:14.2465650Z   Using cached cfgv-3.4.0-py2.py3-none-any.whl.metadata (8.5 kB)
+2025-06-07T22:38:14.3032957Z Collecting identify>=1.0.0 (from pre-commit->statement_refinery==0.1.0)
+2025-06-07T22:38:14.3046212Z   Using cached identify-2.6.12-py2.py3-none-any.whl.metadata (4.4 kB)
+2025-06-07T22:38:14.3303512Z Collecting nodeenv>=0.11.1 (from pre-commit->statement_refinery==0.1.0)
+2025-06-07T22:38:14.3316058Z   Using cached nodeenv-1.9.1-py2.py3-none-any.whl.metadata (21 kB)
+2025-06-07T22:38:14.4274061Z Collecting pyyaml>=5.1 (from pre-commit->statement_refinery==0.1.0)
+2025-06-07T22:38:14.4288327Z   Using cached PyYAML-6.0.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (2.1 kB)
+2025-06-07T22:38:14.4822054Z Collecting virtualenv>=20.10.0 (from pre-commit->statement_refinery==0.1.0)
+2025-06-07T22:38:14.4835153Z   Using cached virtualenv-20.31.2-py3-none-any.whl.metadata (4.5 kB)
+2025-06-07T22:38:14.5149984Z Collecting distlib<1,>=0.3.7 (from virtualenv>=20.10.0->pre-commit->statement_refinery==0.1.0)
+2025-06-07T22:38:14.5162435Z   Using cached distlib-0.3.9-py2.py3-none-any.whl.metadata (5.2 kB)
+2025-06-07T22:38:14.5457247Z Collecting filelock<4,>=3.12.2 (from virtualenv>=20.10.0->pre-commit->statement_refinery==0.1.0)
+2025-06-07T22:38:14.5470065Z   Using cached filelock-3.18.0-py3-none-any.whl.metadata (2.9 kB)
+2025-06-07T22:38:14.5778880Z Collecting iniconfig>=1 (from pytest->statement_refinery==0.1.0)
+2025-06-07T22:38:14.5791675Z   Using cached iniconfig-2.1.0-py3-none-any.whl.metadata (2.7 kB)
+2025-06-07T22:38:14.6046255Z Collecting pluggy<2,>=1.5 (from pytest->statement_refinery==0.1.0)
+2025-06-07T22:38:14.6058254Z   Using cached pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+2025-06-07T22:38:14.6365862Z Collecting pygments>=2.7.2 (from pytest->statement_refinery==0.1.0)
+2025-06-07T22:38:14.6378250Z   Using cached pygments-2.19.1-py3-none-any.whl.metadata (2.5 kB)
+2025-06-07T22:38:14.9494858Z Collecting coverage>=7.5 (from coverage[toml]>=7.5->pytest-cov->statement_refinery==0.1.0)
+2025-06-07T22:38:14.9508805Z   Using cached coverage-7.8.2-cp312-cp312-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (8.9 kB)
+2025-06-07T22:38:14.9796044Z Collecting execnet>=2.1 (from pytest-xdist->statement_refinery==0.1.0)
+2025-06-07T22:38:14.9807277Z   Using cached execnet-2.1.1-py3-none-any.whl.metadata (2.9 kB)
+2025-06-07T22:38:15.0017321Z Using cached openai-1.84.0-py3-none-any.whl (725 kB)
+2025-06-07T22:38:15.0034301Z Using cached anyio-4.9.0-py3-none-any.whl (100 kB)
+2025-06-07T22:38:15.0046610Z Using cached distro-1.9.0-py3-none-any.whl (20 kB)
+2025-06-07T22:38:15.0057504Z Using cached httpx-0.28.1-py3-none-any.whl (73 kB)
+2025-06-07T22:38:15.0069013Z Using cached httpcore-1.0.9-py3-none-any.whl (78 kB)
+2025-06-07T22:38:15.0081117Z Using cached jiter-0.10.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (352 kB)
+2025-06-07T22:38:15.0094698Z Using cached pydantic-2.11.5-py3-none-any.whl (444 kB)
+2025-06-07T22:38:15.0109072Z Using cached pydantic_core-2.33.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.0 MB)
+2025-06-07T22:38:15.0134951Z Using cached typing_extensions-4.14.0-py3-none-any.whl (43 kB)
+2025-06-07T22:38:15.0146432Z Using cached annotated_types-0.7.0-py3-none-any.whl (13 kB)
+2025-06-07T22:38:15.0157351Z Using cached h11-0.16.0-py3-none-any.whl (37 kB)
+2025-06-07T22:38:15.0169289Z Using cached idna-3.10-py3-none-any.whl (70 kB)
+2025-06-07T22:38:15.0181217Z Using cached sniffio-1.3.1-py3-none-any.whl (10 kB)
+2025-06-07T22:38:15.0192599Z Using cached tqdm-4.67.1-py3-none-any.whl (78 kB)
+2025-06-07T22:38:15.0204370Z Using cached typing_inspection-0.4.1-py3-none-any.whl (14 kB)
+2025-06-07T22:38:15.0216768Z Using cached black-25.1.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_28_x86_64.whl (1.8 MB)
+2025-06-07T22:38:15.0244003Z Using cached click-8.2.1-py3-none-any.whl (102 kB)
+2025-06-07T22:38:15.0256193Z Using cached mypy_extensions-1.1.0-py3-none-any.whl (5.0 kB)
+2025-06-07T22:38:15.0267598Z Using cached packaging-25.0-py3-none-any.whl (66 kB)
+2025-06-07T22:38:15.0279288Z Using cached pathspec-0.12.1-py3-none-any.whl (31 kB)
+2025-06-07T22:38:15.0291136Z Using cached platformdirs-4.3.8-py3-none-any.whl (18 kB)
+2025-06-07T22:38:15.0302640Z Using cached certifi-2025.4.26-py3-none-any.whl (159 kB)
+2025-06-07T22:38:15.0315322Z Using cached mypy-1.16.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_28_x86_64.whl (12.7 MB)
+2025-06-07T22:38:15.0417833Z Using cached pdfplumber-0.11.6-py3-none-any.whl (60 kB)
+2025-06-07T22:38:15.0429743Z Using cached pdfminer_six-20250327-py3-none-any.whl (5.6 MB)
+2025-06-07T22:38:15.0481008Z Using cached charset_normalizer-3.4.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (148 kB)
+2025-06-07T22:38:15.0494053Z Using cached cryptography-45.0.3-cp311-abi3-manylinux_2_34_x86_64.whl (4.5 MB)
+2025-06-07T22:38:15.0537041Z Using cached cffi-1.17.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (479 kB)
+2025-06-07T22:38:15.0552126Z Using cached pillow-11.2.1-cp312-cp312-manylinux_2_28_x86_64.whl (4.6 MB)
+2025-06-07T22:38:15.0602256Z Using cached pypdfium2-4.30.1-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.9 MB)
+2025-06-07T22:38:15.0636910Z Using cached pre_commit-4.2.0-py2.py3-none-any.whl (220 kB)
+2025-06-07T22:38:15.0650286Z Using cached cfgv-3.4.0-py2.py3-none-any.whl (7.2 kB)
+2025-06-07T22:38:15.0662129Z Using cached identify-2.6.12-py2.py3-none-any.whl (99 kB)
+2025-06-07T22:38:15.0674167Z Using cached nodeenv-1.9.1-py2.py3-none-any.whl (22 kB)
+2025-06-07T22:38:15.0686003Z Using cached PyYAML-6.0.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (767 kB)
+2025-06-07T22:38:15.0702835Z Using cached virtualenv-20.31.2-py3-none-any.whl (6.1 MB)
+2025-06-07T22:38:15.0759645Z Using cached distlib-0.3.9-py2.py3-none-any.whl (468 kB)
+2025-06-07T22:38:15.0774082Z Using cached filelock-3.18.0-py3-none-any.whl (16 kB)
+2025-06-07T22:38:15.0786408Z Using cached pycparser-2.22-py3-none-any.whl (117 kB)
+2025-06-07T22:38:15.0798326Z Using cached pytest-8.4.0-py3-none-any.whl (363 kB)
+2025-06-07T22:38:15.0812195Z Using cached pluggy-1.6.0-py3-none-any.whl (20 kB)
+2025-06-07T22:38:15.0823448Z Using cached iniconfig-2.1.0-py3-none-any.whl (6.0 kB)
+2025-06-07T22:38:15.0834588Z Using cached pygments-2.19.1-py3-none-any.whl (1.2 MB)
+2025-06-07T22:38:15.0854318Z Using cached pytest_cov-6.1.1-py3-none-any.whl (23 kB)
+2025-06-07T22:38:15.0865996Z Using cached coverage-7.8.2-cp312-cp312-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (245 kB)
+2025-06-07T22:38:15.0878197Z Using cached pytest_xdist-3.7.0-py3-none-any.whl (46 kB)
+2025-06-07T22:38:15.0889714Z Using cached execnet-2.1.1-py3-none-any.whl (40 kB)
+2025-06-07T22:38:15.0901245Z Using cached ruff-0.11.13-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (11.6 MB)
+2025-06-07T22:38:15.1886077Z Building wheels for collected packages: statement_refinery
+2025-06-07T22:38:15.1895294Z   Building editable for statement_refinery (pyproject.toml): started
+2025-06-07T22:38:15.4215797Z   Building editable for statement_refinery (pyproject.toml): finished with status 'done'
+2025-06-07T22:38:15.4224258Z   Created wheel for statement_refinery: filename=statement_refinery-0.1.0-0.editable-py3-none-any.whl size=6066 sha256=0a43d93104ce083e18dd89ac755a34d57bfc7feffab5571660b534e5090bb660
+2025-06-07T22:38:15.4226911Z   Stored in directory: /tmp/pip-ephem-wheel-cache-r1yvi57n/wheels/28/ef/08/2643d2d3176a016c9998941a41d908b9230622f970a4566ebe
+2025-06-07T22:38:15.4249740Z Successfully built statement_refinery
+2025-06-07T22:38:15.5179454Z Installing collected packages: distlib, typing-extensions, tqdm, sniffio, ruff, pyyaml, pypdfium2, pygments, pycparser, pluggy, platformdirs, Pillow, pathspec, packaging, nodeenv, mypy-extensions, jiter, iniconfig, idna, identify, h11, filelock, execnet, distro, coverage, click, charset-normalizer, cfgv, certifi, annotated-types, virtualenv, typing-inspection, pytest, pydantic-core, mypy, httpcore, cffi, black, anyio, pytest-xdist, pytest-cov, pydantic, pre-commit, httpx, cryptography, pdfminer.six, openai, pdfplumber, statement_refinery
+2025-06-07T22:38:21.1393788Z 
+2025-06-07T22:38:21.1444864Z Successfully installed Pillow-11.2.1 annotated-types-0.7.0 anyio-4.9.0 black-25.1.0 certifi-2025.4.26 cffi-1.17.1 cfgv-3.4.0 charset-normalizer-3.4.2 click-8.2.1 coverage-7.8.2 cryptography-45.0.3 distlib-0.3.9 distro-1.9.0 execnet-2.1.1 filelock-3.18.0 h11-0.16.0 httpcore-1.0.9 httpx-0.28.1 identify-2.6.12 idna-3.10 iniconfig-2.1.0 jiter-0.10.0 mypy-1.16.0 mypy-extensions-1.1.0 nodeenv-1.9.1 openai-1.84.0 packaging-25.0 pathspec-0.12.1 pdfminer.six-20250327 pdfplumber-0.11.6 platformdirs-4.3.8 pluggy-1.6.0 pre-commit-4.2.0 pycparser-2.22 pydantic-2.11.5 pydantic-core-2.33.2 pygments-2.19.1 pypdfium2-4.30.1 pytest-8.4.0 pytest-cov-6.1.1 pytest-xdist-3.7.0 pyyaml-6.0.2 ruff-0.11.13 sniffio-1.3.1 statement_refinery-0.1.0 tqdm-4.67.1 typing-extensions-4.14.0 typing-inspection-0.4.1 virtualenv-20.31.2
+
+### 6_Run pre-commit
+
+﻿2025-06-07T22:38:21.6716595Z ##[group]Run pre-commit run --all-files --show-diff-on-failure || echo "::warning::lint failed (ignored)"
+2025-06-07T22:38:21.6717309Z [36;1mpre-commit run --all-files --show-diff-on-failure || echo "::warning::lint failed (ignored)"[0m
+2025-06-07T22:38:21.6769672Z shell: /usr/bin/bash -e {0}
+2025-06-07T22:38:21.6769917Z env:
+2025-06-07T22:38:21.6770103Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:21.6770320Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:21.6770527Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:21.6770721Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:21.6770986Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:21.6771404Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib/pkgconfig
+2025-06-07T22:38:21.6771810Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:21.6772163Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:21.6772525Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:21.6772889Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib
+2025-06-07T22:38:21.6773234Z   GIT_ASKPASS: true
+2025-06-07T22:38:21.6773426Z ##[endgroup]
+2025-06-07T22:38:21.8513260Z [INFO] Initializing environment for https://github.com/astral-sh/ruff-pre-commit.
+2025-06-07T22:38:22.2783826Z [INFO] Initializing environment for https://github.com/psf/black.
+2025-06-07T22:38:22.9295610Z [INFO] Installing environment for https://github.com/astral-sh/ruff-pre-commit.
+2025-06-07T22:38:22.9296532Z [INFO] Once installed this environment will be reused.
+2025-06-07T22:38:22.9297088Z [INFO] This may take a few minutes...
+2025-06-07T22:38:26.7943726Z [INFO] Installing environment for https://github.com/psf/black.
+2025-06-07T22:38:26.7944461Z [INFO] Once installed this environment will be reused.
+2025-06-07T22:38:26.7944967Z [INFO] This may take a few minutes...
+2025-06-07T22:38:30.2420823Z ruff (auto-fix)..........................................................Passed
+2025-06-07T22:38:30.2700431Z ruff (format)............................................................Failed
+2025-06-07T22:38:30.2700978Z - hook id: ruff-format
+2025-06-07T22:38:30.2701261Z - files were modified by this hook
+2025-06-07T22:38:30.2701455Z 
+2025-06-07T22:38:30.2701567Z 2 files reformatted, 16 files left unchanged
+2025-06-07T22:38:30.2701764Z 
+2025-06-07T22:38:30.8147926Z black check..............................................................Failed
+2025-06-07T22:38:30.8148790Z - hook id: black
+2025-06-07T22:38:30.8149178Z - exit code: 1
+2025-06-07T22:38:30.8149407Z 
+2025-06-07T22:38:30.8149637Z would reformat tests/test_pre_commit_config.py
+2025-06-07T22:38:30.8150008Z 
+2025-06-07T22:38:30.8150450Z Oh no! 💥 💔 💥
+2025-06-07T22:38:30.8150981Z 1 file would be reformatted, 17 files would be left unchanged.
+2025-06-07T22:38:30.8151397Z 
+2025-06-07T22:38:30.8345613Z Export AI Patch..........................................................Passed
+2025-06-07T22:38:30.8346274Z - hook id: export-ai-patch
+2025-06-07T22:38:30.8346552Z - duration: 0s
+2025-06-07T22:38:30.8346711Z 
+2025-06-07T22:38:30.8346949Z cp: cannot stat 'diagnostics/ai-patch-unapplied.patch': No such file or directory
+2025-06-07T22:38:30.8347390Z 
+2025-06-07T22:38:30.8347898Z pre-commit hook(s) made changes.
+2025-06-07T22:38:30.8348451Z If you are seeing this message in CI, reproduce locally with: `pre-commit run --all-files`.
+2025-06-07T22:38:30.8349217Z To run `pre-commit` as part of git workflow, use `pre-commit install`.
+2025-06-07T22:38:30.8349728Z All changes made by hooks:
+2025-06-07T22:38:30.8506750Z diff --git a/tests/test_pdf_to_csv.py b/tests/test_pdf_to_csv.py
+2025-06-07T22:38:30.8507268Z index 1e26162..6933721 100644
+2025-06-07T22:38:30.8507599Z --- a/tests/test_pdf_to_csv.py
+2025-06-07T22:38:30.8507938Z +++ b/tests/test_pdf_to_csv.py
+2025-06-07T22:38:30.8508320Z @@ -8,8 +8,10 @@ def test_parse_lines_simple():
+2025-06-07T22:38:30.8508950Z      rows = parse_lines(iter(lines))
+2025-06-07T22:38:30.8509552Z      assert rows[0]["amount_brl"] == Decimal("9.99")
+2025-06-07T22:38:30.8510104Z      assert rows[0]["card_last4"] == "1234"
+2025-06-07T22:38:30.8510988Z +
+2025-06-07T22:38:30.8511256Z +
+2025-06-07T22:38:30.8511519Z  # ... previous code ...
+2025-06-07T22:38:30.8511843Z  
+2025-06-07T22:38:30.8512138Z -assert pdf_to_csv.parse_amount('') is None
+2025-06-07T22:38:30.8512584Z +assert pdf_to_csv.parse_amount("") is None
+2025-06-07T22:38:30.8513001Z  
+2025-06-07T22:38:30.8513259Z -# ... rest of the code ...
+2025-06-07T22:38:30.8513608Z \ No newline at end of file
+2025-06-07T22:38:30.8513934Z +# ... rest of the code ...
+2025-06-07T22:38:30.8514451Z diff --git a/tests/test_pre_commit_config.py b/tests/test_pre_commit_config.py
+2025-06-07T22:38:30.8515060Z index 0dcbd2d..943ba36 100644
+2025-06-07T22:38:30.8515439Z --- a/tests/test_pre_commit_config.py
+2025-06-07T22:38:30.8515858Z +++ b/tests/test_pre_commit_config.py
+2025-06-07T22:38:30.8516262Z @@ -4,10 +4,12 @@ from pathlib import Path
+2025-06-07T22:38:30.8516622Z  
+2025-06-07T22:38:30.8516930Z  CONFIG_PATH = Path(".pre-commit-config.yaml")
+2025-06-07T22:38:30.8517353Z  
+2025-06-07T22:38:30.8517578Z +
+2025-06-07T22:38:30.8517816Z  def load_config():
+2025-06-07T22:38:30.8518177Z      with CONFIG_PATH.open("r", encoding="utf-8") as f:
+2025-06-07T22:38:30.8518883Z          return yaml.safe_load(f)
+2025-06-07T22:38:30.8519226Z  
+2025-06-07T22:38:30.8519450Z +
+2025-06-07T22:38:30.8519714Z  def test_pre_commit_config_valid():
+2025-06-07T22:38:30.8520200Z      """Test that the .pre-commit-config.yaml file is valid YAML."""
+2025-06-07T22:38:30.8520675Z      try:
+2025-06-07T22:38:30.8520992Z @@ -16,20 +18,25 @@ def test_pre_commit_config_valid():
+2025-06-07T22:38:30.8521408Z      except Exception as e:
+2025-06-07T22:38:30.8521775Z          pytest.fail(f"YAML syntax error: {e}")
+2025-06-07T22:38:30.8522228Z  
+2025-06-07T22:38:30.8522583Z +
+2025-06-07T22:38:30.8522945Z  def test_repos_key_exists():
+2025-06-07T22:38:30.8523444Z      config = load_config()
+2025-06-07T22:38:30.8524033Z      assert "repos" in config, "Missing 'repos' key in pre-commit config"
+2025-06-07T22:38:30.8524689Z      assert isinstance(config["repos"], list), "'repos' should be a list"
+2025-06-07T22:38:30.8525167Z  
+2025-06-07T22:38:30.8525395Z +
+2025-06-07T22:38:30.8525691Z  def test_each_repo_has_required_fields():
+2025-06-07T22:38:30.8526093Z      config = load_config()
+2025-06-07T22:38:30.8526454Z      for i, repo in enumerate(config["repos"]):
+2025-06-07T22:38:30.8527072Z -        assert "repo" in repo or repo.get("repo", None) == "local", f"Repo #{i} missing 'repo' key"
+2025-06-07T22:38:30.8527741Z +        assert "repo" in repo or repo.get("repo", None) == "local", (
+2025-06-07T22:38:30.8528224Z +            f"Repo #{i} missing 'repo' key"
+2025-06-07T22:38:30.8528731Z +        )
+2025-06-07T22:38:30.8529013Z          if repo.get("repo", None) != "local":
+2025-06-07T22:38:30.8529455Z              assert "rev" in repo, f"Repo #{i} missing 'rev' key"
+2025-06-07T22:38:30.8529962Z          assert "hooks" in repo, f"Repo #{i} missing 'hooks' key"
+2025-06-07T22:38:30.8530578Z          assert isinstance(repo["hooks"], list), f"Repo #{i} 'hooks' should be a list"
+2025-06-07T22:38:30.8531096Z  
+2025-06-07T22:38:30.8531325Z +
+2025-06-07T22:38:30.8531594Z  def test_each_hook_has_required_fields():
+2025-06-07T22:38:30.8532215Z      config = load_config()
+2025-06-07T22:38:30.8532569Z      for i, repo in enumerate(config["repos"]):
+2025-06-07T22:38:30.8533028Z @@ -38,15 +45,17 @@ def test_each_hook_has_required_fields():
+2025-06-07T22:38:30.8533555Z              assert "name" in hook, f"Repo #{i} Hook #{j} missing 'name'"
+2025-06-07T22:38:30.8534186Z              assert "description" in hook, f"Repo #{i} Hook #{j} missing 'description'"
+2025-06-07T22:38:30.8534795Z  
+2025-06-07T22:38:30.8535052Z +
+2025-06-07T22:38:30.8535345Z  def test_no_duplicate_hook_ids_within_repo():
+2025-06-07T22:38:30.8535759Z      config = load_config()
+2025-06-07T22:38:30.8536137Z      for i, repo in enumerate(config["repos"]):
+2025-06-07T22:38:30.8536614Z          ids = [hook["id"] for hook in repo["hooks"] if "id" in hook]
+2025-06-07T22:38:30.8537391Z          assert len(ids) == len(set(ids)), f"Duplicate hook ids in repo #{i}: {ids}"
+2025-06-07T22:38:30.8537889Z  
+2025-06-07T22:38:30.8538119Z +
+2025-06-07T22:38:30.8538395Z  def test_local_repo_hooks_have_entry():
+2025-06-07T22:38:30.8538944Z      config = load_config()
+2025-06-07T22:38:30.8539310Z      for i, repo in enumerate(config["repos"]):
+2025-06-07T22:38:30.8539718Z          if repo.get("repo", None) == "local":
+2025-06-07T22:38:30.8540142Z              for j, hook in enumerate(repo["hooks"]):
+2025-06-07T22:38:30.8540636Z -                assert "entry" in hook, f"Local repo hook #{j} missing 'entry'"
+2025-06-07T22:38:30.8541238Z \ No newline at end of file
+2025-06-07T22:38:30.8541662Z +                assert "entry" in hook, f"Local repo hook #{j} missing 'entry'"
+2025-06-07T22:38:30.8712849Z ##[warning]lint failed (ignored)
+
+### 7_Run linters
+
+﻿2025-06-07T22:38:30.8803461Z ##[group]Run ruff check --fix . | tee diagnostics/lint.txt
+2025-06-07T22:38:30.8803885Z [36;1mruff check --fix . | tee diagnostics/lint.txt[0m
+2025-06-07T22:38:30.8804232Z [36;1mblack --check . | tee -a diagnostics/lint.txt[0m
+2025-06-07T22:38:30.8855663Z shell: /usr/bin/bash -e {0}
+2025-06-07T22:38:30.8855914Z env:
+2025-06-07T22:38:30.8856103Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:30.8856322Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:30.8856518Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:30.8856710Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:30.8856975Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:30.8857394Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib/pkgconfig
+2025-06-07T22:38:30.8857802Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:30.8858166Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:30.8858698Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:30.8859074Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib
+2025-06-07T22:38:30.8859416Z ##[endgroup]
+2025-06-07T22:38:30.9026556Z tests/test_pdf_to_csv.py:15:8: F821 Undefined name `pdf_to_csv`
+2025-06-07T22:38:30.9027168Z    |
+2025-06-07T22:38:30.9027387Z 13 | # ... previous code ...
+2025-06-07T22:38:30.9027639Z 14 |
+2025-06-07T22:38:30.9027863Z 15 | assert pdf_to_csv.parse_amount("") is None
+2025-06-07T22:38:30.9028157Z    |        ^^^^^^^^^^ F821
+2025-06-07T22:38:30.9028368Z 16 |
+2025-06-07T22:38:30.9028746Z 17 | # ... rest of the code ...
+2025-06-07T22:38:30.9028971Z    |
+2025-06-07T22:38:30.9029064Z 
+2025-06-07T22:38:30.9029144Z Found 1 error.
+2025-06-07T22:38:31.2487864Z would reformat /home/runner/work/Evolve/Evolve/tests/test_pre_commit_config.py
+2025-06-07T22:38:31.2805898Z 
+2025-06-07T22:38:31.2807393Z Oh no! 💥 💔 💥
+2025-06-07T22:38:31.2808181Z 1 file would be reformatted, 17 files would be left unchanged.
+
+### 8_Run mypy
+
+﻿2025-06-07T22:38:31.3049153Z ##[group]Run PYTHONPATH=src mypy --explicit-package-bases src/statement_refinery | tee diagnostics/mypy.txt
+2025-06-07T22:38:31.3049959Z [36;1mPYTHONPATH=src mypy --explicit-package-bases src/statement_refinery | tee diagnostics/mypy.txt[0m
+2025-06-07T22:38:31.3102584Z shell: /usr/bin/bash -e {0}
+2025-06-07T22:38:31.3102837Z env:
+2025-06-07T22:38:31.3103033Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:31.3103432Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:31.3103642Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:31.3103851Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:31.3104131Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:31.3104584Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib/pkgconfig
+2025-06-07T22:38:31.3105029Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:31.3105424Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:31.3105818Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:31.3106216Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib
+2025-06-07T22:38:31.3106581Z ##[endgroup]
+2025-06-07T22:38:37.1086101Z Success: no issues found in 3 source files
+
+### 9_Run tests
+
+﻿2025-06-07T22:38:37.1228130Z ##[group]Run pytest -v --cov=statement_refinery \
+2025-06-07T22:38:37.1229052Z [36;1mpytest -v --cov=statement_refinery \[0m
+2025-06-07T22:38:37.1229548Z [36;1m       --cov-report=xml \[0m
+2025-06-07T22:38:37.1230028Z [36;1m       --cov-report=term-missing \[0m
+2025-06-07T22:38:37.1230581Z [36;1m       --cov-fail-under=90 | tee diagnostics/test.txt[0m
+2025-06-07T22:38:37.1304471Z shell: /usr/bin/bash -e {0}
+2025-06-07T22:38:37.1304865Z env:
+2025-06-07T22:38:37.1305175Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:37.1305536Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:37.1305888Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:37.1306221Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:37.1306665Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:37.1307397Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib/pkgconfig
+2025-06-07T22:38:37.1308112Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:37.1308973Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:37.1309666Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:37.1310314Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib
+2025-06-07T22:38:37.1310848Z ##[endgroup]
+2025-06-07T22:38:37.6923393Z ============================= test session starts ==============================
+2025-06-07T22:38:37.6924211Z platform linux -- Python 3.12.10, pytest-8.4.0, pluggy-1.6.0 -- /opt/hostedtoolcache/Python/3.12.10/x64/bin/python
+2025-06-07T22:38:37.6924693Z cachedir: .pytest_cache
+2025-06-07T22:38:37.6924936Z rootdir: /home/runner/work/Evolve/Evolve
+2025-06-07T22:38:37.6925217Z configfile: pyproject.toml
+2025-06-07T22:38:37.6925473Z plugins: xdist-3.7.0, anyio-4.9.0, cov-6.1.1
+2025-06-07T22:38:38.1389553Z collecting ... collected 40 items / 1 error
+2025-06-07T22:38:38.1389930Z 
+2025-06-07T22:38:38.1390243Z ERROR: Coverage failure: total of 17 is less than fail-under=90
+2025-06-07T22:38:38.1390627Z 
+2025-06-07T22:38:38.1390786Z ==================================== ERRORS ====================================
+2025-06-07T22:38:38.1391356Z __________________ ERROR collecting tests/test_pdf_to_csv.py ___________________
+2025-06-07T22:38:38.1391858Z tests/test_pdf_to_csv.py:15: in <module>
+2025-06-07T22:38:38.1392271Z     assert pdf_to_csv.parse_amount("") is None
+2025-06-07T22:38:38.1392635Z            ^^^^^^^^^^
+2025-06-07T22:38:38.1392949Z E   NameError: name 'pdf_to_csv' is not defined
+2025-06-07T22:38:38.1393375Z ================================ tests coverage ================================
+2025-06-07T22:38:38.1393903Z _______________ coverage: platform linux, python 3.12.10-final-0 _______________
+2025-06-07T22:38:38.1394267Z 
+2025-06-07T22:38:38.1394432Z Name                                   Stmts   Miss  Cover   Missing
+2025-06-07T22:38:38.1394876Z --------------------------------------------------------------------
+2025-06-07T22:38:38.1395381Z src/statement_refinery/__init__.py         3      0   100%
+2025-06-07T22:38:38.1396212Z src/statement_refinery/pdf_to_csv.py     279    236    15%   107-146, 155-176, 180-185, 189-195, 214-218, 254-259, 263-369, 454-470, 475-527, 541-576, 580-595, 600-645
+2025-06-07T22:38:38.1397159Z src/statement_refinery/validation.py      54     42    22%   21-47, 52-55, 60-68, 95-100, 105-110
+2025-06-07T22:38:38.1398364Z --------------------------------------------------------------------
+2025-06-07T22:38:38.1399120Z TOTAL                                    336    278    17%
+2025-06-07T22:38:38.1399684Z Coverage XML written to file coverage.xml
+2025-06-07T22:38:38.1400385Z FAIL Required test coverage of 90% not reached. Total coverage: 17.26%
+2025-06-07T22:38:38.1401086Z =========================== short test summary info ============================
+2025-06-07T22:38:38.1401572Z ERROR tests/test_pdf_to_csv.py - NameError: name 'pdf_to_csv' is not defined
+2025-06-07T22:38:38.1402070Z !!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+2025-06-07T22:38:38.1402470Z =============================== 1 error in 0.42s ===============================
+
+### 10_Check accuracy
+
+﻿2025-06-07T22:38:38.1833107Z ##[group]Run python scripts/check_accuracy.py --threshold 99 \
+2025-06-07T22:38:38.1833618Z [36;1mpython scripts/check_accuracy.py --threshold 99 \[0m
+2025-06-07T22:38:38.1834032Z [36;1m       --summary-file diagnostics/accuracy.json \[0m
+2025-06-07T22:38:38.1834421Z [36;1m       --csv-dir csv_output | tee diagnostics/accuracy.txt[0m
+2025-06-07T22:38:38.1886711Z shell: /usr/bin/bash -e {0}
+2025-06-07T22:38:38.1886973Z env:
+2025-06-07T22:38:38.1887163Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:38.1887396Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:38.1887610Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:38.1887816Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:38.1888098Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:38.1888808Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib/pkgconfig
+2025-06-07T22:38:38.1889270Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:38.1889668Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:38.1890082Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:38.1890526Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib
+2025-06-07T22:38:38.1890864Z ##[endgroup]
+2025-06-07T22:38:38.2502299Z INFO: CSV written → csv_output/Itau_2024-10.csv
+2025-06-07T22:38:38.3172052Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.3186527Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.3198873Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.3208141Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.3219312Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.3228805Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8106102Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8106981Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8107762Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8108694Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8109460Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8110092Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8127528Z INFO: CSV written → csv_output/Itau_2025-05.csv
+2025-06-07T22:38:38.8163143Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8165841Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8168655Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8171270Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8173731Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8176262Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8178923Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:38.8181401Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:39.7619307Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:39.7620777Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:39.7621497Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:39.7622201Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:39.7622885Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:39.7623522Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:39.7624118Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:39.7624698Z WARNING: CropBox missing from /Page, defaulting to MediaBox
+2025-06-07T22:38:39.7644958Z mismatched parser output or low accuracy
+2025-06-07T22:38:39.7645450Z 
+2025-06-07T22:38:39.7645667Z Processing 1/2: Itau_2024-10.pdf
+2025-06-07T22:38:39.7646036Z 
+2025-06-07T22:38:39.7646213Z === Itau_2024-10.pdf ===
+2025-06-07T22:38:39.7646988Z Output matches golden file exactly.
+2025-06-07T22:38:39.7647556Z Match percentage: 100.00%
+2025-06-07T22:38:39.7648093Z Total mismatch: CSV 4772.90 vs PDF 8595.02
+2025-06-07T22:38:39.7648655Z 
+2025-06-07T22:38:39.7648860Z Processing 2/2: Itau_2025-05.pdf
+2025-06-07T22:38:39.7649091Z 
+2025-06-07T22:38:39.7649217Z === Itau_2025-05.pdf ===
+2025-06-07T22:38:39.7649533Z Output matches golden file exactly.
+2025-06-07T22:38:39.7649883Z Match percentage: 100.00%
+2025-06-07T22:38:39.7650201Z Average match across PDFs: 100.00%
+2025-06-07T22:38:39.7650607Z TOTAL mismatch across PDFs: CSV 25633.50 vs PDF 29455.62
+
+### 13_Upload coverage
+
+﻿2025-06-07T22:38:39.8356670Z ##[group]Run codecov/codecov-action@v4
+2025-06-07T22:38:39.8356979Z with:
+2025-06-07T22:38:39.8357154Z   file: coverage.xml
+2025-06-07T22:38:39.8357367Z   fail_ci_if_error: true
+2025-06-07T22:38:39.8357582Z env:
+2025-06-07T22:38:39.8357753Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:39.8357954Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:39.8358148Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:39.8358338Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:39.8358740Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:39.8359186Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib/pkgconfig
+2025-06-07T22:38:39.8359594Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:39.8359954Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:39.8360306Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:39.8360665Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib
+2025-06-07T22:38:39.8361279Z   CODECOV_TOKEN: ***
+2025-06-07T22:38:39.8361530Z ##[endgroup]
+2025-06-07T22:38:39.9202723Z eventName: push
+2025-06-07T22:38:39.9211375Z ==> linux OS detected
+2025-06-07T22:38:40.3599688Z https://cli.codecov.io/latest/linux/codecov.SHA256SUM
+2025-06-07T22:38:40.5206304Z gpg: directory '/home/runner/.gnupg' created
+2025-06-07T22:38:40.5209758Z gpg: keybox '/home/runner/.gnupg/pubring.kbx' created
+2025-06-07T22:38:40.5231245Z gpg: /home/runner/.gnupg/trustdb.gpg: trustdb created
+2025-06-07T22:38:40.5232275Z gpg: key 806BB28AED779869: public key "Codecov Uploader (Codecov Uploader Verification Key) <security@codecov.io>" imported
+2025-06-07T22:38:40.5343327Z gpg: Total number processed: 1
+2025-06-07T22:38:40.5343809Z gpg:               imported: 1
+2025-06-07T22:38:40.5393882Z gpg: Signature made Thu May 29 21:23:31 2025 UTC
+2025-06-07T22:38:40.5394484Z gpg:                using RSA key 27034E7FDB850E0BBC2C62FF806BB28AED779869
+2025-06-07T22:38:40.5396631Z gpg: Good signature from "Codecov Uploader (Codecov Uploader Verification Key) <security@codecov.io>" [unknown]
+2025-06-07T22:38:40.5397412Z gpg: WARNING: This key is not certified with a trusted signature!
+2025-06-07T22:38:40.5397849Z gpg:          There is no indication that the signature belongs to the owner.
+2025-06-07T22:38:40.5398317Z Primary key fingerprint: 2703 4E7F DB85 0E0B BC2C  62FF 806B B28A ED77 9869
+2025-06-07T22:38:40.5614241Z ==> Uploader SHASUM verified (8e0a7ea74f31ee893d11051143fa223cc30f110287ad275e275ca493ddd78eaa  codecov)
+2025-06-07T22:38:40.5615671Z ==> Running version latest
+2025-06-07T22:38:40.6539245Z Could not pull latest version information: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+2025-06-07T22:38:40.6540790Z ==> Running git config --global --add safe.directory /home/runner/work/Evolve/Evolve
+2025-06-07T22:38:40.6634758Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Evolve/Evolve
+2025-06-07T22:38:40.6683865Z ==> Running command '/home/runner/work/_actions/codecov/codecov-action/v4/dist/codecov create-commit'
+2025-06-07T22:38:40.6686817Z [command]/home/runner/work/_actions/codecov/codecov-action/v4/dist/codecov create-commit --git-service github -Z
+2025-06-07T22:38:41.0404608Z info - 2025-06-07 22:38:41,039 -- ci service found: github-actions
+2025-06-07T22:38:41.0499208Z warning - 2025-06-07 22:38:41,049 -- No config file could be found. Ignoring config.
+2025-06-07T22:38:41.0800875Z info - 2025-06-07 22:38:41,079 -- Using token to create a commit for protected branch `main`
+2025-06-07T22:38:41.5184711Z info - 2025-06-07 22:38:41,518 -- Process Commit creating complete
+2025-06-07T22:38:41.6203085Z Sentry is attempting to send 2 pending events
+2025-06-07T22:38:41.6203935Z Waiting up to 2 seconds
+2025-06-07T22:38:41.6204433Z Press Ctrl-C to quit
+2025-06-07T22:38:41.6959769Z ==> Running command '/home/runner/work/_actions/codecov/codecov-action/v4/dist/codecov create-report'
+2025-06-07T22:38:41.6962310Z [command]/home/runner/work/_actions/codecov/codecov-action/v4/dist/codecov create-report --git-service github -Z
+2025-06-07T22:38:42.0579876Z info - 2025-06-07 22:38:42,057 -- ci service found: github-actions
+2025-06-07T22:38:42.0690938Z warning - 2025-06-07 22:38:42,068 -- No config file could be found. Ignoring config.
+2025-06-07T22:38:42.5053022Z info - 2025-06-07 22:38:42,504 -- Process Report creating complete
+2025-06-07T22:38:42.5059100Z info - 2025-06-07 22:38:42,505 -- Finished creating report successfully --- {"response": "{\"status\":\"queued\"}\n"}
+2025-06-07T22:38:42.6081587Z Sentry is attempting to send 2 pending events
+2025-06-07T22:38:42.6104033Z Waiting up to 2 seconds
+2025-06-07T22:38:42.6104437Z Press Ctrl-C to quit
+2025-06-07T22:38:42.6976776Z ==> Running command '/home/runner/work/_actions/codecov/codecov-action/v4/dist/codecov do-upload'
+2025-06-07T22:38:42.6978833Z [command]/home/runner/work/_actions/codecov/codecov-action/v4/dist/codecov do-upload -Z -f coverage.xml --git-service github
+2025-06-07T22:38:43.0514480Z info - 2025-06-07 22:38:43,050 -- ci service found: github-actions
+2025-06-07T22:38:43.0618979Z warning - 2025-06-07 22:38:43,061 -- No config file could be found. Ignoring config.
+2025-06-07T22:38:43.0952610Z warning - 2025-06-07 22:38:43,094 -- xcrun is not installed or can't be found.
+2025-06-07T22:38:43.1079666Z warning - 2025-06-07 22:38:43,107 -- No gcov data found.
+2025-06-07T22:38:43.1086094Z info - 2025-06-07 22:38:43,108 -- Generating coverage.xml report in /home/runner/work/Evolve/Evolve
+2025-06-07T22:38:43.2471605Z info - 2025-06-07 22:38:43,246 -- Wrote XML report to coverage.xml
+2025-06-07T22:38:43.2884046Z info - 2025-06-07 22:38:43,287 -- Found 1 coverage files to report
+2025-06-07T22:38:43.2885052Z info - 2025-06-07 22:38:43,288 -- > /home/runner/work/Evolve/Evolve/coverage.xml
+2025-06-07T22:38:43.6722024Z info - 2025-06-07 22:38:43,671 -- Your upload is now processing. When finished, results will be available at: https://app.codecov.io/github/leolech14/Evolve/commit/ffae1b1416e40894c0eacea8098ae84bec42c97c
+2025-06-07T22:38:43.9990523Z info - 2025-06-07 22:38:43,998 -- Process Upload complete
+
+### 14_Upload diagnostics
+
+﻿2025-06-07T22:38:44.1513836Z ##[group]Run actions/upload-artifact@v4
+2025-06-07T22:38:44.1514143Z with:
+2025-06-07T22:38:44.1514341Z   name: diagnostics
+2025-06-07T22:38:44.1514550Z   path: diagnostics/
+2025-06-07T22:38:44.1514769Z   if-no-files-found: warn
+2025-06-07T22:38:44.1514991Z   compression-level: 6
+2025-06-07T22:38:44.1515198Z   overwrite: false
+2025-06-07T22:38:44.1515405Z   include-hidden-files: false
+2025-06-07T22:38:44.1515627Z env:
+2025-06-07T22:38:44.1515979Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:44.1516186Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:44.1516386Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:44.1516571Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:44.1516820Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:44.1517236Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib/pkgconfig
+2025-06-07T22:38:44.1517631Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:44.1517987Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:44.1518349Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:44.1519255Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib
+2025-06-07T22:38:44.1519559Z ##[endgroup]
+2025-06-07T22:38:44.3664187Z With the provided path, there will be 5 files uploaded
+2025-06-07T22:38:44.3672773Z Artifact name is valid!
+2025-06-07T22:38:44.3674378Z Root directory input is valid!
+2025-06-07T22:38:44.5889653Z Beginning upload of artifact content to blob storage
+2025-06-07T22:38:44.7821935Z Uploaded bytes 1823
+2025-06-07T22:38:44.8297692Z Finished uploading artifact content to blob storage!
+2025-06-07T22:38:44.8300698Z SHA256 digest of uploaded artifact zip is fa7f22f39f4ce15d9e408241798db85e5a2cce7ae39b7291cee9925634a4eecc
+2025-06-07T22:38:44.8302228Z Finalizing artifact upload
+2025-06-07T22:38:44.9313407Z Artifact diagnostics.zip successfully finalized. Artifact ID 3282200474
+2025-06-07T22:38:44.9314481Z Artifact diagnostics has been successfully uploaded! Final size is 1823 bytes. Artifact ID is 3282200474
+2025-06-07T22:38:44.9322061Z Artifact download URL: https://github.com/leolech14/Evolve/actions/runs/15512328389/artifacts/3282200474
+
+### 15_Upload CSVs
+
+﻿2025-06-07T22:38:44.9449412Z ##[group]Run actions/upload-artifact@v4
+2025-06-07T22:38:44.9449720Z with:
+2025-06-07T22:38:44.9449901Z   name: csvs
+2025-06-07T22:38:44.9450093Z   path: csv_output/
+2025-06-07T22:38:44.9450306Z   if-no-files-found: warn
+2025-06-07T22:38:44.9450539Z   compression-level: 6
+2025-06-07T22:38:44.9450769Z   overwrite: false
+2025-06-07T22:38:44.9450982Z   include-hidden-files: false
+2025-06-07T22:38:44.9451210Z env:
+2025-06-07T22:38:44.9451388Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:44.9451592Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:44.9451789Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:44.9451980Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:44.9452237Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:44.9452652Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib/pkgconfig
+2025-06-07T22:38:44.9453053Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:44.9453412Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:44.9453772Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:44.9454176Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib
+2025-06-07T22:38:44.9454476Z ##[endgroup]
+2025-06-07T22:38:45.1634305Z With the provided path, there will be 2 files uploaded
+2025-06-07T22:38:45.1639118Z Artifact name is valid!
+2025-06-07T22:38:45.1641041Z Root directory input is valid!
+2025-06-07T22:38:45.3269032Z Beginning upload of artifact content to blob storage
+2025-06-07T22:38:45.5648453Z Uploaded bytes 12510
+2025-06-07T22:38:45.6251108Z Finished uploading artifact content to blob storage!
+2025-06-07T22:38:45.6254064Z SHA256 digest of uploaded artifact zip is 2047f672000958b87ea6c06d0e747cac0014a8b226f4fb35df1c11ff5fdc32bf
+2025-06-07T22:38:45.6255858Z Finalizing artifact upload
+2025-06-07T22:38:45.7220679Z Artifact csvs.zip successfully finalized. Artifact ID 3282200492
+2025-06-07T22:38:45.7222188Z Artifact csvs has been successfully uploaded! Final size is 12510 bytes. Artifact ID is 3282200492
+2025-06-07T22:38:45.7230150Z Artifact download URL: https://github.com/leolech14/Evolve/actions/runs/15512328389/artifacts/3282200492
+
+### 16_Generate summary
+
+﻿2025-06-07T22:38:45.7339643Z ##[group]Run python scripts/ci_summary.py
+2025-06-07T22:38:45.7340313Z [36;1mpython scripts/ci_summary.py[0m
+2025-06-07T22:38:45.7407587Z shell: /usr/bin/bash -e {0}
+2025-06-07T22:38:45.7407849Z env:
+2025-06-07T22:38:45.7408042Z   OPENAI_MODEL: gpt-4
+2025-06-07T22:38:45.7408277Z   MAX_TOKENS: 5000000
+2025-06-07T22:38:45.7408677Z   MAX_ATTEMPTS: 5
+2025-06-07T22:38:45.7408897Z   FORCE_EVOLVE: 0
+2025-06-07T22:38:45.7409172Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:45.7409606Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib/pkgconfig
+2025-06-07T22:38:45.7410030Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:45.7410412Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:45.7410801Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.10/x64
+2025-06-07T22:38:45.7411200Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.10/x64/lib
+2025-06-07T22:38:45.7411523Z ##[endgroup]
+2025-06-07T22:38:45.7733198Z ## CI Run Summary
+2025-06-07T22:38:45.7733759Z 
+2025-06-07T22:38:45.7733944Z ### Test Results
+2025-06-07T22:38:45.7734396Z - Total Tests: 0
+2025-06-07T22:38:45.7734880Z - Passed: 0
+2025-06-07T22:38:45.7735273Z - Failed: 0
+2025-06-07T22:38:45.7735677Z - Skipped: 0
+2025-06-07T22:38:45.7736092Z - Coverage: 17.0%
+2025-06-07T22:38:45.7736381Z 
+2025-06-07T22:38:45.7736494Z ### Lint Issues
+2025-06-07T22:38:45.7736749Z ```
+2025-06-07T22:38:45.7736980Z Found 1 error.
+2025-06-07T22:38:45.7737232Z ```
+2025-06-07T22:38:45.7737363Z 
+2025-06-07T22:38:45.7737474Z ### Parser Accuracy
+2025-06-07T22:38:45.7737795Z - Average Match: Data not available
+2025-06-07T22:38:45.7738048Z 
+2025-06-07T22:38:45.7738174Z #### Per-File Results
+2025-06-07T22:38:45.7738454Z ```
+2025-06-07T22:38:45.7738897Z ```
+2025-06-07T22:38:45.7739028Z 
+
+### 31_Post Run actions_setup-python@v5
+
+﻿2025-06-07T22:38:45.7824206Z Post job cleanup.
+2025-06-07T22:38:45.9332071Z Cache hit occurred on the primary key setup-python-Linux-x64-24.04-Ubuntu-python-3.12.10-pip-16e89f17d8a7ffc7da5ff034a3d02d9aac7c9a988a734c71f332e0e45a4cb0d9, not saving cache.
+
+### 32_Post Run actions_checkout@v4
+
+﻿2025-06-07T22:38:45.9461109Z Post job cleanup.
+2025-06-07T22:38:46.0403318Z [command]/usr/bin/git version
+2025-06-07T22:38:46.0442806Z git version 2.49.0
+2025-06-07T22:38:46.0484757Z Copying '/home/runner/.gitconfig' to '/home/runner/work/_temp/c538ffaa-1261-4f94-b224-cdb8a16916f7/.gitconfig'
+2025-06-07T22:38:46.0494909Z Temporarily overriding HOME='/home/runner/work/_temp/c538ffaa-1261-4f94-b224-cdb8a16916f7' before making global git config changes
+2025-06-07T22:38:46.0495898Z Adding repository directory to the temporary git global config as a safe directory
+2025-06-07T22:38:46.0501252Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Evolve/Evolve
+2025-06-07T22:38:46.0540837Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-06-07T22:38:46.0573820Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-06-07T22:38:46.0809165Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-06-07T22:38:46.0831752Z http.https://github.com/.extraheader
+2025-06-07T22:38:46.0845609Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2025-06-07T22:38:46.0877820Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+
+### 33_Complete job
+
+﻿2025-06-07T22:38:46.1220984Z Cleaning up orphan processes
