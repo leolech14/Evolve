@@ -2,4 +2,6 @@
 
 __version__ = "0.1.0"
 
-from .pdf_to_csv import *
+from . import pdf_to_csv
+
+__all__ = ["pdf_to_csv"]

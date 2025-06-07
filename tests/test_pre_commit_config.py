@@ -8,10 +8,11 @@ def load_config():
     with CONFIG_PATH.open("r", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
-def test_yaml_syntax():
+def test_pre_commit_config_valid():
     """Test that the .pre-commit-config.yaml file is valid YAML."""
     try:
-        config = load_config()
+        with open(".pre-commit-config.yaml", "r") as f:
+            yaml.safe_load(f)
     except Exception as e:
         pytest.fail(f"YAML syntax error: {e}")
 
