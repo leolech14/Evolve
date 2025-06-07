@@ -30,7 +30,7 @@ from openai import OpenAI
 DIAGNOSTICS = Path("diagnostics")
 MAX_TOKENS = min(5_000_000, int(os.getenv("MAX_TOKENS", "5000000")))
 MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS", "5"))
-MODEL = os.getenv("OPENAI_MODEL", "gpt-4")
+MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1")
 
 
 def ensure_best_branch() -> None:
