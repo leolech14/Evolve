@@ -237,6 +237,7 @@ rather than your personal credentials.
 * **Accuracy first** – robust regex rules tuned for Itaú PDFs.
 * **Zero-friction analysis** – clean CSVs ready for spreadsheets or BI tools.
 * **Open by default** – contributions welcome; see `CONTRIBUTING.md` for guidelines.
+* **AI Codex Agent** – automated parser refinement via the Codex agent is prioritized whenever tests fail.
 
 ## License
 

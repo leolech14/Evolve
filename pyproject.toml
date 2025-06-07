@@ -28,6 +28,7 @@ dev = [
     "mypy",
     "openai>=0",
     "pdfplumber",
+    "pre-commit",
 ]
 
 [tool.setuptools]

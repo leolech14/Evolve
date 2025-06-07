@@ -24,7 +24,9 @@ def test_check_accuracy_main_fails_on_mismatch(monkeypatch, tmp_path, has_pdfplu
     data_dir.mkdir()
     sample_pdf = Path(__file__).parent / "data" / "itau_2024-10.pdf"
     sample_txt = Path(__file__).parent / "data" / "itau_2024-10.txt"
-    sample_golden = Path(__file__).parent / "data" / "golden_2024-10.csv"
+    sample_golden = Path(__file__).parent / "data" / "itau_2024-10.csv"
+    if not sample_pdf.exists() or not sample_txt.exists():
+        pytest.skip("sample data missing")
     shutil.copy(sample_pdf, data_dir / sample_pdf.name)
     shutil.copy(sample_txt, data_dir / sample_txt.name)
     broken_golden = data_dir / sample_golden.name
@@ -44,7 +46,9 @@ def test_check_accuracy_fails_on_total_delta(monkeypatch, tmp_path):
     data_dir.mkdir()
     sample_pdf = Path(__file__).parent / "data" / "itau_2024-10.pdf"
     sample_txt = Path(__file__).parent / "data" / "itau_2024-10.txt"
-    sample_golden = Path(__file__).parent / "data" / "golden_2024-10.csv"
+    sample_golden = Path(__file__).parent / "data" / "itau_2024-10.csv"
+    if not sample_pdf.exists() or not sample_txt.exists():
+        pytest.skip("sample data missing")
     shutil.copy(sample_pdf, data_dir / sample_pdf.name)
     shutil.copy(sample_txt, data_dir / sample_txt.name)
     shutil.copy(sample_golden, data_dir / sample_golden.name)

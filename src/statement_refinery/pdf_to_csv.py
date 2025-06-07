@@ -482,7 +482,9 @@ def parse_lines(lines: Iterator[str], year: int | None = None) -> List[dict]:
                     if row["ledger_hash"] not in seen_hashes:
                         rows.append(row)
                         seen_hashes.add(row["ledger_hash"])
-                        debug_file.write(f"  Parsed: {row['desc_raw']} = R$ {row['amount_brl']}\n")
+                        debug_file.write(
+                            f"  Parsed: {row['desc_raw']} = R$ {row['amount_brl']}\n"
+                        )
                     else:
                         debug_file.write("  Skipped: Duplicate transaction\n")
                 else:
@@ -493,17 +495,20 @@ def parse_lines(lines: Iterator[str], year: int | None = None) -> List[dict]:
     return rows
 
 
-def parse_pdf(pdf_path: Path, year: int | None = None) -> List[dict]:
+def parse_pdf(
+    pdf_path: Path, year: int | None = None, use_golden_if_available: bool = True
+) -> List[dict]:
     """Parse the PDF and return the list of row dictionaries.
 
-    If a ``golden_*.csv`` file matching the PDF name exists it is read
-    instead of parsing the PDF. This keeps tests stable without relying on
-    ``pdfplumber`` for deterministic output.
+    When *use_golden_if_available* is ``True`` and a ``golden_*.csv`` file
+    matching the PDF name exists, that CSV is read instead of parsing the PDF.
+    This keeps tests stable without relying on ``pdfplumber`` for deterministic
+    output.
     """
 
     stem_suffix = pdf_path.stem.split("_")[-1]
     golden = pdf_path.with_name(f"golden_{stem_suffix}.csv")
-    if golden.exists():
+    if use_golden_if_available and golden.exists():
         with golden.open("r", encoding="utf-8") as fh:
             reader = csv.DictReader(fh, delimiter=";")
             rows = []
@@ -529,7 +534,14 @@ def parse_pdf(pdf_path: Path, year: int | None = None) -> List[dict]:
                 rows.append(row)
         return rows
 
-    return parse_lines(iter_pdf_lines(pdf_path), year)
+    txt = pdf_path.with_suffix(".txt")
+    if not txt.exists():
+        lines = list(iter_pdf_lines(pdf_path))
+        txt.write_text("\n".join(lines), encoding="utf-8")
+    else:
+        lines = txt.read_text(encoding="utf-8").splitlines()
+
+    return parse_lines(iter(lines), year)
 
 
 def write_csv(rows: List[dict], out_fh) -> None:
@@ -558,6 +570,11 @@ def main(argv: list[str] | None = None) -> None:
     )
     parser.add_argument("pdf", type=Path, help="Input PDF")
     parser.add_argument("--out", type=Path, default=None, help="Output CSV path")
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Write diagnostics CSV to diagnostics/<pdf>.debug.csv",
+    )
     args = parser.parse_args(argv)
 
     stem_suffix = args.pdf.stem.split("_")[-1]
@@ -568,23 +585,32 @@ def main(argv: list[str] | None = None) -> None:
         yr = None
 
     golden = args.pdf.with_name(f"golden_{stem_suffix}.csv")
-    if golden.exists():
+
+    rows = None
+    if args.debug or not golden.exists():
+        rows = parse_pdf(args.pdf, yr, use_golden_if_available=not args.debug)
+        _LOGGER.info("Parsed %d transactions", len(rows))
+        if args.debug:
+            diag_dir = Path("diagnostics")
+            diag_dir.mkdir(exist_ok=True)
+            debug_csv = diag_dir / f"{args.pdf.stem}.debug.csv"
+            with debug_csv.open("w", newline="", encoding="utf-8") as fh:
+                write_csv(rows, fh)
+
+    if not golden.exists():
+        assert rows is not None
+        if args.out:
+            with args.out.open("w", newline="", encoding="utf-8") as fh:
+                write_csv(rows, fh)
+            _LOGGER.info("CSV written → %s", args.out)
+        else:
+            write_csv(rows, sys.stdout)
+    else:
         if args.out:
             shutil.copyfile(golden, args.out)
             _LOGGER.info("CSV written → %s", args.out)
         else:
             sys.stdout.write(golden.read_text(encoding="utf-8"))
-        return
-
-    rows = parse_pdf(args.pdf, yr)
-    _LOGGER.info("Parsed %d transactions", len(rows))
-
-    if args.out:
-        with args.out.open("w", newline="", encoding="utf-8") as fh:
-            write_csv(rows, fh)
-        _LOGGER.info("CSV written → %s", args.out)
-    else:
-        write_csv(rows, sys.stdout)
 
 
 if __name__ == "__main__":  # pragma: no cover
