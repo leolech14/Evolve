@@ -1,56 +1,63 @@
-name: CI
+name: CI (internal-only)
 
 on:
   push:
   pull_request:
-  # Manual trigger via GitHub UI
   workflow_dispatch:
     inputs:
       force-evolve:
-        description: "Run AI-patch loop even if tests pass"
+        description: "Run AI loop even when tests are green"
         required: false
         default: "false"
-  # Nightly automated evolution
   schedule:
-    - cron: "0 3 * * *"   # daily 03:00 UTC evolution pass
+    - cron: "0 3 * * *"
 
 jobs:
-  test-and-auto-fix:
+  evolve:
     runs-on: ubuntu-latest
+    timeout-minutes: 360
+    permissions:
+      contents: write        # so we can push
+
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0   # we need history for git apply / commit
+      # --- Step 1: built-in checkout (no external action) -------------
+      - name: Checkout self
+        run: |
+          git init .
+          git remote add origin "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
+          git fetch --depth=1 origin "$GITHUB_SHA"
+          git checkout -qf "$GITHUB_SHA"
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+      # --- Step 2: install Python -------------------------------------
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5   # <-- REMOVE THIS LINE if policy bans it
+        # If even setup-python is disallowed, uncomment the shell fallback below
+        # run: |
+        #   sudo apt-get update -y
+        #   sudo apt-get install -y python3 python3-venv python3-pip
+        #   python3 -m pip install --upgrade pip
 
-      - name: Install deps (incl dev + openai)
+      - name: Install project (dev)
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
-      - name: Run tests once
-        id: testrun
-        run: |
-          pytest -q --maxfail=25 || echo "failures=true" >> $GITHUB_OUTPUT
-
-      - name: AI-Patch loop (one iteration)
-        if: steps.testrun.outputs.failures == 'true'
+      - name: Run self-healing AI loop
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          MAX_ITERS: "100"
-          PATIENCE: "7"
-          OPENAI_MODEL: "gpt-4o-mini"
-          # propagate manual-trigger flag
-          FORCE_EVOLVE: ${{ github.event.inputs.force-evolve }}
+          FORCE_EVOLVE:   ${{ github.event.inputs.force-evolve }}
         run: |
-          python .github/tools/ai_patch.py
+          python .github/tools/ai_patch_loop.py
 
-      - name: Push commit (if any)
-        if: env.GITHUB_TOKEN != ''
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "🤖 AUTO-FIX via CI"
+      # --- Step 4: push results ---------------------------------------
+      - name: Push commits produced by loop
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name  "github-actions[bot]"
+          if ! git diff --quiet origin/${GITHUB_REF#refs/heads/}; then
+            git push --force-with-lease
+          else
+            echo "No new commits to push."
+          fi
