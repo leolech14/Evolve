@@ -54,10 +54,32 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -e
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name  "github-actions[bot]"
-          if ! git diff --quiet origin/${GITHUB_REF#refs/heads/}; then
-            git push --force-with-lease
+ 
+          # ----------------------------------------------------------
+          # figure out the branch we should push to
+          # ----------------------------------------------------------
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            TARGET_BRANCH="${{ github.head_ref }}"   # e.g. feature/my-branch
+          else
+            TARGET_BRANCH="${GITHUB_REF#refs/heads/}" # e.g. main
+          fi
+
+          # When Actions checks out a specific commit we sit on a detached HEAD.
+          # Create/overwrite the branch so we can push to it.
+          git checkout -B "$TARGET_BRANCH"
+
+          # Only push if there is at least one new commit compared to remote.
+          if git rev-parse --verify "origin/$TARGET_BRANCH" >/dev/null 2>&1; then
+            RANGE="origin/$TARGET_BRANCH..HEAD"
+          else
+            RANGE="HEAD"   # first push of a brand-new branch
+          fi
+
+          if git log --oneline $RANGE | grep .; then
+            git push --force-with-lease origin "$TARGET_BRANCH"
           else
             echo "No new commits to push."
           fi
