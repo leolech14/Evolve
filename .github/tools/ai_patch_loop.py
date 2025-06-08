@@ -22,7 +22,7 @@ import textwrap
 import pathlib
 import shlex
 from typing import Tuple
-import openai
+from openai import OpenAI
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 MAX_ITERS = int(os.getenv("MAX_ITERS", "100"))
@@ -72,14 +72,16 @@ def ask_llm(prompt: str) -> str:
     Returns an empty string on failure so the caller can decide what to do.
     """
     try:
-        rsp = openai.ChatCompletion.create(
+        client = OpenAI()
+        rsp = client.chat.completions.create(
             model=MODEL,
             messages=[{"role": "user", "content": prompt}],
             temperature=0,
             max_tokens=MAX_TOKENS,
         )
         out = rsp.choices[0].message.content or ""
-        if DEBUG_LOG:
+        debug_log = os.getenv("DEBUG_LOG", "").lower() in ("1", "true", "yes")
+        if debug_log:
             print("—— Raw LLM output ———————————————")
             print(out)
             print("———————————————————————————————")
