@@ -66,7 +66,9 @@ def compare(
         if require_goldens:
             raise FileNotFoundError(f"Missing golden CSV for {pdf_path.name}")
         else:
-            print(f"⚠️  Skipping {pdf_path.name}: No golden CSV (use --require-goldens to fail)")
+            print(
+                f"⚠️  Skipping {pdf_path.name}: No golden CSV (use --require-goldens to fail)"
+            )
             return False, 0.0, Decimal("0.00"), Decimal("0.00"), Decimal("0.00")
 
     golden_lines = golden.read_text().splitlines()

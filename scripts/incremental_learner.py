@@ -305,9 +305,9 @@ import hashlib
         for i, pattern in enumerate(high_confidence_patterns):
             const_name = f"RE_LEARNED_{pattern['name'].upper()}_{i}"
             code += f"""
-# {pattern['description']} (confidence: {pattern['confidence']:.1%})
-# Example: {pattern['examples'][0] if pattern['examples'] else 'N/A'}
-{const_name}: Final = re.compile(r"{pattern['regex']}")
+# {pattern["description"]} (confidence: {pattern["confidence"]:.1%})
+# Example: {pattern["examples"][0] if pattern["examples"] else "N/A"}
+{const_name}: Final = re.compile(r"{pattern["regex"]}")
 """
 
         code += '''
@@ -328,7 +328,7 @@ def parse_with_learned_patterns(line: str, year: int = None) -> dict | None:
 
             code += f"""
     
-    # {pattern['description']}
+    # {pattern["description"]}
     m = {const_name}.match(line)
     if m:
         return {handler_name}(m, original_line, year)
@@ -341,7 +341,7 @@ def parse_with_learned_patterns(line: str, year: int = None) -> dict | None:
             code += f'''
 
 def {handler_name}(m, original_line: str, year: int = None) -> dict:
-    """Handle {pattern['description']}"""
+    """Handle {pattern["description"]}"""
     from datetime import date
     
     # Extract common fields with error handling

@@ -177,7 +177,7 @@ def parse_statement_line_enhanced(line: str, year: int | None = None) -> dict | 
         for i, solution in enumerate(solutions[:10]):  # Top 10 patterns
             pattern_var = f"RE_ENHANCED_{solution['name'].upper()}"
             parser_code += f"""
-    {pattern_var}: Final = re.compile(r"{solution['pattern']}")
+    {pattern_var}: Final = re.compile(r"{solution["pattern"]}")
 """
 
         parser_code += """
@@ -188,10 +188,10 @@ def parse_statement_line_enhanced(line: str, year: int | None = None) -> dict | 
         for solution in solutions[:10]:
             pattern_var = f"RE_ENHANCED_{solution['name'].upper()}"
             parser_code += f"""
-    # {solution['description']} (covers {solution['count']} failed lines)
+    # {solution["description"]} (covers {solution["count"]} failed lines)
     m = {pattern_var}.match(line)
     if m:
-        return _handle_{solution['action']}(m, original_line, year)
+        return _handle_{solution["action"]}(m, original_line, year)
 """
 
         parser_code += """
@@ -204,10 +204,10 @@ def parse_statement_line_enhanced(line: str, year: int | None = None) -> dict | 
         for solution in solutions[:10]:
             parser_code += f'''
 
-def _handle_{solution['action']}(m, original_line: str, year: int | None = None) -> dict:
-    """Handle {solution['description']}."""
-    # Custom logic for {solution['name']} pattern
-    # Example line: {solution['example']}
+def _handle_{solution["action"]}(m, original_line: str, year: int | None = None) -> dict:
+    """Handle {solution["description"]}."""
+    # Custom logic for {solution["name"]} pattern
+    # Example line: {solution["example"]}
     
     # Extract common fields
     card_last4 = "0000"  # Default since these may not have card info

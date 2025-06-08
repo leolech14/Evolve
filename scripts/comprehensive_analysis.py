@@ -273,7 +273,7 @@ def main():
             )[:5]
         ):
             print(
-                f"{i+1}. Structure: {pattern['structure']} (appears {pattern['count']} times)"
+                f"{i + 1}. Structure: {pattern['structure']} (appears {pattern['count']} times)"
             )
             print(f"   Example: {pattern['examples'][0]}")
 

@@ -62,7 +62,7 @@ def analyze_pdf_for_ai(pdf_path: Path) -> dict:
             if accuracy < 0.95:
                 result["parsing_status"] = "NEEDS_IMPROVEMENT"
                 result["diagnostic_summary"] = (
-                    f"Missing {delta:.2f} BRL ({(1-accuracy)*100:.1f}% of total)"
+                    f"Missing {delta:.2f} BRL ({(1 - accuracy) * 100:.1f}% of total)"
                 )
             else:
                 result["parsing_status"] = "GOOD"
