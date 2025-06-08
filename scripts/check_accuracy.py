@@ -27,7 +27,7 @@ DATA_DIR = ROOT / "tests" / "data"
 
 
 def compare(
-    pdf_path: Path, out_dir: Path | None = None
+    pdf_path: Path, out_dir: Path | None = None, require_goldens: bool = False
 ) -> tuple[bool, float, Decimal, Decimal, Decimal]:
     """Run pdf_to_csv on *pdf_path* and compare to its golden CSV.
 
@@ -63,7 +63,11 @@ def compare(
 
     golden = pdf_path.with_name(f"golden_{pdf_path.stem.split('_')[-1]}.csv")
     if not golden.exists():
-        raise FileNotFoundError(f"Missing golden CSV for {pdf_path.name}")
+        if require_goldens:
+            raise FileNotFoundError(f"Missing golden CSV for {pdf_path.name}")
+        else:
+            print(f"⚠️  Skipping {pdf_path.name}: No golden CSV (use --require-goldens to fail)")
+            return False, 0.0, Decimal("0.00"), Decimal("0.00"), Decimal("0.00")
 
     golden_lines = golden.read_text().splitlines()
     diff = difflib.unified_diff(
@@ -119,6 +123,11 @@ def main() -> None:
         default=None,
         help="directory to write generated CSV files",
     )
+    parser.add_argument(
+        "--require-goldens",
+        action="store_true",
+        help="fail if any PDF is missing a golden CSV (default: skip)",
+    )
     args = parser.parse_args()
 
     pdfs = sorted(DATA_DIR.glob("[iI]tau_*.pdf"))
@@ -137,7 +146,7 @@ def main() -> None:
         print(f"\nProcessing {idx}/{total}: {pdf.name}")
         try:
             mis, pct, delta, csv_total, pdf_total = compare(
-                pdf, Path(args.csv_dir) if args.csv_dir else None
+                pdf, Path(args.csv_dir) if args.csv_dir else None, args.require_goldens
             )
         except FileNotFoundError as exc:
             print(exc)

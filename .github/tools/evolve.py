@@ -64,6 +64,9 @@ def collect_context() -> dict:
         "coverage": "",
         "lint": "",
         "accuracy": {},
+        "invariant_scores": {},
+        "hard_golden_status": {},
+        "ai_focused_accuracy": {},
     }
 
     # Get test output
@@ -76,13 +79,29 @@ def collect_context() -> dict:
     if lint_file.exists():
         context["lint"] = lint_file.read_text()
 
-    # Get accuracy results
+    # Get traditional accuracy results (legacy)
     accuracy_file = DIAGNOSTICS / "accuracy.json"
     if accuracy_file.exists():
         try:
             context["accuracy"] = json.loads(accuracy_file.read_text())
         except Exception:
             context["errors"].append("Failed to read accuracy results")
+
+    # Get NEW invariant scores (primary AI feedback)
+    invariant_file = DIAGNOSTICS / "invariant_scores.json"
+    if invariant_file.exists():
+        try:
+            context["invariant_scores"] = json.loads(invariant_file.read_text())
+        except Exception:
+            context["errors"].append("Failed to read invariant scores")
+
+    # Get AI-focused accuracy analysis
+    ai_accuracy_file = DIAGNOSTICS / "ai_focused_accuracy.json"
+    if ai_accuracy_file.exists():
+        try:
+            context["ai_focused_accuracy"] = json.loads(ai_accuracy_file.read_text())
+        except Exception:
+            context["errors"].append("Failed to read AI-focused accuracy")
 
     # Get all tracked Python files (not just changed ones)
     _, output = run_command(["git", "ls-files", "*.py"])
@@ -375,21 +394,39 @@ def main() -> int:
         print("No Python files found")
         return 0
 
-    # Prepare prompt
+    # Prepare enhanced prompt with new training signals
     prompt = [
-        "You are an AI code improvement assistant. "
-        "Analyze the failures and suggest fixes:",
+        "You are an AI parser improvement specialist using the new Hard Goldens + Soft Invariants strategy. "
+        "Your goal is to improve Itaú statement parsing from current accuracy to 99% financial precision.",
         "",
-        "=== Test Output ===",
-        context["tests"],
+        "=== TRAINING SIGNAL ANALYSIS ===",
         "",
-        "=== Lint Output ===",
-        context["lint"],
+        "HARD GOLDENS (Must maintain 100% exact match):",
+        "- Itau_2024-10.pdf: MUST remain exactly matching golden CSV",
+        "- Itau_2025-05.pdf: MUST remain exactly matching golden CSV",
         "",
-        "=== Accuracy Results ===",
+        "INVARIANT SCORES (Primary improvement target):",
+        json.dumps(context["invariant_scores"], indent=2),
+        "",
+        "FINANCIAL ACCURACY BY PDF:",
+        json.dumps(context["ai_focused_accuracy"], indent=2),
+        "",
+        "=== IMPROVEMENT FOCUS ===",
+        "Priority: Financial total matching (PDF total vs parsed CSV total)",
+        "Method: Enhance regex patterns in pdf_to_csv.py to capture missing transactions",
+        "",
+        "=== Traditional Metrics (Reference Only) ===",
+        "",
+        "Test Output:",
+        context["tests"][:1000],  # Truncate for context
+        "",
+        "Lint Output:",
+        context["lint"][:500],    # Truncate for context
+        "",
+        "Legacy Accuracy:",
         json.dumps(context["accuracy"], indent=2),
         "",
-        "=== Changed Files ===",
+        "=== Code Files to Improve ===",
     ]
 
     for file in context["files"]:
@@ -405,17 +442,30 @@ def main() -> int:
 
     prompt.extend(
         [
+            "IMPROVEMENT STRATEGY:",
+            "",
+            "1. PRESERVE Hard Goldens: Ensure Itau_2024-10.pdf and Itau_2025-05.pdf maintain exact CSV output",
+            "2. TARGET Invariant Scores: Focus on PDFs with low financial accuracy scores",
+            "3. ENHANCE Regex Patterns: Add new patterns to capture missing transaction types",
+            "4. VALIDATE Financial Totals: Ensure PDF total matches parsed CSV total",
+            "",
+            "SPECIFIC TARGETS (from financial accuracy analysis):",
+            "- Worst performers need new transaction patterns",
+            "- Missing amounts indicate unparsed transaction lines", 
+            "- Focus on transaction formats not captured by current regex",
+            "",
             "Please suggest fixes in the following format:",
             "FILE: path/to/file.py",
             "```python",
             "complete fixed file content",
             "```",
             "",
-            "Focus on:",
-            "1. Fixing test failures",
-            "2. Addressing lint issues",
-            "3. Improving parser accuracy",
-            "4. Maintaining code style",
+            "PRIORITY ORDER:",
+            "1. Add missing regex patterns for unparsed transactions",
+            "2. Fix financial total extraction patterns",
+            "3. Improve transaction categorization",
+            "4. Maintain hard golden compatibility",
+            "5. Address any lint/test issues",
         ]
     )
 

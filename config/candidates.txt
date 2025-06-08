@@ -1,0 +1,14 @@
+# Candidate PDFs - Validated using invariant testing
+# These PDFs use property-based validation for AI training feedback
+Itau_2024-05.pdf
+Itau_2024-06.pdf
+Itau_2024-07.pdf
+Itau_2024-08.pdf
+Itau_2024-09.pdf
+Itau_2024-11.pdf
+Itau_2024-12.pdf
+Itau_2025-01.pdf
+Itau_2025-02.pdf
+Itau_2025-03.pdf
+Itau_2025-04.pdf
+itau_2025-06.pdf

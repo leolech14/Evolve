@@ -72,7 +72,26 @@ jobs:
                  --cov-report=term-missing \
                  --cov-fail-under=90 | tee diagnostics/test.txt
 
-      - name: Check accuracy
+      # Two-tier validation system
+      - name: Parse all PDFs
+        id: parse
+        continue-on-error: true
+        run: |
+          python scripts/parse_all.py --out csv_output | tee diagnostics/parse_all.txt
+
+      - name: Check hard goldens (MUST PASS)
+        id: hard_goldens
+        continue-on-error: true
+        run: |
+          python scripts/check_hard_goldens.py | tee diagnostics/hard_goldens.txt
+
+      - name: Run invariant tests (RICH FEEDBACK)
+        id: invariants
+        continue-on-error: true
+        run: |
+          python -m pytest tests/test_invariants.py --csv-dir csv_output -v | tee diagnostics/invariants.txt
+
+      - name: Legacy accuracy check
         id: accuracy
         continue-on-error: true
         run: |
@@ -89,6 +108,8 @@ jobs:
             (steps.pre-commit.outcome == 'failure' ||
              steps.lint.outcome == 'failure' ||
              steps.tests.outcome == 'failure' ||
+             steps.hard_goldens.outcome == 'failure' ||
+             steps.invariants.outcome == 'failure' ||
              steps.accuracy.outcome == 'failure') &&
             github.event_name != 'pull_request'
           )
@@ -113,6 +134,9 @@ jobs:
                  --cov-report=xml \
                  --cov-report=term-missing \
                  --cov-fail-under=90
+          python scripts/parse_all.py --out csv_output
+          python scripts/check_hard_goldens.py --fail-fast
+          python -m pytest tests/test_invariants.py --csv-dir csv_output -v
           python scripts/check_accuracy.py --threshold 99
 
       # Artifacts

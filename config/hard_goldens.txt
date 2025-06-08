@@ -1,0 +1,4 @@
+# Hard Golden Standards - Must pass exact diff validation
+# These PDFs have verified, manually-reviewed CSV outputs
+Itau_2024-10.pdf
+Itau_2025-05.pdf
