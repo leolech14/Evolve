@@ -201,7 +201,6 @@ def main() -> None:
             
             # Load and display detailed metrics
             try:
-                import json
                 with open("diagnostics/ai_focused_accuracy.json", "r") as f:
                     accuracy_data = json.load(f)
                 
@@ -450,7 +449,6 @@ def main() -> None:
                 code, accuracy_output = run("python scripts/ai_focused_accuracy.py")
                 if code == 0:
                     try:
-                        import json
                         with open("diagnostics/ai_focused_accuracy.json", "r") as f:
                             new_accuracy_data = json.load(f)
                         
@@ -522,7 +520,6 @@ def main() -> None:
         code, accuracy_output = run("python scripts/ai_focused_accuracy.py")
         if code == 0:
             try:
-                import json
                 with open("diagnostics/ai_focused_accuracy.json", "r") as f:
                     final_accuracy_data = json.load(f)
                 
