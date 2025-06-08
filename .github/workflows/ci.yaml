@@ -141,22 +141,37 @@ jobs:
         env:
           LOG_WEBHOOK_URL: ${{ secrets.LOG_WEBHOOK_URL }}
         run: |
+          echo "🔍 DEBUG: Webhook step starting"
+          echo "🔍 LOG_WEBHOOK_URL configured: $([ -n "$LOG_WEBHOOK_URL" ] && echo "YES" || echo "NO")"
+          echo "🔍 Diagnostics directory contents:"
+          ls -la diagnostics/ || echo "❌ diagnostics/ directory not found"
+          
           # envie todos os logs capturados na pasta diagnostics
           if [ -n "$LOG_WEBHOOK_URL" ]; then
+            echo "📡 Webhook URL configured, sending logs..."
+            found_files=0
             for f in diagnostics/*.txt; do
               if [ -f "$f" ]; then
-                echo "Sending log: $f"
-                curl -sSf \
+                found_files=$((found_files + 1))
+                echo "📤 Sending log: $f (size: $(stat -f%z "$f" 2>/dev/null || stat -c%s "$f" 2>/dev/null || echo "unknown") bytes)"
+                
+                # Remove -f flag to see HTTP errors, add timeout
+                if curl -sS --connect-timeout 10 --max-time 30 \
                   -X POST \
                   -H "X-Repo-Key: ${{ github.repository_owner }}-${{ github.event.repository.name }}" \
                   -H "X-Branch: ${{ github.ref_name }}" \
                   -H "X-Run-ID: ${{ github.run_id }}" \
                   --data-binary "@${f}" \
-                  "$LOG_WEBHOOK_URL" || echo "⚠️ falhou envio ${f}"
+                  "$LOG_WEBHOOK_URL"; then
+                  echo "✅ Successfully sent: $f"
+                else
+                  echo "❌ Failed to send: $f"
+                fi
               fi
             done
+            echo "📊 Total files processed: $found_files"
           else
-            echo "LOG_WEBHOOK_URL not configured, skipping webhook"
+            echo "❌ LOG_WEBHOOK_URL not configured, skipping webhook"
           fi
 
       # Summary
