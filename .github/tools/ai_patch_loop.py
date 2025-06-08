@@ -58,17 +58,28 @@ def failing_snippet(raw: str, cap: int = 4000) -> str:
 
 
 def ask_llm(prompt: str) -> str:
-    resp = openai.chat.completions.create(
-        model=MODEL,
-        messages=[
-            {"role": "system",
-             "content": (f"Return ONLY a unified diff, git apply compatible, "
-                         f"touching max {MAX_LINES} lines. No prose.")},
-            {"role": "user", "content": prompt},
-        ],
-        temperature=0,
-    )
-    return resp.choices[0].message.content.strip()
+    """
+    Call OpenAI and return the assistant content.
+    Prints full error info when the request fails so the CI log tells us why.
+    Returns an empty string on failure so the caller can decide what to do.
+    """
+    try:
+        rsp = openai.ChatCompletion.create(
+            model=MODEL,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0,
+            max_tokens=MAX_TOKENS,
+        )
+        out = rsp.choices[0].message.content or ""
+        if DEBUG_LOG:
+            print("—— Raw LLM output ———————————————")
+            print(out)
+            print("———————————————————————————————")
+        return out
+    except Exception as err:  # pylint: disable=broad-except
+        print("⚠️  OpenAI request failed:")
+        print(err)
+        return ""
 
 
 def apply_patch(diff: str) -> bool:

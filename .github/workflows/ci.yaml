@@ -45,6 +45,8 @@ jobs:
       - name: Run self-healing AI loop
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL:   gpt-4.1
+          MAX_TOKENS:     "4096"
           FORCE_EVOLVE:   ${{ github.event.inputs.force-evolve }}
         run: |
           python .github/tools/ai_patch_loop.py
