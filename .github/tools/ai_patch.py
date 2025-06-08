@@ -9,7 +9,13 @@ The script is idempotent and contains no project-specific logic.
 """
 
 from __future__ import annotations
-import json, os, re, subprocess, sys, textwrap, tempfile, pathlib, shlex
+import os
+import subprocess
+import sys
+import textwrap
+import tempfile
+import pathlib
+import shlex
 from typing import Tuple, List
 import openai  #  pip install openai>=1.0
 

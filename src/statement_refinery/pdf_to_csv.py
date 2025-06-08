@@ -27,9 +27,11 @@ from typing import Final, Iterator, List, Optional
 # ===== ENHANCED TEXT CLEANING FROM CODEX.PY =====
 LEAD_SYM = ">@§$Z)_•*®«» "
 
+
 def strip_pua(s: str) -> str:
     """Remove Private Use Area glyphs (icons)"""
-    return re.sub('[\ue000-\uf8ff]', '', s)
+    return re.sub("[\ue000-\uf8ff]", "", s)
+
 
 def clean_line(raw: str) -> str:
     """Enhanced line cleaning from codex.py"""
@@ -37,6 +39,7 @@ def clean_line(raw: str) -> str:
     raw = raw.lstrip(LEAD_SYM).replace("_", " ")
     raw = re.sub(r"\s{2,}", " ", raw)
     return raw.strip()
+
 
 # Amount below which transactions are considered adjustments
 ADJUSTMENT_THRESHOLD: Final = Decimal("0.30")
@@ -73,14 +76,17 @@ RE_FX_LINE2: Final = re.compile(
 
 # Better payment detection from codex.py
 RE_PAYMENT_ROBUST: Final = re.compile(
-    r"^(?P<date>\d{1,3}/\d{1,2}(?:/\d{4})?)\s+PAGAMENTO.*?(?P<amt>-?\s*[\d.,]+)\s*$", re.I
+    r"^(?P<date>\d{1,3}/\d{1,2}(?:/\d{4})?)\s+PAGAMENTO.*?(?P<amt>-?\s*[\d.,]+)\s*$",
+    re.I,
 )
 
 # Improved date pattern with tolerance
 RE_DATE_TOLERANT: Final = re.compile(r"(?P<d>\d{1,3})/(?P<m>\d{1,2})(?:/(?P<y>\d{4}))?")
 
-# Better installment patterns from codex.py  
-RE_INSTALLMENT_ROBUST: Final = re.compile(r"(\d{1,2})\s*/\s*(\d{1,2})|(\d{1,2})\s*x\s*R\$|(\d{1,2})\s*de\s*(\d{1,2})", re.I)
+# Better installment patterns from codex.py
+RE_INSTALLMENT_ROBUST: Final = re.compile(
+    r"(\d{1,2})\s*/\s*(\d{1,2})|(\d{1,2})\s*x\s*R\$|(\d{1,2})\s*de\s*(\d{1,2})", re.I
+)
 
 # Currency conversion rate lines
 RE_CURRENCY_CONVERSION: Final = re.compile(
@@ -229,9 +235,14 @@ def parse_amount(amount_str: Optional[str]) -> Optional[Decimal]:
         logging.error(f"Failed to parse amount '{amount_str}': {e}")
         return None
 
+
 def parse_amount_flexible(amount_str: str) -> Decimal:
     """Enhanced amount parsing from codex.py - more flexible"""
-    return Decimal(re.sub(r"[^\d,\-]", "", amount_str.replace(' ', '')).replace('.', '').replace(',', '.'))
+    return Decimal(
+        re.sub(r"[^\d,\-]", "", amount_str.replace(" ", ""))
+        .replace(".", "")
+        .replace(",", ".")
+    )
 
 
 def classify_transaction(description: str, amount: Optional[Decimal] = None) -> str:
@@ -271,7 +282,7 @@ def extract_installment_info(description: str) -> tuple[int | None, int | None]:
         seq = int(match.group(1))
         total = int(match.group(2))
         return seq, total
-    
+
     # Try the robust pattern from codex.py
     match = RE_INSTALLMENT_ROBUST.search(description)
     if match:
@@ -284,7 +295,7 @@ def extract_installment_info(description: str) -> tuple[int | None, int | None]:
         else:
             seq, total = None, None
         return seq, total
-    
+
     return None, None
 
 
@@ -611,7 +622,7 @@ def parse_statement_line(line: str, year: int | None = None) -> dict | None:
         }
 
     # ===== ROBUST PAYMENT DETECTION FROM CODEX.PY =====
-    
+
     # Try robust payment pattern as fallback
     mp = RE_PAYMENT_ROBUST.match(line_no_card)
     if mp and mp.group("amt"):
@@ -621,7 +632,7 @@ def parse_statement_line(line: str, year: int | None = None) -> dict | None:
                 post_date = _iso_date(mp.group("date"), year)
             except ValueError:
                 return None
-            
+
             return {
                 "card_last4": card_last4,
                 "post_date": post_date,

@@ -89,8 +89,8 @@ def main() -> None:
     # run baseline tests
     code, out = run_tests()
     baseline_fail = test_fail_count(out)
-    print(f"Baseline failures: {baseline_fail}")
-    if baseline_fail == 0:
+    FORCE_EVOLVE = os.getenv("FORCE_EVOLVE", "false").lower() in {"1", "true", "yes"}
+    if baseline_fail == 0 and not FORCE_EVOLVE:
         print("Nothing to fix 🎉")
         sys.exit(0)
 

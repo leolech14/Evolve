@@ -1,0 +1,93 @@
+diff --git a/pyproject.toml b/pyproject.toml
+index 4e5f6a7..7a7a7a7 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@
+ [project.dependencies]
+ tabulate = "*"
+ 
+-[project.optional-dependencies]
+-dev = [
+-    "pytest",
+-    "ruff",
+-    "black",
+-    "mypy",
+-    "openai>=1.0",
+-    "pdfplumber>=0.10",
+-]
+-
+-# pdfplumber is required **only** when the code needs to parse
+-# a fresh PDF without a golden CSV.  We keep it optional for
+-# environments that cannot hit PyPI, but list it explicitly so
+-# users can `pip install "statement_refinery[pdf]"` to force it.
+-[project.optional-dependencies.pdf]
+-pdfplumber = ">=0.10"
++# ------------ optional extras ---------------- #
++[project.optional-dependencies]
++dev = [
++  "pytest",
++  "ruff",
++  "black",
++  "mypy",
++  "openai>=1.0",
++  "pdfplumber>=0.10",
++]
++pdf = [
++  "pdfplumber>=0.10",
++]
++
++# ------------ console scripts ---------------- #
++[project.scripts]
++pdf-to-csv = "statement_refinery.pdf_to_csv:main"
++statement-self-check = "statement_refinery.__init__:_self_check_cli"
+diff --git a/src/statement_refinery/__init__.py b/src/statement_refinery/__init__.py
+index 1a1a1a1..2b2b2b2 100644
+--- a/src/statement_refinery/__init__.py
++++ b/src/statement_refinery/__init__.py
+@@
+-from .pdf_to_csv import main as pdf_to_csv_main  # noqa: F401
++# Re-export CLI entry point under a clearer name so `ruff` sees it used
++from .pdf_to_csv import main as pdf_to_csv  # noqa: F401
+@@
+-__all__ = [
+-    "pdf_to_csv_main",
+-    "extract_summary",
+-    "pdf_fitness",
+-]
++__all__ = [
++    "pdf_to_csv",
++    "extract_summary",
++    "pdf_fitness",
++]
+diff --git a/src/statement_refinery/summary.py b/src/statement_refinery/summary.py
+index 3333333..4444444 100644
+--- a/src/statement_refinery/summary.py
++++ b/src/statement_refinery/summary.py
+@@
+-import pdfplumber
++try:  # lazy optional import
++    import pdfplumber
++except ModuleNotFoundError:  # pragma: no cover
++    pdfplumber = None
+@@
+-    pdf_path = Path(path)
++    if pdfplumber is None:  # pragma: no cover
++        raise RuntimeError(
++            "pdfplumber is required for summary extraction. "
++            "Install with: pip install 'statement_refinery[pdf]'"
++        )
++
++    pdf_path = Path(path)
+diff --git a/tests/test_summary_extractor.py b/tests/test_summary_extractor.py
+index 6666666..7777777 100644
+--- a/tests/test_summary_extractor.py
++++ b/tests/test_summary_extractor.py
+@@
+-import decimal
++from decimal import Decimal
+@@
+-    ("tests/data/2024-10.pdf", decimal.Decimal("4875.20")),
+-    ("tests/data/2025-05.pdf", decimal.Decimal("3120.45")),
++    ("tests/data/2024-10.pdf", Decimal("4875.20")),
++    ("tests/data/2025-05.pdf", Decimal("3120.45")),
+ ]

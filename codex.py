@@ -11,10 +11,10 @@ import datetime
 import tracemalloc
 import time
 import hashlib
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal
 from pathlib import Path
-from collections import Counter, defaultdict
-from datetime import datetime, date
+from collections import Counter
+from datetime import datetime
 
 __version__ = "0.12.0"
 DATE_FMT_OUT = "%Y-%m-%d"
