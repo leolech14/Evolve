@@ -13,6 +13,7 @@ SUMMARY_FIELDS = {
 
 BRL = re.compile(r"-?\d+\.\d{2}")
 
+
 def extract(path: str | Path) -> dict[str, Decimal]:
     """Returns {'total_due': Decimal(...), 'domestic_total': ... , …}"""
     totals: dict[str, Decimal] = {}

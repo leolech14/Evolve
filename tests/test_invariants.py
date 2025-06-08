@@ -20,7 +20,6 @@ from statement_refinery.pdf_to_csv import parse_pdf
 from statement_refinery.validation import (
     extract_total_from_pdf,
     calculate_fitness_score,
-    extract_statement_totals
 )
 
 
@@ -61,17 +60,17 @@ class InvariantResults:
     def save_report(self, output_path: Path):
         """Save detailed report to JSON file with fitness scores."""
         self.calculate_scores()
-        
+
         # Calculate fitness-based metrics
         overall_fitness = 0.0
         fitness_count = 0
         category_performance = {}
-        
+
         for pdf_name, fitness_data in self.fitness_scores.items():
             if "overall" in fitness_data:
                 overall_fitness += fitness_data["overall"]
                 fitness_count += 1
-            
+
             # Track category performance
             for key, value in fitness_data.items():
                 if key.endswith("_accuracy") and isinstance(value, (int, float)):
@@ -79,12 +78,12 @@ class InvariantResults:
                     if category not in category_performance:
                         category_performance[category] = []
                     category_performance[category].append(value)
-        
+
         avg_fitness = overall_fitness / fitness_count if fitness_count > 0 else 0.0
         avg_category_scores = {}
         for category, scores in category_performance.items():
             avg_category_scores[category] = sum(scores) / len(scores) if scores else 0.0
-        
+
         report = {
             "overall_score": self.overall_score(),
             "pdf_scores": self.scores,
@@ -93,7 +92,9 @@ class InvariantResults:
                 "average_overall_fitness": avg_fitness,
                 "pdf_fitness_scores": self.fitness_scores,
                 "category_performance": avg_category_scores,
-                "worst_categories": sorted(avg_category_scores.items(), key=lambda x: x[1])[:5]
+                "worst_categories": sorted(
+                    avg_category_scores.items(), key=lambda x: x[1]
+                )[:5],
             },
             "summary": {
                 "total_pdfs": len(self.results),
@@ -101,7 +102,13 @@ class InvariantResults:
                 "avg_fitness": avg_fitness,
                 "passing_pdfs": len([s for s in self.scores.values() if s >= 95.0]),
                 "failing_pdfs": len([s for s in self.scores.values() if s < 70.0]),
-                "high_fitness_pdfs": len([f for f in self.fitness_scores.values() if f.get("overall", -999) > -1.0]),
+                "high_fitness_pdfs": len(
+                    [
+                        f
+                        for f in self.fitness_scores.values()
+                        if f.get("overall", -999) > -1.0
+                    ]
+                ),
             },
         }
         output_path.write_text(json.dumps(report, indent=2))
@@ -169,7 +176,11 @@ def test_invariant_financial_totals(request):
                 with open(csv_path, "r", encoding="utf-8") as f:
                     reader = csv.DictReader(f, delimiter=";")
                     csv_total = sum(Decimal(row["amount_brl"]) for row in reader)
-                    rows = list(csv.DictReader(open(csv_path, "r", encoding="utf-8"), delimiter=";"))
+                    rows = list(
+                        csv.DictReader(
+                            open(csv_path, "r", encoding="utf-8"), delimiter=";"
+                        )
+                    )
             else:
                 # Parse directly if CSV doesn't exist
                 rows = parse_pdf(pdf_path, use_golden_if_available=False)
@@ -184,14 +195,18 @@ def test_invariant_financial_totals(request):
             try:
                 fitness_data = calculate_fitness_score(pdf_path, rows)
                 invariant_results.record_fitness(pdf_name, fitness_data)
-                
+
                 overall_fitness = fitness_data.get("overall", 0)
                 print(f"🧬 {pdf_name}: Fitness {overall_fitness:.2f}")
-                
+
                 # Show category breakdowns for failing cases
                 if overall_fitness < -1.0:  # Poor fitness
                     for key, value in fitness_data.items():
-                        if key.endswith("_accuracy") and isinstance(value, (int, float)) and value < 95.0:
+                        if (
+                            key.endswith("_accuracy")
+                            and isinstance(value, (int, float))
+                            and value < 95.0
+                        ):
                             category = key.replace("_accuracy", "")
                             print(f"   📊 {category}: {value:.1f}% accuracy")
             except Exception as e:
@@ -463,16 +478,26 @@ def save_invariant_report(request):
     overall = invariant_results.overall_score()
     print("\n📊 INVARIANT SUMMARY")
     print(f"Overall Score: {overall:.1f}%")
-    
+
     # Calculate fitness summary
     if invariant_results.fitness_scores:
-        avg_fitness = sum(f.get("overall", 0) for f in invariant_results.fitness_scores.values()) / len(invariant_results.fitness_scores)
+        avg_fitness = sum(
+            f.get("overall", 0) for f in invariant_results.fitness_scores.values()
+        ) / len(invariant_results.fitness_scores)
         print(f"Average Fitness: {avg_fitness:.2f}")
-        
+
         # Count high-fitness PDFs
-        high_fitness_count = len([f for f in invariant_results.fitness_scores.values() if f.get("overall", -999) > -1.0])
-        print(f"High Fitness PDFs: {high_fitness_count}/{len(invariant_results.fitness_scores)}")
-    
+        high_fitness_count = len(
+            [
+                f
+                for f in invariant_results.fitness_scores.values()
+                if f.get("overall", -999) > -1.0
+            ]
+        )
+        print(
+            f"High Fitness PDFs: {high_fitness_count}/{len(invariant_results.fitness_scores)}"
+        )
+
     print("Individual Scores:")
     for pdf_name, score in sorted(invariant_results.scores.items()):
         status = "✅" if score >= 95 else "⚠️" if score >= 70 else "❌"

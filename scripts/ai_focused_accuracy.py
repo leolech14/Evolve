@@ -18,10 +18,10 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from statement_refinery.pdf_to_csv import parse_pdf
 from statement_refinery.validation import (
-    extract_total_from_pdf, 
+    extract_total_from_pdf,
     calculate_csv_total,
     extract_statement_totals,
-    calculate_fitness_score
+    calculate_fitness_score,
 )
 
 DATA_DIR = ROOT / "tests" / "data"
@@ -68,7 +68,7 @@ def analyze_pdf_for_ai(pdf_path: Path) -> dict:
         except Exception as e:
             result["financial_accuracy"] = {
                 "error": str(e),
-                "status": "PDF_TOTAL_UNAVAILABLE"
+                "status": "PDF_TOTAL_UNAVAILABLE",
             }
 
         # NEW: Multi-category fitness scoring
@@ -80,7 +80,11 @@ def analyze_pdf_for_ai(pdf_path: Path) -> dict:
             statement_totals = extract_statement_totals(pdf_path)
             result["category_breakdown"] = {
                 "pdf_totals": {k: float(v) for k, v in statement_totals.items()},
-                "fitness_deltas": {k: -v for k, v in fitness_scores.items() if not k.endswith("_accuracy") and k != "error"}
+                "fitness_deltas": {
+                    k: -v
+                    for k, v in fitness_scores.items()
+                    if not k.endswith("_accuracy") and k != "error"
+                },
             }
         except Exception as e:
             result["category_breakdown"] = {"error": str(e)}
@@ -90,29 +94,43 @@ def analyze_pdf_for_ai(pdf_path: Path) -> dict:
         for category, score in fitness_scores.items():
             if category.endswith("_accuracy") and isinstance(score, (int, float)):
                 if score < 95.0:  # Less than 95% accuracy
-                    improvement_targets.append({
-                        "category": category.replace("_accuracy", ""),
-                        "accuracy": score,
-                        "priority": "HIGH" if score < 80.0 else "MEDIUM"
-                    })
-        
+                    improvement_targets.append(
+                        {
+                            "category": category.replace("_accuracy", ""),
+                            "accuracy": score,
+                            "priority": "HIGH" if score < 80.0 else "MEDIUM",
+                        }
+                    )
+
         result["improvement_targets"] = improvement_targets
 
         # Overall status determination
         overall_fitness = fitness_scores.get("overall", 0)
         if overall_fitness > -0.5:  # Within 0.50 BRL total error
             result["parsing_status"] = "GOOD"
-            result["diagnostic_summary"] = f"High accuracy (fitness: {overall_fitness:.2f})"
+            result["diagnostic_summary"] = (
+                f"High accuracy (fitness: {overall_fitness:.2f})"
+            )
         elif overall_fitness > -5.0:  # Within 5.00 BRL total error
             result["parsing_status"] = "NEEDS_IMPROVEMENT"
-            worst_category = min(improvement_targets, key=lambda x: x["accuracy"]) if improvement_targets else None
+            worst_category = (
+                min(improvement_targets, key=lambda x: x["accuracy"])
+                if improvement_targets
+                else None
+            )
             if worst_category:
-                result["diagnostic_summary"] = f"Focus on {worst_category['category']} patterns ({worst_category['accuracy']:.1f}% accuracy)"
+                result["diagnostic_summary"] = (
+                    f"Focus on {worst_category['category']} patterns ({worst_category['accuracy']:.1f}% accuracy)"
+                )
             else:
-                result["diagnostic_summary"] = f"Minor parsing gaps (fitness: {overall_fitness:.2f})"
+                result["diagnostic_summary"] = (
+                    f"Minor parsing gaps (fitness: {overall_fitness:.2f})"
+                )
         else:
             result["parsing_status"] = "MAJOR_ISSUES"
-            result["diagnostic_summary"] = f"Significant parsing failures (fitness: {overall_fitness:.2f})"
+            result["diagnostic_summary"] = (
+                f"Significant parsing failures (fitness: {overall_fitness:.2f})"
+            )
 
     except Exception as e:
         result["parsing_status"] = "PARSING_FAILED"
@@ -145,25 +163,30 @@ def main():
                 print(f"   ❌ BROKEN BASELINE: {result['diagnostic_summary']}")
         else:
             print(f"🎯 TARGET: {pdf.name}")
-            
+
             # Show fitness-based analysis
             if result["fitness_scores"]:
                 overall_fitness = result["fitness_scores"].get("overall", 0)
                 print(f"   🧬 Overall Fitness: {overall_fitness:.2f}")
-                
+
                 # Show category-specific issues
                 if result["improvement_targets"]:
                     for target in result["improvement_targets"]:
                         priority_emoji = "🔥" if target["priority"] == "HIGH" else "⚠️"
-                        print(f"   {priority_emoji} {target['category']}: {target['accuracy']:.1f}% accuracy")
+                        print(
+                            f"   {priority_emoji} {target['category']}: {target['accuracy']:.1f}% accuracy"
+                        )
                 else:
-                    print(f"   ✅ All categories > 95% accuracy")
-            
+                    print("   ✅ All categories > 95% accuracy")
+
             # Legacy accuracy display for compatibility
-            if result["financial_accuracy"] and "accuracy_percentage" in result["financial_accuracy"]:
+            if (
+                result["financial_accuracy"]
+                and "accuracy_percentage" in result["financial_accuracy"]
+            ):
                 acc = result["financial_accuracy"]["accuracy_percentage"]
                 print(f"   📊 Legacy Accuracy: {acc:.1f}%")
-            
+
             print(f"   📝 {result['diagnostic_summary']}")
 
             if result["parsing_status"] in ["NEEDS_IMPROVEMENT", "MAJOR_ISSUES"]:
@@ -176,27 +199,40 @@ def main():
 
     if training_targets:
         print("\n📝 PRIORITY TARGETS FOR AI IMPROVEMENT:")
-        
+
         # Sort by overall fitness (worst first)
         for target in sorted(
             training_targets,
-            key=lambda x: x["fitness_scores"].get("overall", 0) if x["fitness_scores"] else 0
+            key=lambda x: (
+                x["fitness_scores"].get("overall", 0) if x["fitness_scores"] else 0
+            ),
         ):
-            fitness = target["fitness_scores"].get("overall", 0) if target["fitness_scores"] else 0
+            fitness = (
+                target["fitness_scores"].get("overall", 0)
+                if target["fitness_scores"]
+                else 0
+            )
             print(f"   • {target['pdf_name']}: Overall Fitness {fitness:.2f}")
-            
+
             # Show specific category targets
             if target["improvement_targets"]:
                 for category_target in target["improvement_targets"]:
-                    priority_icon = "🔥" if category_target["priority"] == "HIGH" else "⚠️"
-                    print(f"     {priority_icon} {category_target['category']}: {category_target['accuracy']:.1f}% accuracy")
-            
+                    priority_icon = (
+                        "🔥" if category_target["priority"] == "HIGH" else "⚠️"
+                    )
+                    print(
+                        f"     {priority_icon} {category_target['category']}: {category_target['accuracy']:.1f}% accuracy"
+                    )
+
             # Legacy accuracy for reference
-            if target["financial_accuracy"] and "accuracy_percentage" in target["financial_accuracy"]:
+            if (
+                target["financial_accuracy"]
+                and "accuracy_percentage" in target["financial_accuracy"]
+            ):
                 acc = target["financial_accuracy"]["accuracy_percentage"]
                 delta = target["financial_accuracy"].get("delta", 0)
                 print(f"     📊 Legacy: {acc:.1f}% (Δ {delta:.2f} BRL)")
-            
+
             print()  # Empty line for readability
 
     # Save AI-focused results

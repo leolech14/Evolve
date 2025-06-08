@@ -9,7 +9,7 @@ from typing import Any, Dict, Iterable, List, Tuple
 
 __all__ = [
     "extract_total_from_pdf",
-    "extract_statement_totals", 
+    "extract_statement_totals",
     "calculate_csv_total",
     "calculate_category_totals",
     "calculate_fitness_score",
@@ -20,8 +20,17 @@ __all__ = [
 
 # Category mappings for fitness calculation
 DOMESTIC_CATEGORIES = {
-    "SUPERMERCADO", "FARMÁCIA", "RESTAURANTE", "POSTO", "TRANSPORTE", 
-    "ALIMENTAÇÃO", "SAÚDE", "VEÍCULOS", "VESTUÁRIO", "EDUCAÇÃO", "HOBBY"
+    "SUPERMERCADO",
+    "FARMÁCIA",
+    "RESTAURANTE",
+    "POSTO",
+    "TRANSPORTE",
+    "ALIMENTAÇÃO",
+    "SAÚDE",
+    "VEÍCULOS",
+    "VESTUÁRIO",
+    "EDUCAÇÃO",
+    "HOBBY",
 }
 
 INTERNATIONAL_CATEGORIES = {"FX", "INTERNACIONAL"}
@@ -111,11 +120,11 @@ def extract_statement_totals(pdf_path: Path) -> Dict[str, Decimal]:
             r"CRÉDITOS.*?\s*[=R\$\s]*(-?[\d\.]+,\d{2})",
             r"Ajustes\s*[=R\$\s]*(-?[\d\.]+,\d{2})",
             r"Estornos\s*[=R\$\s]*(-?[\d\.]+,\d{2})",
-        ]
+        ],
     }
-    
+
     totals: Dict[str, Decimal] = {}
-    
+
     for category, patterns in category_patterns.items():
         for pattern in patterns:
             match = re.search(pattern, text, re.IGNORECASE)
@@ -123,7 +132,7 @@ def extract_statement_totals(pdf_path: Path) -> Dict[str, Decimal]:
                 val_str = match.group(1).replace(".", "").replace(",", ".")
                 totals[category] = Decimal(val_str)
                 break  # Use first match for each category
-    
+
     return totals
 
 
@@ -139,20 +148,20 @@ def calculate_category_totals(rows: Iterable[Dict]) -> Dict[str, Decimal]:
     """Calculate totals by transaction category for fitness scoring."""
     totals = {
         "domestic": Decimal("0.00"),
-        "international": Decimal("0.00"), 
+        "international": Decimal("0.00"),
         "payments": Decimal("0.00"),
         "services": Decimal("0.00"),
         "adjustments": Decimal("0.00"),
-        "total": Decimal("0.00")
+        "total": Decimal("0.00"),
     }
-    
+
     for row in rows:
         amount = Decimal(row.get("amount_brl", "0"))
         category = row.get("category", "")
-        
+
         # Total sum
         totals["total"] += amount
-        
+
         # Category classification
         if category in DOMESTIC_CATEGORIES:
             totals["domestic"] += amount
@@ -164,7 +173,7 @@ def calculate_category_totals(rows: Iterable[Dict]) -> Dict[str, Decimal]:
             totals["services"] += amount
         elif category == "AJUSTE":
             totals["adjustments"] += amount
-    
+
     return totals
 
 
@@ -173,58 +182,66 @@ def calculate_fitness_score(pdf_path: Path, rows: Iterable[Dict]) -> Dict[str, f
     try:
         # Extract PDF statement totals
         statement_totals = extract_statement_totals(pdf_path)
-        
+
         # Calculate CSV category totals
         csv_totals = calculate_category_totals(rows)
-        
+
         # Calculate deltas for each category
         deltas = {}
-        
+
         # Total due comparison
         if "total_due" in statement_totals:
             deltas["total"] = abs(csv_totals["total"] - statement_totals["total_due"])
-        
+
         # Domestic purchases comparison
         if "domestic_purchases" in statement_totals:
-            deltas["domestic"] = abs(csv_totals["domestic"] - statement_totals["domestic_purchases"])
-        
-        # International purchases comparison  
+            deltas["domestic"] = abs(
+                csv_totals["domestic"] - statement_totals["domestic_purchases"]
+            )
+
+        # International purchases comparison
         if "international_purchases" in statement_totals:
-            deltas["international"] = abs(csv_totals["international"] - statement_totals["international_purchases"])
-        
+            deltas["international"] = abs(
+                csv_totals["international"]
+                - statement_totals["international_purchases"]
+            )
+
         # Payments comparison
         if "payments" in statement_totals:
-            deltas["payments"] = abs(csv_totals["payments"] - statement_totals["payments"])
-        
+            deltas["payments"] = abs(
+                csv_totals["payments"] - statement_totals["payments"]
+            )
+
         # Convert to fitness scores (negative delta = higher is better)
         fitness = {category: -float(delta) for category, delta in deltas.items()}
-        
+
         # Overall fitness (sum of all category fitness)
         fitness["overall"] = sum(fitness.values())
-        
+
         # Add percentage accuracy for each category
         accuracy = {}
         for category, delta in deltas.items():
             if category in statement_totals:
                 pdf_total = statement_totals.get(category.replace("_", "_"), 0)
                 if pdf_total > 0:
-                    accuracy[f"{category}_accuracy"] = float((1 - delta / pdf_total) * 100)
+                    accuracy[f"{category}_accuracy"] = float(
+                        (1 - delta / pdf_total) * 100
+                    )
                 else:
                     accuracy[f"{category}_accuracy"] = 100.0 if delta == 0 else 0.0
-        
+
         fitness.update(accuracy)
-        
+
         return fitness
-        
-    except Exception as e:
+
+    except Exception:
         # Return zero fitness if extraction fails
         return {
             "total": 0.0,
-            "domestic": 0.0, 
+            "domestic": 0.0,
             "international": 0.0,
             "payments": 0.0,
             "overall": 0.0,
-            "error": str(e)
         }
 
 
