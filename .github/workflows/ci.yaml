@@ -50,6 +50,9 @@ jobs:
           OPENAI_MODEL:   gpt-4.1
           MAX_TOKENS:     "4096"
           FORCE_EVOLVE:   ${{ github.event.inputs.force-evolve }}
+          DEBUG_LOG:      "1"
+          MAX_ITERS:      "10"
+          VERBOSE:        "1"
         run: |
           python .github/tools/ai_patch_loop.py
 

@@ -108,12 +108,34 @@ def main() -> None:
     iters = 0
 
     # run baseline tests
+    print("🔍 Running baseline tests...")
     code, out = run_tests()
     baseline_fail = test_fail_count(out)
+    print(f"📊 Baseline test results: {baseline_fail} failures")
+    
+    # Print current accuracy status
+    try:
+        print("📈 Checking current parser accuracy...")
+        accuracy_result = run("python scripts/ai_focused_accuracy.py", capture_output=True, text=True)
+        if accuracy_result.returncode == 0:
+            print("Current accuracy analysis:")
+            for line in accuracy_result.stdout.split('\n')[:10]:  # First 10 lines
+                if line.strip():
+                    print(f"  {line}")
+        else:
+            print(f"⚠️  Accuracy check failed: {accuracy_result.stderr}")
+    except Exception as e:
+        print(f"⚠️  Could not run accuracy analysis: {e}")
+    
     FORCE_EVOLVE = os.getenv("FORCE_EVOLVE", "false").lower() in {"1", "true", "yes"}
+    
     if baseline_fail == 0 and not FORCE_EVOLVE:
-        print("Nothing to fix 🎉")
+        print("Nothing to fix 🎉 (use FORCE_EVOLVE=true to run evolution anyway)")
         sys.exit(0)
+    
+    if FORCE_EVOLVE and baseline_fail == 0:
+        print("🔄 FORCE_EVOLVE enabled - running evolution despite no test failures")
+        print("🎯 Targeting parser accuracy improvements based on fitness data")
 
     while iters < MAX_ITERS and consec_misses < PATIENCE and baseline_fail > 0:
         iters += 1
@@ -161,22 +183,37 @@ def main() -> None:
              another existing line
         """
         )
+        
+        print("🤖 Asking AI for improvement patch...")
+        print(f"📝 Prompt length: {len(prompt)} characters")
+        
         patch = ask_llm(prompt)
+        
         if not patch.startswith("diff --git"):
-            print("LLM did not return a diff, skipping iteration.")
+            print("❌ LLM did not return a diff, skipping iteration.")
             consec_misses += 1
             continue
-        if patch.count("\n+") + patch.count("\n-") > MAX_LINES:
-            print("Patch too large, skipping.")
+            
+        # Count changes
+        additions = patch.count("\n+")
+        deletions = patch.count("\n-")
+        print(f"📋 Patch stats: +{additions} -{deletions} lines")
+        
+        if additions + deletions > MAX_LINES:
+            print(f"⚠️  Patch too large ({additions + deletions} > {MAX_LINES} lines), skipping.")
             consec_misses += 1
             continue
+            
+        print("🔧 Applying patch...")
         if not apply_patch(patch):
-            print("Patch failed to apply.")
+            print("❌ Patch failed to apply.")
             consec_misses += 1
             continue
 
+        print("🧪 Running tests after patch...")
         new_code, new_out = run_tests()
         new_fail = test_fail_count(new_out)
+        print(f"📊 Test results: {new_fail} failures (was {baseline_fail})")
 
         if new_fail < baseline_fail:
             # good – keep and commit
