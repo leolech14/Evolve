@@ -71,6 +71,8 @@ def collect_context() -> dict:
         "invariant_scores": {},
         "hard_golden_status": {},
         "ai_focused_accuracy": {},
+        "fitness_analysis": {},
+        "category_targets": [],
     }
 
     # Get test output
@@ -103,7 +105,38 @@ def collect_context() -> dict:
     ai_accuracy_file = DIAGNOSTICS / "ai_focused_accuracy.json"
     if ai_accuracy_file.exists():
         try:
-            context["ai_focused_accuracy"] = json.loads(ai_accuracy_file.read_text())
+            ai_data = json.loads(ai_accuracy_file.read_text())
+            context["ai_focused_accuracy"] = ai_data
+            
+            # Extract fitness-based analysis for targeted improvements
+            if "detailed_results" in ai_data:
+                fitness_summary = {}
+                category_targets = []
+                
+                for result in ai_data["detailed_results"]:
+                    pdf_name = result.get("pdf_name", "unknown")
+                    fitness_scores = result.get("fitness_scores", {})
+                    improvement_targets = result.get("improvement_targets", [])
+                    
+                    if fitness_scores:
+                        fitness_summary[pdf_name] = {
+                            "overall_fitness": fitness_scores.get("overall", 0),
+                            "worst_categories": improvement_targets[:3],  # Top 3 worst
+                            "status": result.get("parsing_status", "unknown")
+                        }
+                    
+                    # Collect all category targets for AI focus
+                    for target in improvement_targets:
+                        category_targets.append({
+                            "pdf": pdf_name,
+                            "category": target["category"],
+                            "accuracy": target["accuracy"],
+                            "priority": target["priority"]
+                        })
+                
+                context["fitness_analysis"] = fitness_summary
+                context["category_targets"] = sorted(category_targets, key=lambda x: x["accuracy"])
+                
         except Exception:
             context["errors"].append("Failed to read AI-focused accuracy")
 
@@ -490,42 +523,72 @@ def run_single_iteration(context: dict, iteration: int, current_score: float) ->
     """Run a single iteration of AI improvement."""
     print(f"🧠 Running AI analysis for iteration {iteration}...")
 
-    # Prepare enhanced prompt with new training signals
+    # Prepare enhanced prompt with category-targeted training signals
     prompt = [
         f"You are an AI parser improvement specialist (ITERATION {iteration}/{MAX_ITERATIONS}). "
-        f"Using Hard Goldens + Soft Invariants strategy to achieve 99% financial accuracy. "
+        f"Using Self-Supervised Multi-Category Training to achieve 99% financial accuracy. "
         f"Current score: {current_score:.1f}% → Target: 99.0%",
         "",
-        "=== TRAINING SIGNAL ANALYSIS ===",
+        "=== SELF-SUPERVISED TRAINING ANALYSIS ===",
         "",
         "HARD GOLDENS (Must maintain 100% exact match):",
         "- Itau_2024-10.pdf: MUST remain exactly matching golden CSV",
         "- Itau_2025-05.pdf: MUST remain exactly matching golden CSV",
         "",
-        "INVARIANT SCORES (Primary improvement target):",
+        "FITNESS-BASED ANALYSIS (Multi-category self-supervision):",
+        json.dumps(context["fitness_analysis"], indent=2),
+        "",
+        "PRIORITY CATEGORY TARGETS (Worst accuracy first):",
+        json.dumps(context["category_targets"][:10], indent=2),  # Top 10 worst categories
+        "",
+        "INVARIANT SCORES (Secondary validation):",
         json.dumps(context["invariant_scores"], indent=2),
         "",
-        "FINANCIAL ACCURACY BY PDF:",
-        json.dumps(context["ai_focused_accuracy"], indent=2),
+        "=== TARGETED IMPROVEMENT STRATEGY ===",
         "",
-        "=== IMPROVEMENT FOCUS ===",
-        f"Priority: Bridge the gap from {current_score:.1f}% to 99.0% financial accuracy",
-        "Method: Enhance regex patterns in pdf_to_csv.py to capture missing transactions",
-        f"Iteration Strategy: Progressive improvement over {MAX_ITERATIONS} iterations",
+        f"Iteration {iteration} Focus:",
+    ]
+    
+    # Add category-specific focus for this iteration
+    if context["category_targets"]:
+        worst_categories = {}
+        for target in context["category_targets"][:5]:  # Focus on 5 worst
+            category = target["category"]
+            if category not in worst_categories:
+                worst_categories[category] = []
+            worst_categories[category].append(f"{target['pdf']} ({target['accuracy']:.1f}%)")
+        
+        prompt.extend([
+            "",
+            "SPECIFIC CATEGORIES TO IMPROVE:",
+            json.dumps(worst_categories, indent=2),
+            "",
+            "Pattern Enhancement Priority:",
+            "1. Add regex patterns for the worst-performing categories above",
+            "2. Focus on transaction types that cause fitness score penalties",
+            "3. Ensure PDF statement totals match parsed CSV totals by category",
+            "4. Maintain backward compatibility with hard golden CSVs",
+        ])
+    else:
+        prompt.extend([
+            "No specific category targets identified - focus on overall accuracy",
+        ])
+    
+    prompt.extend([
         "",
-        "=== Traditional Metrics (Reference Only) ===",
+        "=== CONTEXT FOR REFERENCE ===",
         "",
         "Test Output:",
-        context["tests"][:1000],  # Truncate for context
+        context["tests"][:800],  # Truncate for context
         "",
         "Lint Output:",
-        context["lint"][:500],  # Truncate for context
+        context["lint"][:400],  # Truncate for context
         "",
         "Legacy Accuracy:",
         json.dumps(context["accuracy"], indent=2),
         "",
-        "=== Code Files to Improve ===",
-    ]
+        "=== CODE FILES TO IMPROVE ===",
+    ])
 
     for file in context["files"]:
         prompt.extend(
@@ -540,17 +603,26 @@ def run_single_iteration(context: dict, iteration: int, current_score: float) ->
 
     prompt.extend(
         [
-            f"IMPROVEMENT STRATEGY (Iteration {iteration}):",
+            "",
+            f"SELF-SUPERVISED IMPROVEMENT STRATEGY (Iteration {iteration}):",
+            "",
+            "CORE PRINCIPLE: Every PDF contains its own ground truth in the statement summary!",
             "",
             "1. PRESERVE Hard Goldens: Ensure Itau_2024-10.pdf and Itau_2025-05.pdf maintain exact CSV output",
-            "2. TARGET 99% Financial Accuracy: Focus on PDFs with worst accuracy scores",
-            "3. ENHANCE Regex Patterns: Add new patterns to capture missing transaction types",
-            "4. VALIDATE Against PDF Totals: Ensure PDF total matches parsed CSV total",
+            "2. TARGET Category-Specific Patterns: Focus on worst-performing categories from fitness analysis",
+            "3. ENHANCE Multi-Category Recognition: Add patterns for domestic/international/payment transactions",
+            "4. VALIDATE Against PDF Category Totals: Ensure each category sum matches PDF summary",
             "",
-            "SPECIFIC TARGETS (from financial accuracy analysis):",
-            "- Worst performers need new transaction patterns",
-            "- Missing amounts indicate unparsed transaction lines",
-            "- Focus on transaction formats not captured by current regex",
+            "CATEGORY-TARGETED APPROACH:",
+            "- 'domestic': Patterns for SUPERMERCADO, FARMÁCIA, RESTAURANTE, POSTO, etc.",
+            "- 'international': Patterns for FX transactions and international purchases", 
+            "- 'payments': Patterns for PAGAMENTO transactions with 7117 codes",
+            "- 'services': Patterns for SERVIÇOS, ENCARGOS, fees and interest",
+            "",
+            "FITNESS OPTIMIZATION:",
+            "- Each regex improvement should reduce fitness penalties (negative deltas)",
+            "- Focus on categories with lowest accuracy percentages",
+            "- Test changes against PDF statement summary totals",
             "",
             "Please suggest fixes in the following format:",
             "FILE: path/to/file.py",
@@ -559,10 +631,10 @@ def run_single_iteration(context: dict, iteration: int, current_score: float) ->
             "```",
             "",
             "PRIORITY ORDER:",
-            "1. Add missing regex patterns for unparsed transactions",
-            "2. Fix financial total extraction patterns",
-            "3. Improve transaction categorization",
-            "4. Maintain hard golden compatibility",
+            "1. Add category-specific regex patterns for worst-performing categories",
+            "2. Enhance transaction classification to match PDF summary categories",
+            "3. Improve amount extraction for better financial total matching",
+            "4. Maintain hard golden compatibility (critical!)",
             "5. Address any lint/test issues",
         ]
     )

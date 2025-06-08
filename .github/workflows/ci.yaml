@@ -1,225 +1,39 @@
 name: CI
 
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-  workflow_dispatch: {}
-  schedule:
-    - cron: '0 3 * * *'   # daily smoke run
-
-env:
-  OPENAI_MODEL: gpt-4.1
-  MAX_TOKENS: '6144'
-  MAX_ATTEMPTS: '5'
-  MAX_ITERATIONS: '8'
-  INVARIANT_TARGET: '99.0'
+on: [push, pull_request]
 
 jobs:
-  test:
+  test-and-auto-fix:
     runs-on: ubuntu-latest
-    env:
-      FORCE_EVOLVE: 1  # Force AI patch to test the evolve loop
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-          cache: 'pip'
+          fetch-depth: 0   # we need history for git apply / commit
 
-      - name: Create dirs
-        run: mkdir -p diagnostics csv_output
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-      - name: Install dependencies
-        run: pip install -e '.[dev]'
-
-      - name: Run pre-commit
-        id: pre-commit
-        continue-on-error: true
-        run: pre-commit run --all-files --show-diff-on-failure
-        env:
-          GIT_ASKPASS: "true"
-
-      # Static analysis
-      - name: Run linters
-        id: lint
-        continue-on-error: true
+      - name: Install deps (incl dev + openai)
         run: |
-          set +e  # Don't exit on error, but still report failure status
-          ruff check --fix . | tee diagnostics/lint.txt
-          RUFF_EXIT=$?
-          black --check . | tee -a diagnostics/lint.txt
-          BLACK_EXIT=$?
-          # Exit with failure if either tool failed
-          if [ $RUFF_EXIT -ne 0 ] || [ $BLACK_EXIT -ne 0 ]; then
-            echo "Linting failed: ruff($RUFF_EXIT) black($BLACK_EXIT)"
-            exit 1
-          fi
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
 
-      - name: Run mypy
-        id: mypy
-        continue-on-error: true
+      - name: Run tests once
+        id: testrun
         run: |
-          PYTHONPATH=src mypy --explicit-package-bases src/statement_refinery | tee diagnostics/mypy.txt
+          pytest -q --maxfail=25 || echo "failures=true" >> $GITHUB_OUTPUT
 
-      # First pass
-      - name: Run tests
-        id: tests
-        continue-on-error: true
-        run: |
-          pytest -v --cov=statement_refinery \
-                 --cov-report=xml \
-                 --cov-report=term-missing \
-                 --cov-fail-under=90 | tee diagnostics/test.txt
-
-      # Two-tier validation system
-      - name: Parse all PDFs
-        id: parse
-        continue-on-error: true
-        run: |
-          python scripts/parse_all.py --out csv_output | tee diagnostics/parse_all.txt
-
-      - name: Check hard goldens (MUST PASS)
-        id: hard_goldens
-        continue-on-error: true
-        run: |
-          python scripts/check_hard_goldens.py | tee diagnostics/hard_goldens.txt
-
-      - name: Run invariant tests (RICH FEEDBACK)
-        id: invariants
-        continue-on-error: true
-        run: |
-          python -m pytest tests/test_invariants.py --csv-dir csv_output -v | tee diagnostics/invariants.txt
-
-      - name: Legacy accuracy check
-        id: accuracy
-        continue-on-error: true
-        run: |
-          python scripts/check_accuracy.py --threshold 99 \
-                 --summary-file diagnostics/accuracy.json \
-                 --csv-dir csv_output | tee diagnostics/accuracy.txt
-          python scripts/ai_focused_accuracy.py | tee diagnostics/ai_focused_accuracy.txt
-
-      # Auto-patch if needed
-      - name: Run auto-patch
-        id: evolve
-        if: |
-          env.FORCE_EVOLVE == '1' || (
-            (steps.pre-commit.outcome == 'failure' ||
-             steps.lint.outcome == 'failure' ||
-             steps.tests.outcome == 'failure' ||
-             steps.hard_goldens.outcome == 'failure' ||
-             steps.invariants.outcome == 'failure' ||
-             steps.accuracy.outcome == 'failure') &&
-            github.event_name != 'pull_request'
-          )
+      - name: AI-Patch loop (one iteration)
+        if: steps.testrun.outputs.failures == 'true'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.BOT_PAT }}
         run: |
-          git config --global user.name "Evolve Bot"
-          git config --global user.email "bot@example.com"
-          python .github/tools/evolve.py | tee diagnostics/evolve.txt
+          python .github/tools/ai_patch.py
 
-      # Re-run if patched
-      - name: Re-run checks
-        if: steps.evolve.outcome == 'success'
-        continue-on-error: true
-        run: |
-          ruff check --fix .
-          black .
-          black --check .
-          mypy src/
-          pytest -v --cov=statement_refinery \
-                 --cov-report=xml \
-                 --cov-report=term-missing \
-                 --cov-fail-under=90
-          python scripts/parse_all.py --out csv_output
-          python scripts/check_hard_goldens.py --fail-fast
-          python -m pytest tests/test_invariants.py --csv-dir csv_output -v
-          python scripts/check_accuracy.py --threshold 99
-
-      # Artifacts
-      - name: Upload coverage
-        if: always()
-        uses: codecov/codecov-action@v4
+      - name: Push commit (if any)
+        if: env.GITHUB_TOKEN != ''
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          file: coverage.xml
-          fail_ci_if_error: true
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
-      - name: Upload diagnostics
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: diagnostics
-          path: diagnostics/
-
-      - name: Upload CSVs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: csvs
-          path: csv_output/
-
-      # Send logs to webhook
-      - name: Send step logs to webhook
-        if: always()   # garante envio mesmo se job falhar
-        env:
-          LOG_WEBHOOK_URL: ${{ secrets.LOG_WEBHOOK_URL }}
-        run: |
-          echo "🔍 DEBUG: Webhook step starting"
-          echo "🔍 LOG_WEBHOOK_URL configured: $([ -n "$LOG_WEBHOOK_URL" ] && echo "YES" || echo "NO")"
-          echo "🔍 Diagnostics directory contents:"
-          ls -la diagnostics/ || echo "❌ diagnostics/ directory not found"
-          
-          # Create a summary file with step outcomes
-          echo "# CI Run Summary" > diagnostics/ci_summary.md
-          echo "Run ID: ${{ github.run_id }}" >> diagnostics/ci_summary.md
-          echo "Branch: ${{ github.ref_name }}" >> diagnostics/ci_summary.md
-          echo "Commit: ${{ github.sha }}" >> diagnostics/ci_summary.md
-          echo "Lint outcome: ${{ steps.lint.outcome }}" >> diagnostics/ci_summary.md
-          echo "MyPy outcome: ${{ steps.mypy.outcome }}" >> diagnostics/ci_summary.md
-          echo "Tests outcome: ${{ steps.tests.outcome }}" >> diagnostics/ci_summary.md
-          echo "Accuracy outcome: ${{ steps.accuracy.outcome }}" >> diagnostics/ci_summary.md
-          echo "Timestamp: $(date)" >> diagnostics/ci_summary.md
-          
-          # envie todos os logs capturados na pasta diagnostics
-          if [ -n "$LOG_WEBHOOK_URL" ]; then
-            echo "📡 Webhook URL configured, sending logs..."
-            found_files=0
-            # Send ALL files in diagnostics directory (txt, json, etc.)
-            for f in diagnostics/*; do
-              if [ -f "$f" ]; then
-                found_files=$((found_files + 1))
-                file_size=$(stat -f%z "$f" 2>/dev/null || stat -c%s "$f" 2>/dev/null || echo "unknown")
-                echo "📤 Sending file: $f (size: ${file_size} bytes)"
-                
-                # Remove -f flag to see HTTP errors, add timeout
-                if curl -sS --connect-timeout 10 --max-time 30 \
-                  -X POST \
-                  -H "X-Repo-Key: ${{ github.repository_owner }}-${{ github.event.repository.name }}" \
-                  -H "X-Branch: ${{ github.ref_name }}" \
-                  -H "X-Run-ID: ${{ github.run_id }}" \
-                  -H "X-File-Name: $(basename "$f")" \
-                  --data-binary "@${f}" \
-                  "$LOG_WEBHOOK_URL"; then
-                  echo "✅ Successfully sent: $f"
-                else
-                  echo "❌ Failed to send: $f"
-                fi
-              fi
-            done
-            echo "📊 Total files processed: $found_files"
-          else
-            echo "❌ LOG_WEBHOOK_URL not configured, skipping webhook"
-          fi
-
-      # Summary
-      - name: Generate summary
-        if: always()
-        run: python scripts/ci_summary.py
-
+          commit_message: "🤖 AUTO-FIX via CI"

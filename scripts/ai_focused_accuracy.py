@@ -17,7 +17,12 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from statement_refinery.pdf_to_csv import parse_pdf
-from statement_refinery.validation import extract_total_from_pdf, calculate_csv_total
+from statement_refinery.validation import (
+    extract_total_from_pdf, 
+    calculate_csv_total,
+    extract_statement_totals,
+    calculate_fitness_score
+)
 
 DATA_DIR = ROOT / "tests" / "data"
 
@@ -29,14 +34,16 @@ VERIFIED_BASELINES = {
 
 
 def analyze_pdf_for_ai(pdf_path: Path) -> dict:
-    """Analyze a single PDF and return AI-focused results."""
+    """Analyze a single PDF and return AI-focused results with multi-category fitness scoring."""
 
     result = {
         "pdf_name": pdf_path.name,
         "is_verified_baseline": pdf_path.name in VERIFIED_BASELINES,
         "parsing_status": "unknown",
         "financial_accuracy": None,
-        "missing_patterns": [],
+        "fitness_scores": None,
+        "category_breakdown": None,
+        "improvement_targets": [],
         "diagnostic_summary": "",
     }
 
@@ -45,7 +52,7 @@ def analyze_pdf_for_ai(pdf_path: Path) -> dict:
         rows = parse_pdf(pdf_path, use_golden_if_available=False)
         parsed_total = calculate_csv_total(rows)
 
-        # Get PDF total for comparison
+        # Legacy single-total comparison for compatibility
         try:
             pdf_total = extract_total_from_pdf(pdf_path)
             delta = abs(parsed_total - pdf_total)
@@ -58,18 +65,54 @@ def analyze_pdf_for_ai(pdf_path: Path) -> dict:
                 "accuracy_percentage": accuracy * 100,
                 "status": "GOOD" if accuracy > 0.95 else "NEEDS_IMPROVEMENT",
             }
-
-            if accuracy < 0.95:
-                result["parsing_status"] = "NEEDS_IMPROVEMENT"
-                result["diagnostic_summary"] = (
-                    f"Missing {delta:.2f} BRL ({(1 - accuracy) * 100:.1f}% of total)"
-                )
-            else:
-                result["parsing_status"] = "GOOD"
-
         except Exception as e:
-            result["diagnostic_summary"] = f"Cannot extract PDF total: {e}"
-            result["parsing_status"] = "PDF_TOTAL_UNAVAILABLE"
+            result["financial_accuracy"] = {
+                "error": str(e),
+                "status": "PDF_TOTAL_UNAVAILABLE"
+            }
+
+        # NEW: Multi-category fitness scoring
+        fitness_scores = calculate_fitness_score(pdf_path, rows)
+        result["fitness_scores"] = fitness_scores
+
+        # Extract category breakdown from PDF
+        try:
+            statement_totals = extract_statement_totals(pdf_path)
+            result["category_breakdown"] = {
+                "pdf_totals": {k: float(v) for k, v in statement_totals.items()},
+                "fitness_deltas": {k: -v for k, v in fitness_scores.items() if not k.endswith("_accuracy") and k != "error"}
+            }
+        except Exception as e:
+            result["category_breakdown"] = {"error": str(e)}
+
+        # Identify specific improvement targets
+        improvement_targets = []
+        for category, score in fitness_scores.items():
+            if category.endswith("_accuracy") and isinstance(score, (int, float)):
+                if score < 95.0:  # Less than 95% accuracy
+                    improvement_targets.append({
+                        "category": category.replace("_accuracy", ""),
+                        "accuracy": score,
+                        "priority": "HIGH" if score < 80.0 else "MEDIUM"
+                    })
+        
+        result["improvement_targets"] = improvement_targets
+
+        # Overall status determination
+        overall_fitness = fitness_scores.get("overall", 0)
+        if overall_fitness > -0.5:  # Within 0.50 BRL total error
+            result["parsing_status"] = "GOOD"
+            result["diagnostic_summary"] = f"High accuracy (fitness: {overall_fitness:.2f})"
+        elif overall_fitness > -5.0:  # Within 5.00 BRL total error
+            result["parsing_status"] = "NEEDS_IMPROVEMENT"
+            worst_category = min(improvement_targets, key=lambda x: x["accuracy"]) if improvement_targets else None
+            if worst_category:
+                result["diagnostic_summary"] = f"Focus on {worst_category['category']} patterns ({worst_category['accuracy']:.1f}% accuracy)"
+            else:
+                result["diagnostic_summary"] = f"Minor parsing gaps (fitness: {overall_fitness:.2f})"
+        else:
+            result["parsing_status"] = "MAJOR_ISSUES"
+            result["diagnostic_summary"] = f"Significant parsing failures (fitness: {overall_fitness:.2f})"
 
     except Exception as e:
         result["parsing_status"] = "PARSING_FAILED"
@@ -102,13 +145,28 @@ def main():
                 print(f"   ❌ BROKEN BASELINE: {result['diagnostic_summary']}")
         else:
             print(f"🎯 TARGET: {pdf.name}")
-            if result["financial_accuracy"]:
+            
+            # Show fitness-based analysis
+            if result["fitness_scores"]:
+                overall_fitness = result["fitness_scores"].get("overall", 0)
+                print(f"   🧬 Overall Fitness: {overall_fitness:.2f}")
+                
+                # Show category-specific issues
+                if result["improvement_targets"]:
+                    for target in result["improvement_targets"]:
+                        priority_emoji = "🔥" if target["priority"] == "HIGH" else "⚠️"
+                        print(f"   {priority_emoji} {target['category']}: {target['accuracy']:.1f}% accuracy")
+                else:
+                    print(f"   ✅ All categories > 95% accuracy")
+            
+            # Legacy accuracy display for compatibility
+            if result["financial_accuracy"] and "accuracy_percentage" in result["financial_accuracy"]:
                 acc = result["financial_accuracy"]["accuracy_percentage"]
-                print(f"   📊 Accuracy: {acc:.1f}% - {result['diagnostic_summary']}")
-            else:
-                print(f"   ❓ {result['diagnostic_summary']}")
+                print(f"   📊 Legacy Accuracy: {acc:.1f}%")
+            
+            print(f"   📝 {result['diagnostic_summary']}")
 
-            if result["parsing_status"] == "NEEDS_IMPROVEMENT":
+            if result["parsing_status"] in ["NEEDS_IMPROVEMENT", "MAJOR_ISSUES"]:
                 training_targets.append(result)
 
     print("\n🎯 AI TRAINING SUMMARY")
@@ -118,20 +176,28 @@ def main():
 
     if training_targets:
         print("\n📝 PRIORITY TARGETS FOR AI IMPROVEMENT:")
+        
+        # Sort by overall fitness (worst first)
         for target in sorted(
             training_targets,
-            key=lambda x: (
-                x["financial_accuracy"]["accuracy_percentage"]
-                if x["financial_accuracy"]
-                else 0
-            ),
+            key=lambda x: x["fitness_scores"].get("overall", 0) if x["fitness_scores"] else 0
         ):
-            if target["financial_accuracy"]:
+            fitness = target["fitness_scores"].get("overall", 0) if target["fitness_scores"] else 0
+            print(f"   • {target['pdf_name']}: Overall Fitness {fitness:.2f}")
+            
+            # Show specific category targets
+            if target["improvement_targets"]:
+                for category_target in target["improvement_targets"]:
+                    priority_icon = "🔥" if category_target["priority"] == "HIGH" else "⚠️"
+                    print(f"     {priority_icon} {category_target['category']}: {category_target['accuracy']:.1f}% accuracy")
+            
+            # Legacy accuracy for reference
+            if target["financial_accuracy"] and "accuracy_percentage" in target["financial_accuracy"]:
                 acc = target["financial_accuracy"]["accuracy_percentage"]
-                delta = target["financial_accuracy"]["delta"]
-                print(
-                    f"   • {target['pdf_name']}: {acc:.1f}% (missing {delta:.2f} BRL)"
-                )
+                delta = target["financial_accuracy"].get("delta", 0)
+                print(f"     📊 Legacy: {acc:.1f}% (Δ {delta:.2f} BRL)")
+            
+            print()  # Empty line for readability
 
     # Save AI-focused results
     output_file = ROOT / "diagnostics" / "ai_focused_accuracy.json"
