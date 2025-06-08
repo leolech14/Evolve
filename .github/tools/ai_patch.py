@@ -16,7 +16,7 @@ import textwrap
 import tempfile
 import pathlib
 import shlex
-from typing import Tuple, List
+from typing import Tuple, Any, List
 import openai  #  pip install openai>=1.0
 
 MAX_LINES_CHANGED = int(os.environ.get("MAX_LINES_CHANGED", "50"))
@@ -28,10 +28,34 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 # --------------------------------------------------------------------------- #
 # helpers                                                                     #
 # --------------------------------------------------------------------------- #
-def run(cmd: str) -> Tuple[int, str]:
-    """Run a shell command, return (exit_code, stdout+stderr)."""
-    p = subprocess.run(cmd, shell=True, text=True, cwd=ROOT, capture_output=True)
-    return p.returncode, p.stdout + p.stderr
+def run(
+    cmd: str,
+    *,
+    capture_output: bool = True,
+    **popen_kwargs: Any,
+) -> Tuple[int, str]:
+    """
+    Run *cmd* in a shell and return ``(exit_code, stdout + stderr)``.
+
+    The wrapper now accepts additional **kwargs so that future callers
+    (including the AI agent) can pass parameters like *timeout*,
+    *env*, *check* … without breaking older versions.
+    """
+    proc = subprocess.run(
+        cmd,
+        shell=True,
+        text=True,
+        cwd=ROOT,
+        capture_output=capture_output,
+        timeout=popen_kwargs.pop("timeout", 120),
+        **popen_kwargs,
+    )
+    combined = (
+        proc.stdout + proc.stderr
+        if capture_output
+        else proc.stdout or ""
+    )
+    return proc.returncode, combined
 
 
 def run_tests() -> Tuple[int, str]:

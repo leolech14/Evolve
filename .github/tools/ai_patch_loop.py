@@ -6,27 +6,26 @@ Iterate up to MAX_ITERS asking OpenAI for tiny diffs.  Each time the number of
 pytest failures goes down we keep the patch; otherwise we revert and retry.
 
 Env-vars:
-  OPENAI_API_KEY   – required
-  OPENAI_MODEL     – gpt-4o-mini by default
-  MAX_ITERS        – hard iteration cap   (default 100)
-  MAX_LINES_CHANGED – per-patch LOC limit (default 50)
-  PATIENCE         – abort after PATIENCE consecutive non-improving patches
+  OPENAI_API_KEY   - required
+  OPENAI_MODEL     - gpt-4o-mini by default
+  MAX_ITERS        - hard iteration cap   (default 100)
+  MAX_LINES_CHANGED - per-patch LOC limit (default 50)
+  PATIENCE         - abort after PATIENCE consecutive non-improving patches
 """
 
 from __future__ import annotations
 import os
-import subprocess
 import sys
+import subprocess
 import tempfile
 import textwrap
 import pathlib
 import shlex
+import json
 from typing import Tuple
 from openai import OpenAI
-import re
-import json
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -63,7 +62,7 @@ def _log_event(event: str, **payload: object) -> None:
     """
 
     record = {
-        "ts": datetime.utcnow().isoformat(timespec="milliseconds") + "Z",
+        "ts": datetime.now(timezone.utc).isoformat(timespec="milliseconds").replace("+00:00", "Z"),
         "event": event,
         **payload,
     }
@@ -125,11 +124,6 @@ def ask_llm(prompt: str) -> str:
             max_tokens=MAX_TOKENS,
         )
         out = rsp.choices[0].message.content or ""
-        debug_log = os.getenv("DEBUG_LOG", "").lower() in ("1", "true", "yes")
-        if debug_log:
-            print("—— Raw LLM output ———————————————")
-            print(out)
-            print("———————————————————————————————")
         return out
     except Exception as err:  # pylint: disable=broad-except
         print("⚠️  OpenAI request failed:")
@@ -137,12 +131,48 @@ def ask_llm(prompt: str) -> str:
         return ""
 
 
-def apply_patch(diff: str) -> bool:
-    with tempfile.NamedTemporaryFile("w+", delete=False) as tf:
-        tf.write(diff)
-        tf.flush()
-        code, _ = run(f"git apply --whitespace=nowarn {shlex.quote(tf.name)}")
-    return code == 0
+def apply_patch(patch: str) -> bool:
+    """
+    Validate and then apply *patch*.
+
+    Returns
+    -------
+    bool
+        True  – patch applied and resulted in a staged change  
+        False – patch rejected or produced no diff
+    """
+    # 1. Quick sanity check (avoids interactive prompts)
+    precheck = subprocess.run(
+        "git apply --check -",
+        input=patch,
+        text=True,
+        shell=True,
+        capture_output=True,
+    )
+    if precheck.returncode != 0:
+        _log_event("patch_rejected", reason="apply_check_failed",
+                   stderr=precheck.stderr.strip())
+        return False
+
+    # 2. Apply to working tree
+    applied = subprocess.run("git apply -", input=patch, text=True, shell=True)
+    if applied.returncode != 0:
+        _log_event("patch_rejected", reason="apply_failed",
+                   stderr=applied.stderr.strip())
+        return False
+
+    # 3. Stage the changes
+    subprocess.run("git add -u", shell=True, check=False)
+
+    # 4. Abort if nothing actually changed (duplicate patch)
+    no_changes = subprocess.run("git diff --staged --quiet", shell=True)
+    if no_changes.returncode == 0:
+        _log_event("patch_rejected", reason="no_effect")
+        # Clean the index to keep the repo tidy
+        subprocess.run("git reset", shell=True)
+        return False
+
+    return True
 
 
 # --------------------------------------------------------------------------- #
@@ -165,8 +195,8 @@ def main() -> None:
     
     try:
         # Run accuracy analysis
-        accuracy_result = run("python scripts/ai_focused_accuracy.py", capture_output=True, text=True)
-        if accuracy_result.returncode == 0:
+        code, accuracy_output = run("python scripts/ai_focused_accuracy.py")
+        if code == 0:
             print("✅ Accuracy analysis completed successfully")
             
             # Load and display detailed metrics
@@ -226,7 +256,7 @@ def main() -> None:
                 print(f"⚠️  Could not parse detailed metrics: {e}")
             
         else:
-            print(f"❌ Accuracy check failed: {accuracy_result.stderr}")
+            print(f"❌ Accuracy check failed: {accuracy_output}")
     except Exception as e:
         print(f"⚠️  Could not run accuracy analysis: {e}")
     
@@ -234,15 +264,28 @@ def main() -> None:
     
     FORCE_EVOLVE = os.getenv("FORCE_EVOLVE", "false").lower() in {"1", "true", "yes"}
     
+    # Check if we have accuracy issues (fitness improvements needed)
+    accuracy_code, accuracy_output = run("python scripts/ai_focused_accuracy.py")
+    accuracy_needs_work = accuracy_code != 0
+    
+    if baseline_fail == 0 and not accuracy_needs_work and not FORCE_EVOLVE:
+        print("Nothing to fix 🎉 (tests and accuracy both perfect)")
+        sys.exit(0)
+    
     if baseline_fail == 0 and not FORCE_EVOLVE:
-        print("Nothing to fix 🎉 (use FORCE_EVOLVE=true to run evolution anyway)")
+        print("Tests pass but accuracy needs work. Use FORCE_EVOLVE=true to improve fitness scores.")
         sys.exit(0)
     
     if FORCE_EVOLVE and baseline_fail == 0:
         print("🔄 FORCE_EVOLVE enabled - running evolution despite no test failures")
-        print("🎯 Targeting parser accuracy improvements based on fitness data")
+        if accuracy_needs_work:
+            print("🎯 Targeting parser accuracy improvements based on fitness data")
+        else:
+            print("🎯 Running evolution on already-good accuracy (experimental mode)")
 
-    while iters < MAX_ITERS and consec_misses < PATIENCE and baseline_fail > 0:
+    # Evolution loop: continue while we have test failures OR accuracy issues (when forced)
+    should_continue_for_accuracy = FORCE_EVOLVE and accuracy_needs_work
+    while iters < MAX_ITERS and consec_misses < PATIENCE and (baseline_fail > 0 or should_continue_for_accuracy):
         iters += 1
         logging.info(
             "=== Iteration %s/%s (failures so far: %s) ===",
@@ -253,44 +296,120 @@ def main() -> None:
         _log_event("iteration_start", iteration=iters, baseline_fail=baseline_fail)
 
         # Get current file contents to provide context
-        failed_files = set()
-        for line in out.split("\n"):
-            if "FAILED" in line and "::" in line:
-                file_part = line.split("::")[0].strip()
-                if file_part.startswith("FAILED "):
-                    file_part = file_part[7:]  # Remove "FAILED "
-                failed_files.add(file_part)
-        
-        file_contents = ""
-        for filepath in list(failed_files)[:2]:  # Limit to first 2 files to avoid token limit
-            if os.path.exists(filepath):
-                try:
-                    with open(filepath, 'r') as f:
-                        content = f.read()
-                    file_contents += f"\n--- Current content of {filepath} ---\n{content}\n"
-                except Exception:
-                    pass
-        
-        prompt = textwrap.dedent(
-            f"""
-            pytest failures (excerpt):
-            {failing_snippet(out)}
-            {file_contents}
-
-            Provide a git diff that reduces failure count. Must start with "diff --git" and follow standard git patch format.
-            Use the exact current file content shown above to create accurate line numbers and context.
+        if baseline_fail > 0:
+            # Traditional test failure mode - use failed test files
+            failed_files = set()
+            for line in out.split("\n"):
+                if "FAILED" in line and "::" in line:
+                    file_part = line.split("::")[0].strip()
+                    if file_part.startswith("FAILED "):
+                        file_part = file_part[7:]  # Remove "FAILED "
+                    failed_files.add(file_part)
             
-            Example format:
-            diff --git a/file.py b/file.py
-            index abc123..def456 100644
-            --- a/file.py
-            +++ b/file.py
-            @@ -1,3 +1,4 @@
-             existing line
-            +new line
-             another existing line
-        """
-        )
+            file_contents = ""
+            for filepath in list(failed_files)[:2]:  # Limit to first 2 files to avoid token limit
+                if os.path.exists(filepath):
+                    try:
+                        with open(filepath, 'r') as f:
+                            content = f.read()
+                        file_contents += f"\n--- Current content of {filepath} ---\n{content}\n"
+                    except Exception:
+                        pass
+        else:
+            # Fitness mode - include main parser file
+            parser_file = "src/statement_refinery/pdf_to_csv.py"
+            file_contents = ""
+            if os.path.exists(parser_file):
+                try:
+                    with open(parser_file, 'r') as f:
+                        content = f.read()
+                    file_contents = f"\n--- Current content of {parser_file} ---\n{content}\n"
+                except Exception as e:
+                    print(f"⚠️  Could not read parser file: {e}")
+                    file_contents = "\n--- Parser file could not be loaded ---\n"
+        
+        # Build prompt based on whether we're targeting test failures or accuracy improvements
+        if baseline_fail > 0:
+            # Traditional test failure mode
+            prompt = textwrap.dedent(
+                f"""
+                pytest failures (excerpt):
+                {failing_snippet(out)}
+                {file_contents}
+
+                Provide a git diff that reduces failure count. Must start with "diff --git" and follow standard git patch format.
+                Use the exact current file content shown above to create accurate line numbers and context.
+                
+                Example format:
+                diff --git a/file.py b/file.py
+                index abc123..def456 100644
+                --- a/file.py
+                +++ b/file.py
+                @@ -1,3 +1,4 @@
+                 existing line
+                +new line
+                 another existing line
+            """
+            )
+        else:
+            # Fitness-based accuracy improvement mode
+            try:
+                with open("diagnostics/ai_focused_accuracy.json", "r") as f:
+                    accuracy_data = json.load(f)
+                
+                # Get worst performers for targeting
+                worst_performers = sorted(accuracy_data.get("detailed_results", []), 
+                                       key=lambda x: x.get("fitness_scores", {}).get("overall", 0))[:3]
+                
+                fitness_guidance = "\n🎯 TOP ACCURACY IMPROVEMENT TARGETS:\n"
+                for i, pdf in enumerate(worst_performers, 1):
+                    name = pdf.get("pdf_name", "Unknown")
+                    fitness = pdf.get("fitness_scores", {}).get("overall", 0)
+                    acc = pdf.get("financial_accuracy", {}).get("accuracy_percentage", "N/A")
+                    fitness_guidance += f"   {i}. {name}: fitness {fitness:.2f} (accuracy: {acc})\n"
+                
+                prompt = textwrap.dedent(
+                    f"""
+                    🎯 FITNESS-BASED PARSER IMPROVEMENT NEEDED
+                    
+                    Current parser accuracy analysis shows significant room for improvement:
+                    {fitness_guidance}
+                    
+                    The parser is missing transactions or incorrectly parsing amounts, leading to poor fitness scores.
+                    Focus on improving regex patterns, amount parsing, or transaction classification in src/statement_refinery/pdf_to_csv.py.
+                    
+                    {file_contents}
+
+                    Provide a git diff that improves parser accuracy for the worst-performing PDFs above.
+                    Must start with "diff --git" and follow standard git patch format.
+                    Use the exact current file content shown above to create accurate line numbers and context.
+                    
+                    Example format:
+                    diff --git a/src/statement_refinery/pdf_to_csv.py b/src/statement_refinery/pdf_to_csv.py
+                    index abc123..def456 100644
+                    --- a/src/statement_refinery/pdf_to_csv.py
+                    +++ b/src/statement_refinery/pdf_to_csv.py
+                    @@ -1,3 +1,4 @@
+                     existing line
+                    +new line
+                     another existing line
+                """
+                )
+            except Exception as e:
+                print(f"⚠️  Could not load fitness data for prompt: {e}")
+                # Fallback to generic improvement prompt
+                prompt = textwrap.dedent(
+                    f"""
+                    🎯 PARSER ACCURACY IMPROVEMENT NEEDED
+                    
+                    The parser accuracy analysis indicates improvements are needed.
+                    Focus on improving regex patterns, amount parsing, or transaction classification.
+                    
+                    {file_contents}
+
+                    Provide a git diff that improves parser accuracy. Must start with "diff --git" and follow standard git patch format.
+                """
+                )
         
         print("🤖 Asking AI for improvement patch...")
         print(f"📝 Prompt length: {len(prompt)} characters")
@@ -321,19 +440,15 @@ def main() -> None:
             continue
 
         print("🧪 Running tests after patch...")
-        new_code, new_out = run_tests()
+        _, new_out = run_tests()
         new_fail = test_fail_count(new_out)
         print(f"📊 Test results: {new_fail} failures (was {baseline_fail})")
 
         if new_fail < baseline_fail:
-            # good – keep and commit
-            print(f"🎉 IMPROVEMENT DETECTED!")
-            print(f"   Test failures reduced: {baseline_fail} → {new_fail}")
-            
             # Run accuracy analysis to measure improvement
             try:
-                accuracy_result = run("python scripts/ai_focused_accuracy.py", capture_output=True, text=True)
-                if accuracy_result.returncode == 0:
+                code, accuracy_output = run("python scripts/ai_focused_accuracy.py")
+                if code == 0:
                     try:
                         import json
                         with open("diagnostics/ai_focused_accuracy.json", "r") as f:
@@ -374,13 +489,23 @@ def main() -> None:
             commit_msg = f"🤖 AUTO-FIX: failures {baseline_fail} after iter {iters}"
             run(f'git commit -am "{commit_msg}"')
             print("✅ Patch accepted and committed")
+            
+            # Re-check accuracy status for loop continuation
+            accuracy_code, _ = run("python scripts/ai_focused_accuracy.py")
+            should_continue_for_accuracy = FORCE_EVOLVE and accuracy_code != 0
+            
         else:
             # revert
             run("git reset --hard")
             consec_misses += 1
             print(f"❌ Patch reverted (failures: {baseline_fail} → {new_fail})")
 
-        if baseline_fail == 0:
+        # Exit conditions: no test failures AND (no accuracy issues OR not forced)
+        if baseline_fail == 0 and (not should_continue_for_accuracy or not FORCE_EVOLVE):
+            if baseline_fail == 0 and not should_continue_for_accuracy:
+                print("🎉 Tests and accuracy both achieved!")
+            else:
+                print("🎉 Tests fixed!")
             break
 
     # Final comprehensive summary
@@ -394,8 +519,8 @@ def main() -> None:
     
     # Final accuracy analysis
     try:
-        accuracy_result = run("python scripts/ai_focused_accuracy.py", capture_output=True, text=True)
-        if accuracy_result.returncode == 0:
+        code, accuracy_output = run("python scripts/ai_focused_accuracy.py")
+        if code == 0:
             try:
                 import json
                 with open("diagnostics/ai_focused_accuracy.json", "r") as f:
