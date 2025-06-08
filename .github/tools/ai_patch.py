@@ -50,11 +50,7 @@ def run(
         timeout=popen_kwargs.pop("timeout", 120),
         **popen_kwargs,
     )
-    combined = (
-        proc.stdout + proc.stderr
-        if capture_output
-        else proc.stdout or ""
-    )
+    combined = proc.stdout + proc.stderr if capture_output else proc.stdout or ""
     return proc.returncode, combined
 
 

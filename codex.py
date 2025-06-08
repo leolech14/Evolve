@@ -14,7 +14,6 @@ import hashlib
 from decimal import Decimal
 from pathlib import Path
 from collections import Counter
-from datetime import datetime
 
 __version__ = "0.12.0"
 DATE_FMT_OUT = "%Y-%m-%d"
@@ -580,11 +579,11 @@ def main():
         brl_serv = sum(
             r["valor_brl"] for r in rows_dedup if r["categoria_high"] == "SERVIÇOS"
         )
-        neg_rows = sum(
-            1
-            for r in rows_dedup
-            if r.get("valor_brl") not in ("", None) and Decimal(str(r["valor_brl"])) < 0
-        )
+        # neg_rows = sum(
+        #     1
+        #     for r in rows_dedup
+        #     if r.get("valor_brl") not in ("", None) and Decimal(str(r["valor_brl"])) < 0
+        # )
         neg_sum = sum(
             Decimal(str(r["valor_brl"]))
             for r in rows_dedup
