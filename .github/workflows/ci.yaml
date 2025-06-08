@@ -29,8 +29,10 @@ jobs:
           git checkout -qf "$GITHUB_SHA"
 
       # --- Step 2: install Python -------------------------------------
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5   # <-- REMOVE THIS LINE if policy bans it
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"   # <- specify the desired version
         # If even setup-python is disallowed, uncomment the shell fallback below
         # run: |
         #   sudo apt-get update -y
