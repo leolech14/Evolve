@@ -23,6 +23,9 @@ MAX_ITERS        = int(os.getenv("MAX_ITERS", "100"))
 MAX_LINES        = int(os.getenv("MAX_LINES_CHANGED", "50"))
 MODEL            = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 PATIENCE         = int(os.getenv("PATIENCE", "5"))
+# Maximum number of tokens the assistant may return.
+# Can be overridden in the workflow via the MAX_TOKENS env var.
+MAX_TOKENS       = int(os.getenv("MAX_TOKENS", "4096"))
 
 
 # --------------------------------------------------------------------------- #
