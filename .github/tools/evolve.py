@@ -31,7 +31,7 @@ DIAGNOSTICS = Path("diagnostics")
 MAX_TOKENS = 6144  # Increased for comprehensive AI analysis
 MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS", "5"))
 MAX_ITERATIONS = int(os.getenv("MAX_ITERATIONS", "8"))  # More iterations for 99% target
-MODEL = os.getenv("OPENAI_MODEL", "gpt-4")
+MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1")
 INVARIANT_TARGET_SCORE = float(os.getenv("INVARIANT_TARGET", "99.0"))  # 99% financial accuracy target
 
 

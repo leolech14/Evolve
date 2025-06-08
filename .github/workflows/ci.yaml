@@ -10,7 +10,7 @@ on:
     - cron: '0 3 * * *'   # daily smoke run
 
 env:
-  OPENAI_MODEL: gpt-4
+  OPENAI_MODEL: gpt-4.1
   MAX_TOKENS: '6144'
   MAX_ATTEMPTS: '5'
   MAX_ITERATIONS: '8'
