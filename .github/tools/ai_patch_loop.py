@@ -23,6 +23,11 @@ import pathlib
 import shlex
 from typing import Tuple
 from openai import OpenAI
+import re
+import json
+import logging
+from datetime import datetime
+from pathlib import Path
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 MAX_ITERS = int(os.getenv("MAX_ITERS", "100"))
@@ -32,6 +37,46 @@ PATIENCE = int(os.getenv("PATIENCE", "5"))
 # Maximum number of tokens the assistant may return.
 # Can be overridden in the workflow via the MAX_TOKENS env var.
 MAX_TOKENS = int(os.getenv("MAX_TOKENS", "4096"))
+
+
+# --------------------------------------------------------------------------- #
+# Logging setup
+# ---------------------------------------------------------------------------
+
+_DIAG_DIR = Path("diagnostics")
+_DIAG_DIR.mkdir(exist_ok=True)
+
+_LOG_FILE = _DIAG_DIR / "evolve_run.log"
+_JSONL_FILE = _DIAG_DIR / "evolve_events.jsonl"
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s  %(levelname)-8s %(message)s",
+    handlers=[logging.FileHandler(_LOG_FILE), logging.StreamHandler()],
+)
+
+
+def _log_event(event: str, **payload: object) -> None:
+    """
+    Write a one-line JSON record for programmatic analysis _and_
+    emit a concise INFO line for human inspection.
+    """
+
+    record = {
+        "ts": datetime.utcnow().isoformat(timespec="milliseconds") + "Z",
+        "event": event,
+        **payload,
+    }
+
+    with _JSONL_FILE.open("a", encoding="utf-8") as fh:
+        fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+    # Short console line
+    logging.info(
+        "%s | %s",
+        event,
+        ", ".join(f"{k}={v}" for k, v in payload.items()),
+    )
 
 
 # --------------------------------------------------------------------------- #
@@ -199,10 +244,13 @@ def main() -> None:
 
     while iters < MAX_ITERS and consec_misses < PATIENCE and baseline_fail > 0:
         iters += 1
-        print(
-            f"\n=== Iteration {iters}/{MAX_ITERS} "
-            f"(failures so far: {baseline_fail}) ==="
+        logging.info(
+            "=== Iteration %s/%s (failures so far: %s) ===",
+            iters,
+            MAX_ITERS,
+            baseline_fail,
         )
+        _log_event("iteration_start", iteration=iters, baseline_fail=baseline_fail)
 
         # Get current file contents to provide context
         failed_files = set()
@@ -247,7 +295,9 @@ def main() -> None:
         print("🤖 Asking AI for improvement patch...")
         print(f"📝 Prompt length: {len(prompt)} characters")
         
+        _log_event("llm_prompt", prompt_chars=len(prompt))
         patch = ask_llm(prompt)
+        _log_event("llm_response", response_chars=len(patch))
         
         if not patch.startswith("diff --git"):
             print("❌ LLM did not return a diff, skipping iteration.")

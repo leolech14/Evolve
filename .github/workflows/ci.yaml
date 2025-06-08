@@ -56,6 +56,20 @@ jobs:
         run: |
           python .github/tools/ai_patch_loop.py
 
+      # ------------------------------------------------------------
+      # Publish the detailed evolve logs so maintainers can inspect
+      # every iteration and LLM interaction.
+      # ------------------------------------------------------------
+      - name: Upload evolve diagnostics
+        if: always()           # ensure logs are collected even on failure
+        uses: actions/upload-artifact@v4
+        with:
+          name: evolve-logs
+          path: |
+            diagnostics/evolve_run.log
+            diagnostics/evolve_events.jsonl
+          if-no-files-found: ignore
+
       # --- Step 4: push results ---------------------------------------
       - name: Push commits produced by loop
         env:
