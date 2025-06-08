@@ -1,13 +1,29 @@
-# Evolve - Itaú Statement Parser
+# Evolve - AI-Powered Financial Parser Training Platform
 
-A simple and elegant tool for converting Itaú credit card statements from PDF to CSV format.
+🤖 **This is NOT a finished parser - it's a self-improving AI training environment!**
 
-## Features
+An innovative system that uses OpenAI to continuously refine Itaú credit card statement parsing through automated feedback loops and real-world accuracy measurement.
 
-- Direct PDF to CSV conversion
-- Two-step conversion through TXT format for validation
-- Enhanced transaction categorization
-- Detailed logging for troubleshooting
+## How It Works
+
+### 🎯 Training Foundation
+- **2 Golden Standards**: `2024-10.pdf` and `2025-05.pdf` with verified CSV outputs
+- **12 Training Targets**: Additional PDFs that need parsing refinement
+- **Current Accuracy**: ~65% across all statements (target: 99%)
+
+### 🤖 AI Improvement Loop
+1. **Parse Attempt**: Current regex patterns process all 14 PDFs  
+2. **Accuracy Check**: Real financial totals vs. parsed results
+3. **Failure Detection**: Webhook logs capture detailed diagnostics
+4. **AI Analysis**: OpenAI agent examines failures and suggests improvements
+5. **Auto-Patch**: Code refinements applied and tested automatically
+6. **Iteration**: Process repeats until 99% accuracy achieved
+
+### 🔧 Current Status
+- ✅ Baseline parsing works for 2/14 PDFs  
+- ✅ Complete diagnostic infrastructure deployed
+- ✅ AI feedback loop operational
+- 🔄 **Actively training** on remaining 12 statements
 
 ## Installation
 

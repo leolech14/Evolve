@@ -94,6 +94,11 @@ RE_INSTALLMENT_VALUE: Final = re.compile(
     re.I
 )
 
+# Multi-line transaction pattern (card transactions split across lines)
+RE_MULTILINE_TRANSACTION: Final = re.compile(
+    r"^(?P<date>\d{1,2}/\d{1,2})\s+(?P<desc>[A-Z][A-Z\s\*\-\.]+?)\s+(?P<installment>\d{2}/\d{2})?\s*(?P<amount>\d{1,3}(?:\.\d{3})*,\d{2})$"
+)
+
 # Learned generic transaction pattern (high-confidence catch-all)
 RE_GENERIC_TRANSACTION: Final = re.compile(
     r"^(?P<desc>.+?)\s+(?P<amount>\d{1,3}(?:\.\d{3})*,\d{2})(?:\s+.*)?$"
@@ -500,6 +505,52 @@ def parse_statement_line(line: str, year: int | None = None) -> dict | None:
             "fx_rate": Decimal("0.00"),
             "iof_brl": Decimal("0.00"),
             "category": "ENCARGO",
+            "merchant_city": "",
+            "ledger_hash": hashlib.sha1(original_line.encode()).hexdigest(),
+            "prev_bill_amount": Decimal("0.00"),
+            "interest_amount": Decimal("0.00"),
+            "amount_orig": Decimal("0.00"),
+            "currency_orig": "",
+            "amount_usd": Decimal("0.00"),
+        }
+
+    # ===== ENHANCED MULTILINE TRANSACTION PATTERN =====
+    
+    # Try the new multiline transaction pattern
+    m = RE_MULTILINE_TRANSACTION.match(line_no_card)
+    if m:
+        date_str = m.group("date")
+        if not validate_date(date_str):
+            return None
+        desc = m.group("desc").strip()
+        amount = parse_amount(m.group("amount"))
+        installment_info = m.group("installment")
+        
+        inst_seq, inst_tot = (0, 0)
+        if installment_info:
+            try:
+                seq, tot = installment_info.split("/")
+                inst_seq, inst_tot = int(seq), int(tot)
+            except (ValueError, AttributeError):
+                pass
+        
+        category = classify_transaction(desc, amount)
+        
+        try:
+            post_date = _iso_date(date_str, year)
+        except ValueError:
+            return None
+            
+        return {
+            "card_last4": card_last4,
+            "post_date": post_date,
+            "desc_raw": desc,
+            "amount_brl": amount,
+            "installment_seq": inst_seq,
+            "installment_tot": inst_tot,
+            "fx_rate": Decimal("0.00"),
+            "iof_brl": Decimal("0.00"),
+            "category": category,
             "merchant_city": "",
             "ledger_hash": hashlib.sha1(original_line.encode()).hexdigest(),
             "prev_bill_amount": Decimal("0.00"),
