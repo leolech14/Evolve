@@ -11,8 +11,10 @@ on:
 
 env:
   OPENAI_MODEL: gpt-4
-  MAX_TOKENS: '5000000'
+  MAX_TOKENS: '6144'
   MAX_ATTEMPTS: '5'
+  MAX_ITERATIONS: '8'
+  INVARIANT_TARGET: '99.0'
 
 jobs:
   test:

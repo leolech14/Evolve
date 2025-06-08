@@ -28,9 +28,11 @@ from openai import OpenAI
 
 # Configuration
 DIAGNOSTICS = Path("diagnostics")
-MAX_TOKENS = 5000  # Set to 5000 tokens as requested
+MAX_TOKENS = 6144  # Increased for comprehensive AI analysis
 MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS", "5"))
-MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1")
+MAX_ITERATIONS = int(os.getenv("MAX_ITERATIONS", "8"))  # More iterations for 99% target
+MODEL = os.getenv("OPENAI_MODEL", "gpt-4")
+INVARIANT_TARGET_SCORE = float(os.getenv("INVARIANT_TARGET", "99.0"))  # 99% financial accuracy target
 
 
 def ensure_best_branch() -> None:
@@ -376,9 +378,21 @@ def apply_direct_file_overwrite(suggestion: str) -> bool:
         return False
 
 
+def get_current_invariant_score() -> float:
+    """Get current invariant score from diagnostics."""
+    invariant_file = DIAGNOSTICS / "invariant_scores.json"
+    if invariant_file.exists():
+        try:
+            data = json.loads(invariant_file.read_text())
+            return data.get("overall_score", 0.0)
+        except Exception:
+            return 0.0
+    return 0.0
+
+
 def main() -> int:
-    """Main entry point."""
-    print("🤖 Starting AI auto-patch process...")
+    """Main entry point with multi-iteration capability."""
+    print("🧬 Starting EVOLVE multi-iteration AI improvement process...")
 
     ensure_best_branch()
 
@@ -387,17 +401,73 @@ def main() -> int:
         print("Error: OPENAI_API_KEY not set")
         return 1
 
-    # Collect context
-    print("📝 Collecting context...")
-    context = collect_context()
-    if not context["files"]:
-        print("No Python files found")
+    # Multi-iteration loop
+    best_score = get_current_invariant_score()
+    print(f"📊 Starting invariant score: {best_score:.1f}%")
+    
+    for iteration in range(1, MAX_ITERATIONS + 1):
+        print(f"\n🔄 ITERATION {iteration}/{MAX_ITERATIONS}")
+        print("=" * 50)
+        
+        # Collect context
+        print("📝 Collecting context...")
+        context = collect_context()
+        if not context["files"]:
+            print("No Python files found")
+            return 0
+        
+        current_score = get_current_invariant_score()
+        print(f"📊 Current invariant score: {current_score:.1f}%")
+        
+        # Check if we've reached 99% target
+        if current_score >= INVARIANT_TARGET_SCORE:
+            print(f"🎉 99% FINANCIAL ACCURACY ACHIEVED! Score {current_score:.1f}% >= {INVARIANT_TARGET_SCORE}%")
+            return 0
+        
+        # Check if we're making progress
+        if iteration > 1 and current_score <= best_score:
+            print(f"⚠️  No improvement in iteration {iteration} ({current_score:.1f}% <= {best_score:.1f}%)")
+            if iteration >= 2:  # Give at least 2 attempts
+                print("🛑 Stopping iterations - no progress detected")
+                break
+        
+        best_score = max(best_score, current_score)
+
+        # Single iteration attempt
+        success = run_single_iteration(context, iteration, current_score)
+        
+        if success:
+            print(f"✅ Iteration {iteration} completed successfully")
+            # Re-run validation to get updated scores
+            run_command(["python", "scripts/parse_all.py", "--out", "csv_output"])
+            run_command(["python", "-m", "pytest", "tests/test_invariants.py", "--csv-dir", "csv_output", "-v"])
+        else:
+            print(f"❌ Iteration {iteration} failed")
+    
+    final_score = get_current_invariant_score()
+    improvement = final_score - best_score
+    print(f"\n📊 FINAL RESULTS")
+    print("=" * 50)
+    print(f"Final score: {final_score:.1f}%")
+    print(f"Improvement: +{improvement:.1f}%")
+    
+    if final_score >= INVARIANT_TARGET_SCORE:
+        print("🎉 99% FINANCIAL ACCURACY TARGET ACHIEVED!")
         return 0
+    else:
+        print(f"⚠️  99% target not reached (need {INVARIANT_TARGET_SCORE:.1f}%)")
+        return 1
+
+
+def run_single_iteration(context: dict, iteration: int, current_score: float) -> bool:
+    """Run a single iteration of AI improvement."""
+    print(f"🧠 Running AI analysis for iteration {iteration}...")
 
     # Prepare enhanced prompt with new training signals
     prompt = [
-        "You are an AI parser improvement specialist using the new Hard Goldens + Soft Invariants strategy. "
-        "Your goal is to improve Itaú statement parsing from current accuracy to 99% financial precision.",
+        f"You are an AI parser improvement specialist (ITERATION {iteration}/{MAX_ITERATIONS}). "
+        f"Using Hard Goldens + Soft Invariants strategy to achieve 99% financial accuracy. "
+        f"Current score: {current_score:.1f}% → Target: 99.0%",
         "",
         "=== TRAINING SIGNAL ANALYSIS ===",
         "",
@@ -412,8 +482,9 @@ def main() -> int:
         json.dumps(context["ai_focused_accuracy"], indent=2),
         "",
         "=== IMPROVEMENT FOCUS ===",
-        "Priority: Financial total matching (PDF total vs parsed CSV total)",
+        f"Priority: Bridge the gap from {current_score:.1f}% to 99.0% financial accuracy",
         "Method: Enhance regex patterns in pdf_to_csv.py to capture missing transactions",
+        f"Iteration Strategy: Progressive improvement over {MAX_ITERATIONS} iterations",
         "",
         "=== Traditional Metrics (Reference Only) ===",
         "",
@@ -442,12 +513,12 @@ def main() -> int:
 
     prompt.extend(
         [
-            "IMPROVEMENT STRATEGY:",
+            f"IMPROVEMENT STRATEGY (Iteration {iteration}):",
             "",
             "1. PRESERVE Hard Goldens: Ensure Itau_2024-10.pdf and Itau_2025-05.pdf maintain exact CSV output",
-            "2. TARGET Invariant Scores: Focus on PDFs with low financial accuracy scores",
-            "3. ENHANCE Regex Patterns: Add new patterns to capture missing transaction types",
-            "4. VALIDATE Financial Totals: Ensure PDF total matches parsed CSV total",
+            "2. TARGET 99% Financial Accuracy: Focus on PDFs with worst accuracy scores",
+            "3. ENHANCE Regex Patterns: Add new patterns to capture missing transaction types", 
+            "4. VALIDATE Against PDF Totals: Ensure PDF total matches parsed CSV total",
             "",
             "SPECIFIC TARGETS (from financial accuracy analysis):",
             "- Worst performers need new transaction patterns",
@@ -462,14 +533,14 @@ def main() -> int:
             "",
             "PRIORITY ORDER:",
             "1. Add missing regex patterns for unparsed transactions",
-            "2. Fix financial total extraction patterns",
+            "2. Fix financial total extraction patterns", 
             "3. Improve transaction categorization",
             "4. Maintain hard golden compatibility",
             "5. Address any lint/test issues",
         ]
     )
 
-    # Get AI suggestion (OpenAI 1.x API)
+    # Get AI suggestion (OpenAI API)
     print("🧠 Requesting AI analysis...")
     try:
         client = OpenAI()
@@ -482,22 +553,22 @@ def main() -> int:
         suggestion = response.choices[0].message.content
     except Exception as e:
         print(f"Error: Failed to get AI suggestion: {e}")
-        return 1
+        return False
 
     # Create and apply patch
     print("🔧 Creating patch...")
     patch = create_patch(suggestion)
     if not patch:
         print("Error: Failed to create patch")
-        return 1
+        return False
 
     print("⬆️  Creating pull request...")
     if not apply_patch(patch):
         print("Error: Failed to apply patch")
-        return 1
+        return False
 
-    print("✅ Auto-patch complete!")
-    return 0
+    print(f"✅ Iteration {iteration} completed!")
+    return True
 
 
 if __name__ == "__main__":
