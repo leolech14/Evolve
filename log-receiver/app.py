@@ -1,6 +1,6 @@
-from fastapi import FastAPI, Header, Request, HTTPException
+from fastapi import FastAPI, Header, Request
 from pathlib import Path
-import json, os, datetime
+import datetime
 
 app = FastAPI()
 SAVE_DIR = Path("/data")          # volume gravável no Fly

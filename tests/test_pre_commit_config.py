@@ -4,9 +4,11 @@ from pathlib import Path
 
 CONFIG_PATH = Path(".pre-commit-config.yaml")
 
+
 def load_config():
     with CONFIG_PATH.open("r", encoding="utf-8") as f:
         return yaml.safe_load(f)
+
 
 def test_pre_commit_config_valid():
     """Test that the .pre-commit-config.yaml file is valid YAML."""
@@ -26,9 +28,9 @@ def test_repos_key_exists():
 def test_each_repo_has_required_fields():
     config = load_config()
     for i, repo in enumerate(config["repos"]):
-        assert "repo" in repo or repo.get("repo", None) == "local", (
-            f"Repo #{i} missing 'repo' key"
-        )
+        assert (
+            "repo" in repo or repo.get("repo", None) == "local"
+        ), f"Repo #{i} missing 'repo' key"
         if repo.get("repo", None) != "local":
             assert "rev" in repo, f"Repo #{i} missing 'rev' key"
         assert "hooks" in repo, f"Repo #{i} missing 'hooks' key"

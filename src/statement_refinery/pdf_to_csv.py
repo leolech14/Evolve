@@ -54,10 +54,10 @@ RE_FX_LINE2: Final = re.compile(
 # Currency conversion rate lines
 RE_CURRENCY_CONVERSION: Final = re.compile(
     r"Dólar\s+de\s+Conversão\s+R\$\s+(?P<rate1>\d+,\d{2})(?:\s+Dólar\s+de\s+Conversão\s+R\$\s+(?P<rate2>\d+,\d{2}))?",
-    re.I
+    re.I,
 )
 
-# International transaction with city and amounts  
+# International transaction with city and amounts
 RE_INTL_TRANSACTION: Final = re.compile(
     r"^(?P<city>\w+)\s+(?P<orig_amt>\d{1,3}(?:\.\d{3})*,\d{2})\s+(?P<currency>[A-Z]{3})\s+(?P<brl_amt>\d{1,3}(?:\.\d{3})*,\d{2})(?:\s+(?P<desc>.+))?$"
 )
@@ -75,23 +75,21 @@ RE_TRANSACTION_CODE: Final = re.compile(
 # Fee information lines
 RE_FEE_INFO: Final = re.compile(
     r"^(?P<desc>(?:valor\s+)?(?:juros|multa|encargo|tarifa)[\w\s]*)\s+(?P<amount>\d{1,3}(?:\.\d{3})*,\d{2})$",
-    re.I
+    re.I,
 )
 
 # More specific patterns from failed line analysis
 RE_INTEREST_VALUE: Final = re.compile(
-    r"^Valor\s+juros\s+(?P<amount>\d{1,3}(?:\.\d{3})*,\d{2})$",
-    re.I
+    r"^Valor\s+juros\s+(?P<amount>\d{1,3}(?:\.\d{3})*,\d{2})$", re.I
 )
 
 RE_CET_RATE: Final = re.compile(
     r"^CET\s+da\s+compra\s+parcelada\s+(?P<monthly>\d+,\d{2})\s+%\s+am\s+(?P<annual>\d{1,3},\d{2})\s+%\s+aa$",
-    re.I
+    re.I,
 )
 
 RE_INSTALLMENT_VALUE: Final = re.compile(
-    r"^Valor\s+da\s+parcela\s+(?P<amount>\d{1,3}(?:\.\d{3})*,\d{2})$",
-    re.I
+    r"^Valor\s+da\s+parcela\s+(?P<amount>\d{1,3}(?:\.\d{3})*,\d{2})$", re.I
 )
 
 # Multi-line transaction pattern (card transactions split across lines)
@@ -412,30 +410,30 @@ def parse_statement_line(line: str, year: int | None = None) -> dict | None:
         }
 
     # ===== ENHANCED PATTERN MATCHING =====
-    
+
     # Specific fee patterns from failed line analysis
     m = RE_INTEREST_VALUE.match(line_no_card)
     if m:
         # "Valor juros 477,06" - Interest value information
         return None  # Skip informational fee lines
-    
+
     m = RE_CET_RATE.match(line_no_card)
     if m:
         # "CET da compra parcelada 6,32 % am 110,71 % aa" - Rate information
         return None  # Skip informational rate lines
-    
+
     m = RE_INSTALLMENT_VALUE.match(line_no_card)
     if m:
         # "Valor da parcela 41,35" - Installment value information
         return None  # Skip informational installment lines
-    
+
     # Currency conversion rate information
     m = RE_CURRENCY_CONVERSION.match(line_no_card)
     if m:
         # Extract conversion rates for future FX calculations
         # These are informational lines, not transactions
         return None  # Skip but log for FX rate tracking
-    
+
     # International transaction with city
     m = RE_INTL_TRANSACTION.match(line_no_card)
     if m:
@@ -444,7 +442,7 @@ def parse_statement_line(line: str, year: int | None = None) -> dict | None:
         currency = m.group("currency")
         brl_amt = parse_amount(m.group("brl_amt"))
         desc = m.group("desc") or f"{city} Transaction"
-        
+
         return {
             "card_last4": card_last4,
             "post_date": f"{year or date.today().year}-01-01",  # Default date
@@ -463,13 +461,13 @@ def parse_statement_line(line: str, year: int | None = None) -> dict | None:
             "currency_orig": currency,
             "amount_usd": orig_amt if currency == "USD" else Decimal("0.00"),
         }
-    
+
     # Payment summary lines
     m = RE_PAYMENT_SUMMARY.match(line_no_card)
     if m:
         desc = f"{m.group('type')} {m.group('desc')}"
         amount = parse_amount(m.group("amount"))
-        
+
         return {
             "card_last4": card_last4,
             "post_date": f"{year or date.today().year}-12-31",  # End of period
@@ -488,13 +486,13 @@ def parse_statement_line(line: str, year: int | None = None) -> dict | None:
             "currency_orig": "",
             "amount_usd": Decimal("0.00"),
         }
-    
+
     # Fee information lines
     m = RE_FEE_INFO.match(line_no_card)
     if m:
         desc = m.group("desc")
         amount = parse_amount(m.group("amount"))
-        
+
         return {
             "card_last4": card_last4,
             "post_date": f"{year or date.today().year}-12-31",  # End of period
@@ -515,7 +513,7 @@ def parse_statement_line(line: str, year: int | None = None) -> dict | None:
         }
 
     # ===== ENHANCED MULTILINE TRANSACTION PATTERN =====
-    
+
     # Try the new multiline transaction pattern
     m = RE_MULTILINE_TRANSACTION.match(line_no_card)
     if m:
@@ -525,7 +523,7 @@ def parse_statement_line(line: str, year: int | None = None) -> dict | None:
         desc = m.group("desc").strip()
         amount = parse_amount(m.group("amount"))
         installment_info = m.group("installment")
-        
+
         inst_seq, inst_tot = (0, 0)
         if installment_info:
             try:
@@ -533,14 +531,14 @@ def parse_statement_line(line: str, year: int | None = None) -> dict | None:
                 inst_seq, inst_tot = int(seq), int(tot)
             except (ValueError, AttributeError):
                 pass
-        
+
         category = classify_transaction(desc, amount)
-        
+
         try:
             post_date = _iso_date(date_str, year)
         except ValueError:
             return None
-            
+
         return {
             "card_last4": card_last4,
             "post_date": post_date,

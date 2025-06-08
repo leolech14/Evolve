@@ -5,7 +5,8 @@ Retorna 200 OK imediatamente.
 """
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
-import datetime, io, os
+import datetime
+import os
 
 INBOX = Path("ci_inbox")
 INBOX.mkdir(exist_ok=True)
@@ -34,7 +35,7 @@ class Handler(BaseHTTPRequestHandler):
         
         with fname.open("wb") as f:
             # Write headers as metadata first
-            metadata = f"# Log metadata\n"
+            metadata = "# Log metadata\n"
             metadata += f"# Repo: {repo_key}\n"
             metadata += f"# Branch: {branch}\n"
             metadata += f"# Run ID: {run_id}\n"

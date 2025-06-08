@@ -15,7 +15,7 @@ dependencies = [
 ]
 
 [project.scripts]
-evolve = "statement_refinery.cli:main"
+evolve = "statement_refinery.cli:main_cli"
 
 [project.optional-dependencies]
 # Development dependencies for linting, type checking and tests
@@ -38,6 +38,9 @@ packages = ["statement_refinery"]
 [tool.ruff]
 target-version = "py312"
 line-length = 88
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/*.py" = ["E402"]  # Allow module imports after sys.path modifications
 
 [tool.black]
 target-version = ["py312"]
