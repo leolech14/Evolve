@@ -1,0 +1,8 @@
+# Log metadata
+# Repo: test-repo
+# Branch: test-branch
+# Run ID: local-test
+# Timestamp: 20250608-003053
+# Content-Length: 24
+
+Testing local connection

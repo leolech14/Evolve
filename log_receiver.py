@@ -20,13 +20,17 @@ class Handler(BaseHTTPRequestHandler):
         repo_key = self.headers.get("X-Repo-Key", "unknown")
         branch = self.headers.get("X-Branch", "unknown")
         run_id = self.headers.get("X-Run-ID", "unknown")
+        file_name = self.headers.get("X-File-Name", "unknown")
         
         # Create repo-specific subdirectory
         repo_dir = INBOX / repo_key
         repo_dir.mkdir(exist_ok=True)
         
-        # Create filename with context
-        fname = repo_dir / f"log_{branch}_{run_id}_{ts}.txt"
+        # Create filename with context, preserve original extension
+        if file_name != "unknown":
+            fname = repo_dir / f"{branch}_{run_id}_{ts}_{file_name}"
+        else:
+            fname = repo_dir / f"log_{branch}_{run_id}_{ts}.txt"
         
         with fname.open("wb") as f:
             # Write headers as metadata first
