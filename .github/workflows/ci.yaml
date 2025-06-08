@@ -77,6 +77,7 @@ jobs:
           python scripts/check_accuracy.py --threshold 99 \
                  --summary-file diagnostics/accuracy.json \
                  --csv-dir csv_output | tee diagnostics/accuracy.txt
+          python scripts/ai_focused_accuracy.py | tee diagnostics/ai_focused_accuracy.txt
 
       # Auto-patch if needed
       - name: Run auto-patch
