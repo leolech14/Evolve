@@ -58,11 +58,19 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name  "github-actions[bot]"
  
+          # -----------------------------------------------------------------
+          # Ensure 'origin' uses the CI token, so `git push` authenticates.
+          # checkout@v4 does this automatically, but if it was replaced or
+          # modified earlier we guarantee it here.
+          # -----------------------------------------------------------------
+          git remote set-url origin \
+            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+ 
           # ----------------------------------------------------------
           # figure out the branch we should push to
           # ----------------------------------------------------------
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            TARGET_BRANCH="${{ github.head_ref }}"   # e.g. feature/my-branch
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            TARGET_BRANCH="$GITHUB_HEAD_REF"   # e.g. feature/my-branch
           else
             TARGET_BRANCH="${GITHUB_REF#refs/heads/}" # e.g. main
           fi
