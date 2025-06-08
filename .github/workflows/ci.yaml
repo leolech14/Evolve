@@ -146,6 +146,17 @@ jobs:
           echo "🔍 Diagnostics directory contents:"
           ls -la diagnostics/ || echo "❌ diagnostics/ directory not found"
           
+          # Create a summary file with step outcomes
+          echo "# CI Run Summary" > diagnostics/ci_summary.md
+          echo "Run ID: ${{ github.run_id }}" >> diagnostics/ci_summary.md
+          echo "Branch: ${{ github.ref_name }}" >> diagnostics/ci_summary.md
+          echo "Commit: ${{ github.sha }}" >> diagnostics/ci_summary.md
+          echo "Lint outcome: ${{ steps.lint.outcome }}" >> diagnostics/ci_summary.md
+          echo "MyPy outcome: ${{ steps.mypy.outcome }}" >> diagnostics/ci_summary.md
+          echo "Tests outcome: ${{ steps.tests.outcome }}" >> diagnostics/ci_summary.md
+          echo "Accuracy outcome: ${{ steps.accuracy.outcome }}" >> diagnostics/ci_summary.md
+          echo "Timestamp: $(date)" >> diagnostics/ci_summary.md
+          
           # envie todos os logs capturados na pasta diagnostics
           if [ -n "$LOG_WEBHOOK_URL" ]; then
             echo "📡 Webhook URL configured, sending logs..."
