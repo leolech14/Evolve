@@ -18,7 +18,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      FORCE_EVOLVE: 0  # Only run AI patch when tests actually fail
+      FORCE_EVOLVE: 1  # Force AI patch to test the evolve loop
     steps:
       - uses: actions/checkout@v4
 
