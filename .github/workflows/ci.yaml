@@ -135,6 +135,30 @@ jobs:
           name: csvs
           path: csv_output/
 
+      # Send logs to webhook
+      - name: Send step logs to webhook
+        if: always()   # garante envio mesmo se job falhar
+        env:
+          LOG_WEBHOOK_URL: ${{ secrets.LOG_WEBHOOK_URL }}
+        run: |
+          # envie todos os logs capturados na pasta diagnostics
+          if [ -n "$LOG_WEBHOOK_URL" ]; then
+            for f in diagnostics/*.txt; do
+              if [ -f "$f" ]; then
+                echo "Sending log: $f"
+                curl -sSf \
+                  -X POST \
+                  -H "X-Repo-Key: ${{ github.repository_owner }}-${{ github.event.repository.name }}" \
+                  -H "X-Branch: ${{ github.ref_name }}" \
+                  -H "X-Run-ID: ${{ github.run_id }}" \
+                  --data-binary "@${f}" \
+                  "$LOG_WEBHOOK_URL" || echo "⚠️ falhou envio ${f}"
+              fi
+            done
+          else
+            echo "LOG_WEBHOOK_URL not configured, skipping webhook"
+          fi
+
       # Summary
       - name: Generate summary
         if: always()
