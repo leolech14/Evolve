@@ -30,9 +30,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 # --------------------------------------------------------------------------- #
 def run(cmd: str) -> Tuple[int, str]:
     """Run a shell command, return (exit_code, stdout+stderr)."""
-    p = subprocess.run(
-        cmd, shell=True, text=True, cwd=ROOT, capture_output=True
-    )
+    p = subprocess.run(cmd, shell=True, text=True, cwd=ROOT, capture_output=True)
     return p.returncode, p.stdout + p.stderr
 
 
@@ -126,8 +124,7 @@ def main() -> None:
     if after_code < before_code:
         # improvement – commit!
         msg_lines = [
-            "🤖 AUTO-FIX: shrink failing-tests count "
-            f"{before_code} → {after_code}",
+            "🤖 AUTO-FIX: shrink failing-tests count " f"{before_code} → {after_code}",
             "",
             "Context:",
             *fail_snippet.splitlines()[:20],

@@ -107,36 +107,40 @@ def collect_context() -> dict:
         try:
             ai_data = json.loads(ai_accuracy_file.read_text())
             context["ai_focused_accuracy"] = ai_data
-            
+
             # Extract fitness-based analysis for targeted improvements
             if "detailed_results" in ai_data:
                 fitness_summary = {}
                 category_targets = []
-                
+
                 for result in ai_data["detailed_results"]:
                     pdf_name = result.get("pdf_name", "unknown")
                     fitness_scores = result.get("fitness_scores", {})
                     improvement_targets = result.get("improvement_targets", [])
-                    
+
                     if fitness_scores:
                         fitness_summary[pdf_name] = {
                             "overall_fitness": fitness_scores.get("overall", 0),
                             "worst_categories": improvement_targets[:3],  # Top 3 worst
-                            "status": result.get("parsing_status", "unknown")
+                            "status": result.get("parsing_status", "unknown"),
                         }
-                    
+
                     # Collect all category targets for AI focus
                     for target in improvement_targets:
-                        category_targets.append({
-                            "pdf": pdf_name,
-                            "category": target["category"],
-                            "accuracy": target["accuracy"],
-                            "priority": target["priority"]
-                        })
-                
+                        category_targets.append(
+                            {
+                                "pdf": pdf_name,
+                                "category": target["category"],
+                                "accuracy": target["accuracy"],
+                                "priority": target["priority"],
+                            }
+                        )
+
                 context["fitness_analysis"] = fitness_summary
-                context["category_targets"] = sorted(category_targets, key=lambda x: x["accuracy"])
-                
+                context["category_targets"] = sorted(
+                    category_targets, key=lambda x: x["accuracy"]
+                )
+
         except Exception:
             context["errors"].append("Failed to read AI-focused accuracy")
 
@@ -539,7 +543,9 @@ def run_single_iteration(context: dict, iteration: int, current_score: float) ->
         json.dumps(context["fitness_analysis"], indent=2),
         "",
         "PRIORITY CATEGORY TARGETS (Worst accuracy first):",
-        json.dumps(context["category_targets"][:10], indent=2),  # Top 10 worst categories
+        json.dumps(
+            context["category_targets"][:10], indent=2
+        ),  # Top 10 worst categories
         "",
         "INVARIANT SCORES (Secondary validation):",
         json.dumps(context["invariant_scores"], indent=2),
@@ -548,7 +554,7 @@ def run_single_iteration(context: dict, iteration: int, current_score: float) ->
         "",
         f"Iteration {iteration} Focus:",
     ]
-    
+
     # Add category-specific focus for this iteration
     if context["category_targets"]:
         worst_categories = {}
@@ -556,39 +562,47 @@ def run_single_iteration(context: dict, iteration: int, current_score: float) ->
             category = target["category"]
             if category not in worst_categories:
                 worst_categories[category] = []
-            worst_categories[category].append(f"{target['pdf']} ({target['accuracy']:.1f}%)")
-        
-        prompt.extend([
-            "",
-            "SPECIFIC CATEGORIES TO IMPROVE:",
-            json.dumps(worst_categories, indent=2),
-            "",
-            "Pattern Enhancement Priority:",
-            "1. Add regex patterns for the worst-performing categories above",
-            "2. Focus on transaction types that cause fitness score penalties",
-            "3. Ensure PDF statement totals match parsed CSV totals by category",
-            "4. Maintain backward compatibility with hard golden CSVs",
-        ])
+            worst_categories[category].append(
+                f"{target['pdf']} ({target['accuracy']:.1f}%)"
+            )
+
+        prompt.extend(
+            [
+                "",
+                "SPECIFIC CATEGORIES TO IMPROVE:",
+                json.dumps(worst_categories, indent=2),
+                "",
+                "Pattern Enhancement Priority:",
+                "1. Add regex patterns for the worst-performing categories above",
+                "2. Focus on transaction types that cause fitness score penalties",
+                "3. Ensure PDF statement totals match parsed CSV totals by category",
+                "4. Maintain backward compatibility with hard golden CSVs",
+            ]
+        )
     else:
-        prompt.extend([
-            "No specific category targets identified - focus on overall accuracy",
-        ])
-    
-    prompt.extend([
-        "",
-        "=== CONTEXT FOR REFERENCE ===",
-        "",
-        "Test Output:",
-        context["tests"][:800],  # Truncate for context
-        "",
-        "Lint Output:",
-        context["lint"][:400],  # Truncate for context
-        "",
-        "Legacy Accuracy:",
-        json.dumps(context["accuracy"], indent=2),
-        "",
-        "=== CODE FILES TO IMPROVE ===",
-    ])
+        prompt.extend(
+            [
+                "No specific category targets identified - focus on overall accuracy",
+            ]
+        )
+
+    prompt.extend(
+        [
+            "",
+            "=== CONTEXT FOR REFERENCE ===",
+            "",
+            "Test Output:",
+            context["tests"][:800],  # Truncate for context
+            "",
+            "Lint Output:",
+            context["lint"][:400],  # Truncate for context
+            "",
+            "Legacy Accuracy:",
+            json.dumps(context["accuracy"], indent=2),
+            "",
+            "=== CODE FILES TO IMPROVE ===",
+        ]
+    )
 
     for file in context["files"]:
         prompt.extend(
@@ -615,7 +629,7 @@ def run_single_iteration(context: dict, iteration: int, current_score: float) ->
             "",
             "CATEGORY-TARGETED APPROACH:",
             "- 'domestic': Patterns for SUPERMERCADO, FARMÁCIA, RESTAURANTE, POSTO, etc.",
-            "- 'international': Patterns for FX transactions and international purchases", 
+            "- 'international': Patterns for FX transactions and international purchases",
             "- 'payments': Patterns for PAGAMENTO transactions with 7117 codes",
             "- 'services': Patterns for SERVIÇOS, ENCARGOS, fees and interest",
             "",

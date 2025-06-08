@@ -14,26 +14,31 @@ Env-vars:
 """
 
 from __future__ import annotations
-import os, subprocess, sys, tempfile, textwrap, pathlib, shlex
+import os
+import subprocess
+import sys
+import tempfile
+import textwrap
+import pathlib
+import shlex
 from typing import Tuple
 import openai
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-MAX_ITERS        = int(os.getenv("MAX_ITERS", "100"))
-MAX_LINES        = int(os.getenv("MAX_LINES_CHANGED", "50"))
-MODEL            = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
-PATIENCE         = int(os.getenv("PATIENCE", "5"))
+MAX_ITERS = int(os.getenv("MAX_ITERS", "100"))
+MAX_LINES = int(os.getenv("MAX_LINES_CHANGED", "50"))
+MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+PATIENCE = int(os.getenv("PATIENCE", "5"))
 # Maximum number of tokens the assistant may return.
 # Can be overridden in the workflow via the MAX_TOKENS env var.
-MAX_TOKENS       = int(os.getenv("MAX_TOKENS", "4096"))
+MAX_TOKENS = int(os.getenv("MAX_TOKENS", "4096"))
 
 
 # --------------------------------------------------------------------------- #
 # helpers                                                                     #
 # --------------------------------------------------------------------------- #
 def run(cmd: str) -> Tuple[int, str]:
-    p = subprocess.run(cmd, shell=True, text=True, cwd=ROOT,
-                       capture_output=True)
+    p = subprocess.run(cmd, shell=True, text=True, cwd=ROOT, capture_output=True)
     return p.returncode, p.stdout + p.stderr
 
 
@@ -98,7 +103,7 @@ def apply_patch(diff: str) -> bool:
 # --------------------------------------------------------------------------- #
 def main() -> None:
     consec_misses = 0
-    iters         = 0
+    iters = 0
 
     # run baseline tests
     code, out = run_tests()
@@ -110,15 +115,19 @@ def main() -> None:
 
     while iters < MAX_ITERS and consec_misses < PATIENCE and baseline_fail > 0:
         iters += 1
-        print(f"\n=== Iteration {iters}/{MAX_ITERS} "
-              f"(failures so far: {baseline_fail}) ===")
+        print(
+            f"\n=== Iteration {iters}/{MAX_ITERS} "
+            f"(failures so far: {baseline_fail}) ==="
+        )
 
-        prompt = textwrap.dedent(f"""
+        prompt = textwrap.dedent(
+            f"""
             pytest failures (excerpt):
             {failing_snippet(out)}
 
             Provide a diff that reduces failure count.
-        """)
+        """
+        )
         patch = ask_llm(prompt)
         if not patch.startswith("diff --git"):
             print("LLM did not return a diff, skipping iteration.")
@@ -155,8 +164,9 @@ def main() -> None:
         if baseline_fail == 0:
             break
 
-    print(f"\nLoop finished after {iters} iterations; failures left: "
-          f"{baseline_fail}")
+    print(
+        f"\nLoop finished after {iters} iterations; failures left: " f"{baseline_fail}"
+    )
     # exit 0 so CI step passes; overall job status handled by outer steps
     sys.exit(0)
 
