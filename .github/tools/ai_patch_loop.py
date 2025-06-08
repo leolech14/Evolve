@@ -122,12 +122,43 @@ def main() -> None:
             f"(failures so far: {baseline_fail}) ==="
         )
 
+        # Get current file contents to provide context
+        failed_files = set()
+        for line in out.split("\n"):
+            if "FAILED" in line and "::" in line:
+                file_part = line.split("::")[0].strip()
+                if file_part.startswith("FAILED "):
+                    file_part = file_part[7:]  # Remove "FAILED "
+                failed_files.add(file_part)
+        
+        file_contents = ""
+        for filepath in list(failed_files)[:2]:  # Limit to first 2 files to avoid token limit
+            if os.path.exists(filepath):
+                try:
+                    with open(filepath, 'r') as f:
+                        content = f.read()
+                    file_contents += f"\n--- Current content of {filepath} ---\n{content}\n"
+                except Exception:
+                    pass
+        
         prompt = textwrap.dedent(
             f"""
             pytest failures (excerpt):
             {failing_snippet(out)}
+            {file_contents}
 
-            Provide a diff that reduces failure count.
+            Provide a git diff that reduces failure count. Must start with "diff --git" and follow standard git patch format.
+            Use the exact current file content shown above to create accurate line numbers and context.
+            
+            Example format:
+            diff --git a/file.py b/file.py
+            index abc123..def456 100644
+            --- a/file.py
+            +++ b/file.py
+            @@ -1,3 +1,4 @@
+             existing line
+            +new line
+             another existing line
         """
         )
         patch = ask_llm(prompt)
