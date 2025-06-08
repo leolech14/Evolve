@@ -128,8 +128,9 @@ def main() -> None:
             baseline_fail = new_fail
             out = new_out
             run("git add -u")
-            run(f"git commit -m "
-                f\"🤖 AUTO-FIX: failures {baseline_fail} after iter {iters}\")
+            # Commit any staged changes
+            commit_msg = f"🤖 AUTO-FIX: failures {baseline_fail} after iter {iters}"
+            run(f'git commit -am "{commit_msg}"')
             print("✅ patch accepted")
         else:
             # revert
