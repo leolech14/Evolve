@@ -247,13 +247,24 @@ def apply_patch(patch: str) -> bool:
             f"[apply_patch] git apply --index --3way --whitespace=fix: code={code}, output={out[:500]}"
         )
         if code != 0:
-            print(
-                "Patch failed to apply cleanly; attempting direct file overwrite fallback..."
+            # Try without --index to avoid index mismatch issues
+            print("Patch failed with --index, trying without index...")
+            code2, out2 = run_command(
+                ["git", "apply", "--3way", "--whitespace=fix", str(patch_file)]
             )
-            print(f"[apply_patch] Fallback: AI suggestion (truncated):\n{patch[:1000]}")
-            if not apply_direct_file_overwrite(patch):
-                print("Fallback direct file overwrite also failed.")
-                return False
+            print(
+                f"[apply_patch] git apply --3way --whitespace=fix: code={code2}, output={out2[:500]}"
+            )
+            if code2 != 0:
+                print(
+                    "Patch failed to apply cleanly; attempting direct file overwrite fallback..."
+                )
+                print(
+                    f"[apply_patch] Fallback: AI suggestion (truncated):\n{patch[:1000]}"
+                )
+                if not apply_direct_file_overwrite(patch):
+                    print("Fallback direct file overwrite also failed.")
+                    return False
             branch = f"ai-patch-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
             run_command(["git", "checkout", "-b", branch])
             run_command(["git", "add", "."])
